@@ -1,5 +1,12 @@
 [![Build Status](https://travis-ci.org/grrr-amsterdam/garp3.svg?branch=develop)](https://travis-ci.org/grrr-amsterdam/garp3)
 
+# To signed-commit something:
+
+```
+    git commit -S -m your commit message
+```
+
+
 # Garp 3
 
 Garp is a flexible opensource PHP and frontend framework and CMS.   
