@@ -45,7 +45,7 @@ class Garp_Config_Ini extends Zend_Config_Ini {
         return $config;
     }
 
-    public function __construct($filename, $section = null, $options = false) {
+    public function __construct($filename, $section = null, $options = []) {
         $options['allowModifications'] = true;
         try {
             parent::__construct($filename, $section, $options);
@@ -101,4 +101,3 @@ class Garp_Config_Ini extends Zend_Config_Ini {
         return new Garp_Config_Ini(new Garp_Config_Ini_String($iniString), $section, $options);
     }
 }
-

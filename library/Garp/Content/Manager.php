@@ -65,7 +65,7 @@ class Garp_Content_Manager {
      * @param array $options Various fetching options (e.g. limit, sorting, etc.)
      * @return array
      */
-    public function fetch(array $options = null) {
+    public function fetch(?array $options = null) {
         try {
             $this->_checkAcl('fetch');
         } catch (Garp_Auth_Exception $e) {
@@ -255,7 +255,7 @@ class Garp_Content_Manager {
      * @param Array $options Options
      * @return Int
      */
-    public function count(array $options = null) {
+    public function count(?array $options = null) {
         if ($this->_model instanceof Garp_Model_Db) {
             unset($options['sort']);
             $options['fields'] = 'COUNT(*)';

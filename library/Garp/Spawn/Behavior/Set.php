@@ -46,7 +46,7 @@ class Garp_Spawn_Behavior_Set implements Countable {
         $this->_loadDefaultConditionalBehaviors();
     }
 
-    public function count() {
+    public function count(): int {
         return count($this->_behaviors);
     }
 
@@ -178,4 +178,3 @@ class Garp_Spawn_Behavior_Set implements Countable {
         $this->_add('relation', 'Weighable', $weighableConfig);
     }
 }
-

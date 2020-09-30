@@ -472,7 +472,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @param Zend_Db_Select $select SELECT object can be filled with additional query parameters.
      * @return array
      */
-    public function fetchNeighbors($sortColumn, $sortValue, Zend_Db_Select $select = null) {
+    public function fetchNeighbors($sortColumn, $sortValue, ?Zend_Db_Select $select = null) {
         $select = $select ?: $this->select();
 
         $prevSelect = clone $select;
@@ -499,7 +499,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @param Zend_Db_Select $select
      * @return Zend_Db_Table_Rowset_Abstract
      */
-    public function fetchByAuthor($authorId, Zend_Db_Select $select = null) {
+    public function fetchByAuthor($authorId, ?Zend_Db_Select $select = null) {
         $select = $select ?: $this->select();
         $select->where('author_id = ?', $authorId);
 
@@ -698,7 +698,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @param Zend_Db_Select $select
      * @return Int Number of records
      */
-    public function count(Zend_Db_Select $select = null) {
+    public function count(?Zend_Db_Select $select = null) {
         if (!$select) {
             $select = $this->select();
         }

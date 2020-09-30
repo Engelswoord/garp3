@@ -593,4 +593,3 @@ class G_ContentController extends Garp_Controller_Action {
     }
 
 }
-

@@ -19,8 +19,8 @@ class Garp_Spawn_Config_Model_Set extends ArrayObject {
 
 
     public function __construct(
-        Garp_Spawn_Config_Storage_Interface $storage = null,
-        Garp_Spawn_Config_Format_Interface $format = null
+        ?Garp_Spawn_Config_Storage_Interface $storage = null,
+        ?Garp_Spawn_Config_Format_Interface $format = null
     ) {
         if (!$storage) {
             $storage = $this->_getDefaultStorage();

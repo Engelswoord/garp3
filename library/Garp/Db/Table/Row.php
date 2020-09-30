@@ -94,7 +94,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      * @return Zend_Db_Table_Rowset_Abstract Query result from $matchTable
      * @throws Zend_Db_Table_Row_Exception If $matchTable or $intersectionTable is not a table class or is not loadable.
      */
-    public function findManyToManyRowset($matchTable, $intersectionTable, $callerRefRule = null, $matchRefRule = null, Zend_Db_Table_Select $select = null) {
+    public function findManyToManyRowset($matchTable, $intersectionTable, $callerRefRule = null, $matchRefRule = null, ?Zend_Db_Table_Select $select = null) {
         $db = $this->_getTable()->getAdapter();
 
         if (is_string($intersectionTable)) {
@@ -249,7 +249,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      * @return Zend_Db_Table_Row_Abstract   Query result from $parentTable
      * @throws Zend_Db_Table_Row_Exception If $parentTable is not a table or is not loadable.
      */
-    public function findParentRow($parentTable, $ruleKey = null, Zend_Db_Table_Select $select = null)
+    public function findParentRow($parentTable, $ruleKey = null, ?Zend_Db_Table_Select $select = null)
     {
         $db = $this->_getTable()->getAdapter();
 

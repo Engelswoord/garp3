@@ -84,7 +84,7 @@ class Garp_Spawn_MySql_View_Joint extends Garp_Spawn_MySql_View_Abstract {
         return $modelSet[$modelName];
     }
 
-    protected function _getTranslatedViewName(Garp_Spawn_Model_Abstract $model = null) {
+    protected function _getTranslatedViewName(?Garp_Spawn_Model_Abstract $model = null) {
         if (!$model) {
             $model = $this->getModel();
         }
@@ -242,7 +242,7 @@ class Garp_Spawn_MySql_View_Joint extends Garp_Spawn_MySql_View_Abstract {
     }
 
     protected function _modelHasFirstAndLastNameListFields(
-        Garp_Spawn_Model_Abstract $model = null
+        ?Garp_Spawn_Model_Abstract $model = null
     ) {
         if (!$model) {
             $model = $this->getModel();

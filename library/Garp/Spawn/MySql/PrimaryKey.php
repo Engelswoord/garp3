@@ -46,7 +46,7 @@ class Garp_Spawn_MySql_PrimaryKey extends Garp_Spawn_MySql_Key {
         $matches = array();
         preg_match('/PRIMARY KEY\s+\((?P<columns>[`\w,]+?)\)/i', trim($line), $matches);
         if (array_key_exists('columns', $matches)) {
-            $columns = preg_split('/`+,?\s?/', $matches['columns'], null, PREG_SPLIT_NO_EMPTY);
+            $columns = preg_split('/`+,?\s?/', $matches['columns'], -1, PREG_SPLIT_NO_EMPTY);
             return array('columns' => $columns);
         } else throw new Exception("Could not find any column names in the primary key statement.");
     }

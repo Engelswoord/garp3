@@ -3,28 +3,27 @@
   "description": "Framework and CMS built on top of Zend Framework. Forked from grrr-amsterdam/garp3",
   "license": "BSD-3-Clause",
   "type": "library",
+  "minimum-stability": "dev",
   "require": {
-    "php": ">=7.1",
+    "php": ">=8.2",
     "ext-json": "*",
     "google/apiclient": "^1.1",
-    "phpoffice/phpexcel": "1.8.*",
     "ezyang/htmlpurifier": "^4.12",
-    "monolog/monolog": "^1.0",
     "dompdf/dompdf": "^0.8.0",
     "tedivm/jshrink": "1.1.0",
-    "vlucas/phpdotenv": "^3.4",
-    "fzaninotto/faker": "^1.9.1",
-    "grrr-amsterdam/garp-functional": "^4.0",
-    "phpunit/phpunit": "^6|^7",
+    "vlucas/phpdotenv": "^v5.4",
+    "fzaninotto/faker": "dev-master",
+    "grrr-amsterdam/garp-functional": "^6.0",
     "greenlion/php-sql-parser": "^4.1",
     "league/csv": "^8.0",
     "aws/aws-sdk-php": "^3.87",
-    "sentry/sdk": "^2.0",
+    "sentry/sdk": "^3.0",
     "shardj/zf1-future": "^1.16.1",
     "guzzlehttp/guzzle": "^6|^7"
   },
   "require-dev": {
-    "squizlabs/php_codesniffer": "^3.5"
+    "squizlabs/php_codesniffer": "^3.5",
+    "phpunit/phpunit": "^9"
   },
   "autoload": {
     "psr-0": {
@@ -34,6 +33,11 @@
     },
     "files": [
       "application/functions.php"
+    ],
+    "classmap": [
+      "application/modules/g/controllers",
+      "application/modules/g/views/helpers",
+      "packages/phpoffice-phpexcel/Classes"
     ]
   },
   "autoload-dev": {
@@ -48,5 +52,10 @@
     "test": "phpunit --verbose --colors --bootstrap tests/TestHelper.php tests/",
     "phpcs": "vendor/bin/phpcs --standard=./phpcs.xml --extensions=php --colors ."
   },
-  "bin": ["scripts/g"]
+  "suggest": {
+    "phpunit/phpunit": "Required to use assertions and run tests (^6|^7)."
+  },
+  "bin": [
+    "scripts/g"
+  ]
 }

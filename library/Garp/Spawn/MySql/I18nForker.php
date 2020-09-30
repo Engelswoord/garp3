@@ -1,13 +1,12 @@
 <?php
 /**
  * Move unilingual content to multilingual tables in case of i18n models.
- * @author David Spreekmeester | grrr.nl
+ * 
  * @package Garp
- * @subpackage MySql
+ * @author David Spreekmeester <david@grrr.nl>
  */
 class Garp_Spawn_MySql_I18nForker {
-    const ERROR_CANT_CREATE_TABLE =
-        "Unable to create the %s table.";
+    const ERROR_CANT_CREATE_TABLE = "Unable to create the %s table.";
 
     /**
      * @var Garp_Spawn_Model_Base $_model
@@ -65,6 +64,7 @@ class Garp_Spawn_MySql_I18nForker {
 
     /**
      * @param Garp_Spawn_MySql_Table_Abstract $target
+     * @return void
      */
     public function setTarget($target) {
         $this->_target = $target;
@@ -79,6 +79,7 @@ class Garp_Spawn_MySql_I18nForker {
 
     /**
      * @param Garp_Spawn_MySql_Table_Abstract $source
+     * @return void
      */
     public function setSource($source) {
         $this->_source = $source;
@@ -93,12 +94,16 @@ class Garp_Spawn_MySql_I18nForker {
 
     /**
      * @param Garp_Spawn_Model_Base $model
+     * @return void
      */
     public function setModel($model) {
         $this->_model = $model;
     }
 
     protected function _executeSql($sql) {
+        if (!$sql) {
+            return null;
+        }
         $adapter = Zend_Db_Table::getDefaultAdapter();
         return $adapter->query($sql);
     }
@@ -113,7 +118,9 @@ class Garp_Spawn_MySql_I18nForker {
         } else {
             // Make sure an existing table is updated
             $baseSynchronizer = new Garp_Spawn_MySql_Table_Synchronizer(
-                $this->getModel()->getI18nModel(), $this->getFeedback());
+                $this->getModel()->getI18nModel(), 
+                $this->getFeedback()
+            );
             $baseSynchronizer->sync(false);
         }
 
@@ -144,14 +151,17 @@ class Garp_Spawn_MySql_I18nForker {
         $fieldNamesString = implode(',', $existingColumns);
 
         if (!$this->_tableHasRecords($i18nTableName)) {
-            $statement =
-                "INSERT IGNORE INTO `{$i18nTableName}` ({$relationColumnName}, lang, {$fieldNamesString}) "
-                ."SELECT id, '{$language}', {$fieldNamesString} "
-                ."FROM `{$target->name}`"
+            $statement 
+                = "INSERT IGNORE INTO `{$i18nTableName}` ({$relationColumnName}, lang, {$fieldNamesString}) "
+                . "SELECT id, '{$language}', {$fieldNamesString} "
+                . "FROM `{$target->name}`"
             ;
         } else {
             $sqlSetStatements = implode(',', $this->_getSqlSetStatementsForUpdate(
-                $target->name, $i18nTableName, $existingColumns));
+                $target->name, 
+                $i18nTableName, 
+                $existingColumns
+            ));
             $statement = "UPDATE `{$i18nTableName}` " .
                 "INNER JOIN `{$target->name}` ON `{$i18nTableName}`.`{$relationColumnName}` = " .
                 "`{$target->name}`.`id` " .
@@ -164,7 +174,8 @@ class Garp_Spawn_MySql_I18nForker {
 
     protected function _tableHasRecords($tableName) {
         $stmt = Zend_Db_Table::getDefaultAdapter()->query(
-            "SELECT COUNT(*) AS `count` FROM {$tableName}");
+            "SELECT COUNT(*) AS `count` FROM {$tableName}"
+        );
         $rows = $stmt->fetchAll();
         if (!isset($rows[0]['count'])) {
             return;
@@ -174,13 +185,13 @@ class Garp_Spawn_MySql_I18nForker {
     }
 
     protected function _getSqlSetStatementsForUpdate($fromTable, $toTable, $columns) {
-        return array_map(function($col) use ($fromTable, $toTable) {
+        return array_map(function ($col) use ($fromTable, $toTable) {
             return "`$toTable`.`$col` = `$fromTable`.`$col`";
         }, $columns);
     }
 
     protected function getOverlappingColumnsFromBase($multilingualColumns) {
-        return array_values(array_intersect($multilingualColumns, array_map(function($col) {
+        return array_values(array_intersect($multilingualColumns, array_map(function ($col) {
             return $col->name;
         }, $this->getTarget()->getColumns())));
     }
@@ -198,10 +209,10 @@ class Garp_Spawn_MySql_I18nForker {
 
     protected function _getMultilingualFieldNames() {
         return array_merge(
-            array_map(function($field) {
+            array_map(function ($field) {
                 return $field->name;
             }, $this->getModel()->fields->getFields('multilingual', true)),
-            array_map(function($rel) {
+            array_map(function ($rel) {
                 return $rel->column;    ;
             }, $this->getModel()->relations->getRelations('multilingual', true))
         );

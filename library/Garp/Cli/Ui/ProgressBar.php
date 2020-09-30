@@ -66,7 +66,7 @@ class Garp_Cli_Ui_ProgressBar extends Garp_Cli_Ui {
      *                                  If you want to use this param, provide $message as well.
      * @return void
      */
-    public function display($message = null, $itemsLeftMessage = null) {
+    public function display($message = null, $itemsLeftMessage = '') {
         $this->_verifyTotalValue();
         $this->_clearLine();
         $this->_renderProgress();

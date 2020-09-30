@@ -1,11 +1,52 @@
 # Changelist Garp 3
+
 Here we keep track of backward-incompatible changes.
 
 For every (necessary) backward-incompatible Garp update we create a new tag, with an incremented minor version number.
 
 (not entirely semver-compatible, we know, but historically more compatible with how we came to Garp version 3 in the first place)
 
-## Version 3.24
+## Version 3.29.0
+
+Garp is now compatible with PHP 8.0.
+The minimally required version is PHP 7.4.
+
+Mostly thanks to upgrading these dependencies:
+
+- fzaninotto/faker: using `dev-master`, so make sure your `minimum-stability` is set to `dev` to allow this.
+- phpunit: a ton of assertion methods, as well as the `@expectedException` directive in docblocks, have been removed, so make sure you're not using those. You'll know because your test suite will fail.
+- shardj/zf1-future: should be backward-compatible, but your mileage may vary. We had to update the loading of filters in `Garp_Form_Element_Email` for instance, due to a `ReflectionClass` peculiarity.
+
+## Version 3.28.0
+
+Removed support for Dotenv version 4.
+You're unlikely to notice a difference, but if you load env files yourself, please update your calls to use `createUnsafeImmutable`. See also [DotEnv's Upgrading Guide](https://github.com/vlucas/phpdotenv/blob/master/UPGRADING.md#details).
+
+## Version 3.27.0
+
+Upgrade Garp\Functional to the latest version.
+Make sure you don't use the `match` function anymore, since it conflicts with PHP 8's `match` keyword!
+
+## Version 3.26.0
+
+Monolog is not used by Garp and therefore removed. Before upgrading, add `monolog/monolog:^1.0` to your projects `composer.json`, if you use Monolog.
+
+Remove support voor phpdotenv 3 and add support for version 4 and 5. When your application calls phpdotenv (not very likely) follow the upgrade instruction provided by phpdotenv: https://github.com/vlucas/phpdotenv
+
+PHPUnit is now a dev dependency. When your application `composer.json` doesn't require `phpunit/phpunit` add `"phpunit/phpunit": "^6|^7"` to `require-dev`.
+
+## Version 3.25.0
+
+Composer 2 compatibility is finally there. `autoload` rules in `composer.json` have been changed. Some classes previously loaded by PSR-0 have been moved to `classmap`, because Composer 2 is stricter about PSR-0 class loading. Garp uses an old version of `phpoffice/phpexcel`, this package is not compatible with PHP 7.4 and Composer 1. By including it in the repository, changing `autoload` rules and fixing some PHP 7.4 syntax errors the package is working again.
+
+When upgrading to this version:
+
+- Run Composer 1 `composer dumpautoload --optimize`, all autoloading warnings from Garp should be gone. All warnings should be fixed before your application can use Composer 2.
+- Test code that uses `phpoffice/phpexcel`.
+
+> We advise you to refactor code that's using `phpoffice/phpexcel` to use `phpoffice/spreadsheet` instead.
+
+## Version 3.24.0
 
 Custom HTTP calls to AWS API are replaced by AWS SDK for PHP calls to add support for signature version 4. So `Garp_Mailer` uses AWS SDK for PHP instead of Zend http client. No breaking changes, but `Garp_Mailer` will throw `SesException`'s instead of `Exception`.
 
@@ -24,7 +65,7 @@ Removed:
 
 ## Version 3.23.1
 
-The functionality previously found in `Garp_Test_PHPUnit_TestCase` is now in `Garp_Test_Traits_UsesTestHelper`.   
+The functionality previously found in `Garp_Test_PHPUnit_TestCase` is now in `Garp_Test_Traits_UsesTestHelper`.
 This allows you to extend other TestCase parent classes (like the one provided with Laravel), while still keeping Garp functionality.
 Hopefully this eases the transition to or integration with other frameworks.
 
@@ -41,8 +82,8 @@ Some dependencies got a higher minimal version. When you use lower versions upda
 
 ## Version 3.22.1
 
-Removed the need for a class docblock from `phpcs.xml`. In modern development environments all information is in a version control system. We don't think it's required anymore to have a docblock.   
-Obviously add one yourself when an explanation of the class is warranted. 
+Removed the need for a class docblock from `phpcs.xml`. In modern development environments all information is in a version control system. We don't think it's required anymore to have a docblock.
+Obviously add one yourself when an explanation of the class is warranted.
 
 ## Version 3.22.0
 
@@ -93,7 +134,7 @@ class My_Form extends App_Form {
 
 ## Version 3.21.0
 
-`Garp_Db_Table_Rowset` methods `filter` and `map` will pass an actual row object into the callback, as opposed to an array.    
+`Garp_Db_Table_Rowset` methods `filter` and `map` will pass an actual row object into the callback, as opposed to an array.
 This will break existing implementations that rely on the argument being an array.
 
 ## Version 3.20.0
@@ -110,7 +151,7 @@ The functions `partial()`, `snippet()` and `__()` where moved to `\Garp\` namesp
 
 Change API response `Content-Type` to `application/json`.
 
-Add spawn input property [`searchable`](https://github.com/grrr-amsterdam/garp3/wiki/spawn-input-properties#searchable-default-null-boolean).
+Add spawn input property [`searchable`](https://github.com/engelswoord/garp3/wiki/spawn-input-properties#searchable-default-null-boolean).
 
 ## Version 3.19.0
 
@@ -121,7 +162,7 @@ To prevent conflicts between Garp3 and Laravel some global functions have been r
     # composer.json
     "autoload": {
         "files": [
-            "vendor/grrr-amsterdam/garp3/application/removed-functions.php"
+            "vendor/engelswoord/garp3/application/removed-functions.php"
         ]
     }
 
@@ -129,7 +170,7 @@ To become compatible with Laravel you can't use `removed-functions.php`. `view()
 
 Removed functions:
 
-- `__()`*
+- `__()`\*
 - `array_get()`
 - `array_get_subset()`
 - `array_pluck()`
@@ -146,23 +187,23 @@ Removed functions:
 - `model()`
 - `noop()`
 - `not()`
-- `partial()`*
+- `partial()`\*
 - `propertyEquals()`
 - `psort()`
-- `snippet()`*
+- `snippet()`\*
 - `some()`
 - `unary()`
 - `view()`
 - `when()`
 
-\* Moved to `\Garp` namespace. 
+\* Moved to `\Garp` namespace.
 
 Removed polyfills:
 
 - `array_column()`
 - `gzdecode()`
 
-### Sentry 
+### Sentry
 
 Sentry has been updated to version 2.
 This means any manual Sentry error reporting should be updated. [Sentry's own changelog](https://github.com/getsentry/sentry-php/blob/master/UPGRADE-2.0.md) is the best place to start.
@@ -170,7 +211,7 @@ Also: the entry `RavenClient` in `Zend_Registry` has been removed.
 
 ## Version 3.18.1
 
-Not a breaking change, but because of the huge impact on deploy performance interesting to mention nonetheless: as of this version you can configure Capistrano to not distribute assets to the CDN.   
+Not a breaking change, but because of the huge impact on deploy performance interesting to mention nonetheless: as of this version you can configure Capistrano to not distribute assets to the CDN.
 Put the following in the stage's deploy configuration file, or the general `deploy.rb`:
 
 ```rb
@@ -178,7 +219,7 @@ Put the following in the stage's deploy configuration file, or the general `depl
 :set distribute_assets, false
 ```
 
-**Note**: obviously, if you rely on assets being on the CDN, this setting is not for you.  
+**Note**: obviously, if you rely on assets being on the CDN, this setting is not for you.
 This works when you have configured your `cdn.location` to be `local`, for all file types relevant to you. For instance:
 
 ```
@@ -192,7 +233,7 @@ The minimum-stability of Composer packages installed by Garp has changed from `d
 
 ## Version 3.17
 
-Removes the `DefaultSortable` behavior. It caused more errors than it gave value.  
+Removes the `DefaultSortable` behavior. It caused more errors than it gave value.
 How to migrate models using this feature?
 
 1. Check for models specifying the `order` property in their spawn configuration.
@@ -202,17 +243,17 @@ Note: the CMS is not affected, since the order is still stored in the Javascript
 
 ## Version 3.16
 
-The Zend Framework Amazon S3 service has been severed from Garp: it now uses the official AWS PHP SDK from Amazon to interact with the S3 service.  
-Nothing has changed, all interfaces and outputs have remained the same, however, `cdn.s3.region` has become a *required configuration parameter*.
+The Zend Framework Amazon S3 service has been severed from Garp: it now uses the official AWS PHP SDK from Amazon to interact with the S3 service.
+Nothing has changed, all interfaces and outputs have remained the same, however, `cdn.s3.region` has become a _required configuration parameter_.
 
 ## Version 3.15
 
-The minimum required PHP version has been updated to PHP7.1.  
+The minimum required PHP version has been updated to PHP7.1.
 Mostly to be able to support Garp\Functional version 3.
 
 ## Version 3.14
 
-`teardown` on our unit test has been greatly optimized to allow for high-precision truncating. 
+`teardown` on our unit test has been greatly optimized to allow for high-precision truncating.
 The `teardown` method will truncate exactly the tables that received inserts during the tests, no more, no less.
 
 In order to use this functionality, you need to make sure your default database adapter has a profiler enabled:
@@ -224,16 +265,16 @@ resources.db.params.profiler.enabled = true
 resources.db.params.dbname = "my_test_database"
 ```
 
-This way we can piggyback on the profiler to keep track of all `INSERT` queries. 
+This way we can piggyback on the profiler to keep track of all `INSERT` queries.
 When no profiler is configured, the old behavior will still work.
 
-One notable backward-compatible change is the removal of `getDatabaseAdapter()` from `Garp_Test_PHPUnit_TestCase`. 
+One notable backward-compatible change is the removal of `getDatabaseAdapter()` from `Garp_Test_PHPUnit_TestCase`.
 It has been moved to `Garp_Test_PHPUnit_Helper`, so if you still want to use it, do so thru `$this->_helper->getDatabaseAdapter()`.
 
 ## Version 3.13
 
 Using Capistrano, we write a `VERSION` file in the root of the project. An accompanying `Garp_Version` class is created to lookup the current version.
-Note that this file will usually *not* exist in `development` environments, so don't write code which relies on it.
+Note that this file will usually _not_ exist in `development` environments, so don't write code which relies on it.
 This deprecates the use of `Garp_Semver`. Since this is mostly used to aid the `git flow` helper commands, this version of Garp will be most compatible with a `One Flow` setup. See [OneFlow - a Git branching model and workflow
 ](http://endoflineblog.com/oneflow-a-git-branching-model-and-workflow) for more information.
 
@@ -248,7 +289,6 @@ In addition, some spring cleaning has been done:
 In order to update the phpunit dependency to a modern version, we finally dropped support for php 5.3 and jumped all the way up to php 7.
 
 Most importantly for implementors: `Garp_Test_PHPUnit_ControllerTestCase` has been removed from Garp. It extended `Zend_Test_PHPUnit_ControllerTestCase`, which was the reason we couldn't upgrade phpunit.
-
 
 ## Version 3.11
 
@@ -268,12 +308,13 @@ function afterFetch($args) {
   $isCms = $model->isCmsContext();
 }
 ```
+
 If your app uses `Zend_Registry::get('CMS')` it will need to refactor that bit.
 
 ### Version 3.11.19
 
 Since credentials for CDNs moved to `.env` files, `g cdn distribute` is no longer able to distribute to the right environment, since the credentials are not known across envs anymore.
-[12g](https://github.com/grrr-amsterdam/12g) is developed to fix this. It can read configuration from other environments, among other things.  
+[12g](https://github.com/grrr-amsterdam/12g) is developed to fix this. It can read configuration from other environments, among other things.
 Its output can be piped into Garp to distribute to the right environment, like this:
 
 ```
@@ -283,7 +324,6 @@ Its output can be piped into Garp to distribute to the right environment, like t
 ### Version 3.11.30
 
 A little late to the party, but as of this version `12g` is a requirement for Garp deployment using Capistrano. The `--to` parameter of `g cdn distribute` is officially deprecated and will trigger a warning.
-
 
 ## Version 3.10
 
@@ -296,9 +336,9 @@ All you have to do is configure:
 cdn.baseUrl = "https://s3-eu-west-1.amazonaws.com/bucket"
 ```
 
-That's it. Provide everything up to the paths that are fed to the `assetUrl` helper at runtime.  
+That's it. Provide everything up to the paths that are fed to the `assetUrl` helper at runtime.
 
-Note that nothing changed to the path manipulation logic, so versioning or hashing still works.  
+Note that nothing changed to the path manipulation logic, so versioning or hashing still works.
 Also, local exceptions for assets are still allowed:
 
 ```
@@ -310,7 +350,7 @@ This still puts CSS files on a relative path (`/css/base.css`) but uploaded file
 
 ## Version 3.9.61
 
-When memcached is configured, it HAS to be running, otherwise an exception is thrown. Sounds fair, right? In the past however, Garp would fallback to the `BlackHole` cache if Memcache was unavailable.   
+When memcached is configured, it HAS to be running, otherwise an exception is thrown. Sounds fair, right? In the past however, Garp would fallback to the `BlackHole` cache if Memcache was unavailable.
 We want to be explicit in our behaviors rather than implicit, therefore this was changed. You can simply configure Memcached to be `NULL` and no connection attempts are made.
 
 ```
@@ -336,7 +376,7 @@ Garp will look for `composer.phar` in the shared folder when deployed with Capis
 
 [Take a look at this script to find out how to install Composer on the server](https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md)
 
-Note: in a clustered environment every webserver should have its own `composer.phar`.  
+Note: in a clustered environment every webserver should have its own `composer.phar`.
 Also: development machines are pretty rad and run things like PHP 7. Webservers sometimes are kinda wack and run things like PHP 5.3.
 
 You can configure the following in `composer.json` to make sure you never install dependencies that cannot run in the target environment:
@@ -364,9 +404,9 @@ If not configured, no path will be specified to HTMLPurifier.
 
 ## Version 3.9
 
-Translatable behavior has been refactored. (See commit https://github.com/grrr-amsterdam/garp3/commit/4d200b62d5d70f8b0a08499e683d10c47baaf6ef)
+Translatable behavior has been refactored. (See commit https://github.com/engelswoord/garp3/commit/4d200b62d5d70f8b0a08499e683d10c47baaf6ef)
 
-Because of this change, the database of multilingual projects needs an update. The fallback system is gone, so data needs to be migrated from the default language to all others.   
+Because of this change, the database of multilingual projects needs an update. The fallback system is gone, so data needs to be migrated from the default language to all others.
 A CLI command is provided for this purpose:
 
 ```
@@ -375,7 +415,7 @@ g i18n populateLocalizedRecords
 
 Note that the process reads every multilingual record in your project and migrates its content to the accompanying record in every other language. It might take a long time to finish.
 
-Also, a tiny change is made to reflect recent Gulp setups. Projects are now required to have both a `assets.js.root` and a `assets.js.build` directory.  
+Also, a tiny change is made to reflect recent Gulp setups. Projects are now required to have both a `assets.js.root` and a `assets.js.build` directory.
 It used to be just `root`, but as of now that's reserved for your Javascript source files as opposed to actual compiled files. Example:
 
 ```
@@ -383,19 +423,20 @@ assets.js.root = "/js/src"
 assets.js.build = "/js/build/prod"
 ```
 
-:exclamation: *Make sure that je new js build path is also updated in the gulpfile!*
+:exclamation: _Make sure that je new js build path is also updated in the gulpfile!_
 
 That's it! You're done. ☕
 
 ## Version 3.8
-Garp moved to a Composer package.   
+
+Garp moved to a Composer package.
 This changes Garp a lot in that it has be able to stand on its own when tested for instance. A lot of unit tests broke because they relied on Garp being part of a bigger project. These tests have been moved out of Garp (conceptually you could say they're integration tests) and into a Garp sandbox project.
 
-*Make sure you update Golem before updating Garp!*
+_Make sure you update Golem before updating Garp!_
 
 [To migrate to Garp composer version, see the accompanying wiki article.](garp-composer)
 
-That should be your step 1 in upgrading. Just make sure you require `^3.8.0`. Run `composer update` to install.   
+That should be your step 1 in upgrading. Just make sure you require `^3.8.0`. Run `composer update` to install.
 
 :exclamation: Look into [this issue](empty-composer) if you're getting empty Composer packages on your web server (most often noted by an error stating `Zend_Registry` cannot be found when deploying).
 
@@ -413,7 +454,7 @@ Secondly:
     }
 ```
 
-`Garp_Loader` is *deprecated* in favor of Composer's autoloader.
+`Garp_Loader` is _deprecated_ in favor of Composer's autoloader.
 
 - Create `tests/TestHelper.php`
 
@@ -428,7 +469,7 @@ ini_set('log_errors', 0);
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 'stderr');
 
-$garpRoot = BASE_PATH . '/vendor/grrr-amsterdam/garp3';
+$garpRoot = BASE_PATH . '/vendor/engelswoord/garp3';
 require_once $garpRoot . '/application/init.php';
 
 $application = new Garp_Application(
@@ -452,83 +493,101 @@ require_once('../vendor/autoload.php');
 
 - Rename `application/modules/default/models` to `application/modules/default/Model` (to support `psr-0` style autoloading).
 - Run `g models migrateGarpModels`. Garp models have moved from the `G_Model_` namespace to the `Garp_Model_Db_` namespace. Make sure your project doesn't reference the former still.
-It's possible your `AuthLocal` model is not correctly configured to extend from Garp. Make sure `"module": "garp"` is in `AuthLocal.json` and its extended model extends from `Garp_Model_Db_AuthLocal`.
+  It's possible your `AuthLocal` model is not correctly configured to extend from Garp. Make sure `"module": "garp"` is in `AuthLocal.json` and its extended model extends from `Garp_Model_Db_AuthLocal`.
 - You can remove `library/PHPExcel` and `library/Zend`: they're required by Composer.
 
 ## Versie 3.7
+
 Alle tabellen worden vanaf deze versie in lowercase gegenereerd.
 Het is dus zaak het volgende stappenplan aan te houden:
 
-- hernoem je tabellen naar de lowercase variant. (volledig lowercase, ```_MovieGenre``` wordt dus ```_moviegenre```)
-- draai ```g spawn```
-- herschrijf alle referenties naar de oude tabelnamen. In Ack kun je de volgende query gebruiken: ```[ `\'\(]+Cinema[ `\'\.]+``` om ze te vinden.
+- hernoem je tabellen naar de lowercase variant. (volledig lowercase, `_MovieGenre` wordt dus `_moviegenre`)
+- draai `g spawn`
+- herschrijf alle referenties naar de oude tabelnamen. In Ack kun je de volgende query gebruiken: `` [ `\'\(]+Cinema[ `\'\.]+ `` om ze te vinden.
 
-Optioneel: je kunt in ```app.ini``` de parameter ```app.domain``` vullen, voor FullUrl helpers e.d.
-
+Optioneel: je kunt in `app.ini` de parameter `app.domain` vullen, voor FullUrl helpers e.d.
 
 ## Versie 3.6 (Git)
+
 (ik weet niet zeker of we dit 3.6 noemen!)
 
 ### cms-stylesheets.phtml partial + cms.css
+
 @harmenjanssen (12-12-2012)
 
-- cms.css is verplaatst naar Sass, d.w.z. dat de echte CSS file dus in ```/public/css/compiled``` staat. In het CMS wordt dit pad gebruikt. Mocht je nou geen icoontjes zien bij de datatypes kijk dan even of deze file wel goed geladen wordt.
-- er is een partial bijgekomen: ```cms-stylesheets.phtml```. Hierin kun je app-specifieke stylesheets kwijt. Bovenstaande cms.css wordt daar ook in gezet. Met de komende WYSIWYG editor is dat heel handig omdat je nog wel wat custom styles zou moeten kunnen toevoegen (zoals een @font-face dingetje van Google of Typekit). Als deze partial er niet is krijg je logischerwijs een dikke error.
+- cms.css is verplaatst naar Sass, d.w.z. dat de echte CSS file dus in `/public/css/compiled` staat. In het CMS wordt dit pad gebruikt. Mocht je nou geen icoontjes zien bij de datatypes kijk dan even of deze file wel goed geladen wordt.
+- er is een partial bijgekomen: `cms-stylesheets.phtml`. Hierin kun je app-specifieke stylesheets kwijt. Bovenstaande cms.css wordt daar ook in gezet. Met de komende WYSIWYG editor is dat heel handig omdat je nog wel wat custom styles zou moeten kunnen toevoegen (zoals een @font-face dingetje van Google of Typekit). Als deze partial er niet is krijg je logischerwijs een dikke error.
 
 ## Versie 3.5
+
 svn.grrr.nl/garp3/code/branches/3_5
 
 ### Storage type Cookie
-Toevoegen aan ```core.ini```:
+
+Toevoegen aan `core.ini`:
+
 ```
 store.type = "Cookie"
 ```
 
-
 ### Volgorde class hiërarchie veranderd voor Garp modellen
+
 Let op! Modellen die afstammen van een Garp model afstammen moeten iets anders inheriten dan het geval was:
+
 ```
 Model_Image > G_Model_Image > Model_Base_Image
 ```
+
 in plaats van:
+
 ```
 Model_Image > Model_Base_Image > G_Model_Image
 ```
+
 Je zult dus je app-specifieke modellen aan moeten passen.
 
 ### App-specifieke cms icons
+
 @davidspreekmeester
 public/css/cms-icons.css heet nu
 public/css/cms.css
 
 ### [application.ini] Auth config notatie
+
 @harmenjanssen
-We hanteren een nieuwe syntax voor auth variabelen, specifiek voor het auth.login.* en auth.login.register.* stukje. In de scaffoldversie van application.ini kun je het juiste formaat al vinden. Voorbeeld:
+We hanteren een nieuwe syntax voor auth variabelen, specifiek voor het auth.login._ en auth.login.register._ stukje. In de scaffoldversie van application.ini kun je het juiste formaat al vinden. Voorbeeld:
+
 ```
 auth.login.view = “login.phtml”
 ```
 
 ### [database] Auth tabellen hernoemd
+
 @harmenjanssen
 We zijn van auth_facebook en auth_local en auth_twitter enzovoorts gegaan naar de Garp 3.4 nieuwe stijl namen AuthFacebook, AuthLocal, AuthTwitter etc.
 
 ### [database] Aanpassing benaming relatiekolommen in homofiele relaties
+
 @davidspreekmeester
 Waar een homofiele relatietabel zoals `_UserUser` voorheen de kolommen `user_id1` en `user_id2` zou hebben, gebruiken we vanaf 3.5 `user1_id` en `user2_id`.
 
 ### Consistentere configuratie voor hasAndBelongsToMany relaties
+
 @davidspreekmeester
 Voorheen hadden we het bestand `_HabtmRelations.json`, waar alle `hasAndBelongsToMany` relaties in gedefinieerd worden. Vanaf 3.5 dienen deze relaties in de configuratie van het eerste model in de relatie (alfabetisch gezien) te gebeuren. De configuratie is hetzelfde als voor andere typen relaties, maar dan met type: hasAndBelongsToMany. Zie de Spawner docs voor uitgebreidere info.
 
 ### Aanpassing kolom Video.author naar Video.video_author
+
 @harmenjanssen
 Omdat de virtuele kolom Author ook al wordt toegevoegd in de joint view.
 Pas bij bestaande data eerst de kolom in de database aan (zodat je geen data kwijt raakt).
 Pas daarna de Spawn config aan en draai een Spawn.
 
 ### Opzet modules is veranderd, LayoutBroker plugin is geïntroduceerd
+
 @harmenjanssen
 Pas het volgende aan in **application.ini**:
+
 ```
 -resources.layout.layoutPath = APPLICATION_PATH "/modules/default/views/layouts"
 +resources.layout =
@@ -538,18 +597,20 @@ Pas het volgende aan in **application.ini**:
 +resources.frontController.moduleDirectory[] = APPLICATION_PATH "/modules"
 +resources.frontController.moduleDirectory[] = APPLICATION_PATH "/../garp/application/modules"
 ```
-De symlink "g" in **APPLICATION_PATH "/modules"** moet vanaf nu wijzen naar ```garp/application/modules/g```.
 
+De symlink "g" in **APPLICATION_PATH "/modules"** moet vanaf nu wijzen naar `garp/application/modules/g`.
 
 ## Versie 3.4
+
 svn.grrr.nl/garp3/code/branches/3_4
 
 ### JS models / Base JS models
+
 @peter
 Geen support meer voor xtype = ‘compositefield’. Gebruik nu xtype = ‘fieldset’ met layout = ‘hbox’ om visueel de zelfde rendering te verkrijgen.
 
-
 ### Spawnen Base model goo (minified en geclusterd)
+
 @davidspreekmeester
 De aanroep in models.phtml is veranderd. Dit bestand wordt nu nog maar gedeeltelijk gespawnd. Er moeten wat Ext aanroepen voor en na de gespawnde aanroepen. Zie
 
@@ -557,14 +618,14 @@ garp/scripts/scaffold/application/modules/default/views/scripts/partials/models.
 
 voor de juiste syntax. Dit kun je gebruiken als inhoud voor models.phtml in de applicatie, een Spawn-sessie daarna zal de rest aanvullen.
 
-
-
 ## versie 3.3
+
 svn.grrr.nl/garp3/code/branches/3_3
 revision 3357
 25 november 2011
 
 ### Rollen / Rechten voor CMS
+
 @harmenjanssen
 Alle modellen moeten in acl.ini genoemd worden zodat ze in ACL bekend worden en door de Content Manager gebruikt worden. Als ze er niet instaan kun je ze niet editen in het CMS.
 Bijvoorbeeld: (bij resources)
@@ -575,36 +636,32 @@ acl.resources.G_Model_Video.allow.all.roles = "admin"
 acl.resources.Model_BlogPost.allow.all.roles = "admin"
 Zie n8.nl voor een recente implementatie.
 
-
 ### Caching refactor
+
 @harmenjanssen
-application/configs/cache.ini moet aanwezig zijn. Hoeft niet per sé gevuld te zijn, maar er moeten  wel entries voor production / staging / development in staan . Zie n8_garp3 repository voor een voorbeeld van de daadwerkelijke implementatie.
-
-
-
+application/configs/cache.ini moet aanwezig zijn. Hoeft niet per sé gevuld te zijn, maar er moeten wel entries voor production / staging / development in staan . Zie n8_garp3 repository voor een voorbeeld van de daadwerkelijke implementatie.
 
 ## versie 3.2
 
 > revision ?
-datum?
-Asset version
-@harmenjanssen
-In public/.htaccess dient:
-```RewriteRule ^([0-9]+)/(css|js|media)/(.*) $2/$3 [L]```
-vervangen te worden door:
-```RewriteRule ^(\d+)/(css|js|media)/(.*) $2/$3 [L]```
-
-
+> datum?
+> Asset version
+> @harmenjanssen
+> In public/.htaccess dient:
+> `RewriteRule ^([0-9]+)/(css|js|media)/(.*) $2/$3 [L]`
+> vervangen te worden door:
+> `RewriteRule ^(\d+)/(css|js|media)/(.*) $2/$3 [L]`
 
 ## versie 3.1
 
 > revision 2684
-20 september 2011
-Image / storage refactor
-@davidspreekmeester
-Snippet.image is een veld met een filename, dit moet Snippet.image_id worden, die verwijst naar een image record.
-De entries voor cdn in application.ini zijn veranderd.
-De benodigde entries zijn:
+> 20 september 2011
+> Image / storage refactor
+> @davidspreekmeester
+> Snippet.image is een veld met een filename, dit moet Snippet.image_id worden, die verwijst naar een image record.
+> De entries voor cdn in application.ini zijn veranderd.
+> De benodigde entries zijn:
+
 ```
 cdn.type = 'local'
 cdn.domain = HTTP_HOST
@@ -625,6 +682,7 @@ cdn.path.static.document = "/2011/documents"
 ```
 
 De volgende entries voor de setup van images in **application.ini** kunnen verwijderd worden:
+
 ```
 image.uri.scaled = '/uploads/images/scaled/'
 image.uri.upload = '/uploads/images/'
@@ -632,4 +690,5 @@ image.path.upload = APPLICATION_PATH "/../public/uploads/images/"
 image.path.scaled = APPLICATION_PATH "/../public/uploads/images/scaled/"
 image.host.static = "http://" HTTP_HOST
 ```
+
 In plaats van CDN moet in Javascript IMAGES_CDN en DOCUMENTS_CDN gezet zijn.

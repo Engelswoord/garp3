@@ -445,7 +445,7 @@ class Garp_Cache_Manager {
         // symlink. The different release folders are purged over time, so not reliable to use when
         // scheduling a future operation.
         return realpath(APPLICATION_PATH . '/../../..') .
-            '/current/vendor/grrr-amsterdam/garp3/scripts/garp.php';
+            '/current/vendor/engelswoord/garp3/scripts/garp.php';
     }
 
 }

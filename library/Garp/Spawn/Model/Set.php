@@ -8,20 +8,20 @@ class Garp_Spawn_Model_Set extends ArrayObject {
     private static $_instance = null;
 
 
-    public static function getInstance(Garp_Spawn_Config_Model_Set $config = null) {
+    public static function getInstance(?Garp_Spawn_Config_Model_Set $config = null) {
         if (!self::$_instance) {
             self::$_instance = self::_createInstance($config);
             self::_addMirroredRelations();
         }
-        
+
         return self::$_instance;
     }
-    
-    private static function _createInstance(Garp_Spawn_Config_Model_Set $config = null) {
+
+    private static function _createInstance(?Garp_Spawn_Config_Model_Set $config = null) {
         if (!$config) {
             $config = new Garp_Spawn_Config_Model_Set();
         }
-    
+
         return new Garp_Spawn_Model_Set($config);
     }
 
@@ -45,7 +45,7 @@ class Garp_Spawn_Model_Set extends ArrayObject {
         $modelSetFile = new Garp_Spawn_Js_ModelSet_File_Base();
         $modelSetFile->save($output);
     }
-        
+
     public function includeInJsModelLoader() {
         new Garp_Spawn_Js_ModelsIncluder($this);
     }
@@ -55,10 +55,9 @@ class Garp_Spawn_Model_Set extends ArrayObject {
             $model->relations->addMirrored();
         }
     }
-    
+
     protected function _sortModels() {
         $this->ksort();
         //ArrayObject::ksort($this);
     }
 }
-

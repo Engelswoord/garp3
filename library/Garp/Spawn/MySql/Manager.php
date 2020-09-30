@@ -53,7 +53,7 @@ class Garp_Spawn_MySql_Manager {
      * Get Garp_Auth instance
      * @return Garp_Auth
      */
-    public static function getInstance(Garp_Cli_Ui_Protocol $feedback = null) {
+    public static function getInstance(?Garp_Cli_Ui_Protocol $feedback = null) {
          if (!Garp_Spawn_MySql_Manager::$_instance) {
              Garp_Spawn_MySql_Manager::$_instance = new Garp_Spawn_MySql_Manager($feedback);
          }

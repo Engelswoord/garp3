@@ -60,7 +60,7 @@ class Garp_Auth {
      * @param Garp_Store_Interface $store Session or cookie, for instance
      * @return Void
      */
-    private function __construct(Garp_Store_Interface $store = null) {
+    private function __construct(?Garp_Store_Interface $store = null) {
         $this->setStore($store ?: Garp_Store_Factory::getStore('Garp_Auth'));
     }
 
@@ -70,7 +70,7 @@ class Garp_Auth {
      * @param Garp_Store_Interface $store Session or cookie, for instance
      * @return Garp_Auth
      */
-    public static function getInstance(Garp_Store_Interface $store = null) {
+    public static function getInstance(?Garp_Store_Interface $store = null) {
         if (!Garp_Auth::$_instance) {
             Garp_Auth::$_instance = new Garp_Auth($store);
         }

@@ -127,8 +127,7 @@ class Garp_Util_AssetUrl implements JsonSerializable {
         return strval($this->_url);
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return $this->__toString();
     }
 }
-

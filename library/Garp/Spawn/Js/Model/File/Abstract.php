@@ -8,11 +8,11 @@ abstract class Garp_Spawn_Js_Model_File_Abstract {
     protected $_extension = 'js';
     protected $_overwrite = false;
     protected $_model;
-    
+
     public function __construct(Garp_Spawn_Model_Base $model) {
         $this->_model = $model;
     }
-    
+
     public function save($content) {
         $filePath = $this->_getFilePath();
 
@@ -30,7 +30,7 @@ abstract class Garp_Spawn_Js_Model_File_Abstract {
 
         return false;
     }
-    
+
     protected function _getFilePath() {
         return APPLICATION_PATH.$this->_path.$this->_model->id.'.'.$this->_extension;
     }

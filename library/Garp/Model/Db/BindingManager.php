@@ -36,7 +36,7 @@ class Garp_Model_Db_BindingManager {
      * @param Garp_Util_Configuration $options
      * @return Void
      */
-    public static function storeBinding($subjectModel, $alias, Garp_Util_Configuration $options = null) {
+    public static function storeBinding($subjectModel, $alias, ?Garp_Util_Configuration $options = null) {
         static::$_bindings[$subjectModel][$alias] = self::_setRelationDefaultOptions($alias, $options);
     }
 
@@ -154,7 +154,7 @@ class Garp_Model_Db_BindingManager {
      * @param Garp_Util_Configuration $options The given options
      * @return Garp_Util_Configuration Modified options
      */
-    protected static function _setRelationDefaultOptions($alias, Garp_Util_Configuration $options = null) {
+    protected static function _setRelationDefaultOptions($alias, ?Garp_Util_Configuration $options = null) {
         $options = $options ?: new Garp_Util_Configuration();
         $options->setDefault('rule', null)
                 ->setDefault('rule2', null)
