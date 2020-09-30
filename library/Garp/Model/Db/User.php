@@ -151,6 +151,7 @@ class Garp_Model_Db_User extends Model_Base_User {
     public function beforeUpdate(array &$args) {
         $data = &$args[1];
         $where = $args[2];
+
         $authVars = Garp_Auth::getInstance()->getConfigValues('validateemail');
 
         // Check if the email address is about to be changed, and wether we should respond to it
@@ -161,6 +162,9 @@ class Garp_Model_Db_User extends Model_Base_User {
             // @todo For now we assume that email is a unique value. This means that
             // we use fetchRow instead of fetchAll.
             // If this ever changes, fix this code.
+            if (is_array($where)) {
+                $where = $where[0];
+            }
             $user = $this->fetchRow(
                 $this->select()->from($this->getName(), array('email'))->where($where)
             );
