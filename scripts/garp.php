@@ -51,7 +51,7 @@ if (!defined('APPLICATION_ENV')) {
  * directory and no longer be connected to the project root (or cwd).
  */
 $cwd = getcwd();
-if (!file_exists($cwd . '/vendor/grrr-amsterdam/garp3/scripts/garp.php')) {
+if (!file_exists($cwd . '/vendor/engelswoord/garp3/scripts/garp.php')) {
     $basePath = realpath(dirname(__FILE__) . '/..');
     if (basename(realpath($basePath . '/../../')) === 'vendor') {
         // Set BASE_PATH to be the root of the host project

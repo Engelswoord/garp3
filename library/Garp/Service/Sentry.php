@@ -73,7 +73,7 @@ class Garp_Service_Sentry {
             $packages,
             function ($prevVersion, $package) {
                 // Found Garp? Return its version
-                if ($package['name'] === 'grrr-amsterdam/garp3') {
+                if ($package['name'] === 'engelswoord/garp3') {
                     return $package['version'];
                 }
                 // Otherwise return whatever version we previously got

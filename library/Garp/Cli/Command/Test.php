@@ -8,7 +8,7 @@
  * @author  Harmen Janssen <harmen@grrr.nl>
  */
 class Garp_Cli_Command_Test extends Garp_Cli_Command {
-    protected $_garpPath = 'vendor/grrr-amsterdam/garp3/tests/';
+    protected $_garpPath = 'vendor/engelswoord/garp3/tests/';
     protected $_appPath = 'tests/';
     protected $_command = 'phpunit --verbose --colors ';
 
@@ -41,7 +41,7 @@ class Garp_Cli_Command_Test extends Garp_Cli_Command {
         if (array_key_exists('module', $args) && $args['module']) {
             if ($args['module'] === 'garp') {
                 $path = $this->_garpPath;
-                $command .= '--bootstrap vendor/grrr-amsterdam/garp3/tests/TestHelper.php ';
+                $command .= '--bootstrap vendor/engelswoord/garp3/tests/TestHelper.php ';
                 $command .= $path;
             } elseif ($args['module'] === 'default') {
                 $path = $this->_appPath;

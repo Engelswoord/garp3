@@ -8,14 +8,14 @@
  */
 class Garp_Cli_Command_Composer extends Garp_Cli_Command {
     const OLD_INIT_PHP_REFERENCE = '../garp/application/init.php';
-    const NEW_INIT_PHP_REFERENCE = '../vendor/grrr-amsterdam/garp3/application/init.php';
+    const NEW_INIT_PHP_REFERENCE = '../vendor/engelswoord/garp3/application/init.php';
     const BASEPATH_DEFINITON = "define('BASE_PATH', realpath(dirname(__FILE__) . '/..'));";
     const INCLUDE_I18N_FILE = "include APPLICATION_PATH.'/../garp/application/data/i18n/%s.php';";
     const NEW_INCLUDE_I18N_FILE =  "include GARP_APPLICATION_PATH . '/data/i18n/%s.php';";
     const OLD_ROUTES_INCLUDE = 'APPLICATION_PATH "/../garp/application/configs/routes.ini"';
     const NEW_ROUTES_INCLUDE = 'GARP_APPLICATION_PATH "/configs/routes.ini"';
     const OLD_GARP_DEPLOY_PATH = 'garp/application/configs/deploy.rb';
-    const NEW_GARP_DEPLOY_PATH = 'vendor/grrr-amsterdam/garp3/application/configs/deploy.rb';
+    const NEW_GARP_DEPLOY_PATH = 'vendor/engelswoord/garp3/application/configs/deploy.rb';
 
     /**
      * Migrate garp to the composer version.
@@ -40,18 +40,18 @@ class Garp_Cli_Command_Composer extends Garp_Cli_Command {
     }
 
     protected function _requireGarpComposerPackage() {
-        passthru('composer require grrr-amsterdam/garp3:^3.7.0');
+        passthru('composer require engelswoord/garp3:^3.7.0');
     }
 
     protected function _updateSymlinks() {
-        passthru('ln -shf ../../vendor/grrr-amsterdam/garp3/public/js public/js/garp');
-        passthru('ln -shf ../../vendor/grrr-amsterdam/garp3/public/css public/css/garp');
+        passthru('ln -shf ../../vendor/engelswoord/garp3/public/js public/js/garp');
+        passthru('ln -shf ../../vendor/engelswoord/garp3/public/css public/css/garp');
         passthru(
-            'ln -shf ../../../vendor/grrr-amsterdam/garp3/public/images ' .
+            'ln -shf ../../../vendor/engelswoord/garp3/public/images ' .
             'public/media/images/garp'
         );
         passthru(
-            'ln -shf ../vendor/grrr-amsterdam/garp3/library/Garp/3rdParty/PHPExcel ' .
+            'ln -shf ../vendor/engelswoord/garp3/library/Garp/3rdParty/PHPExcel ' .
             'library/PHPExcel'
         );
     }
