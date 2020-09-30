@@ -1,6 +1,6 @@
 {
-  "name": "grrr-amsterdam/garp3",
-  "description": "Framework and CMS built on top of Zend Framework.",
+  "name": "engelswoord/garp3",
+  "description": "Framework and CMS built on top of Zend Framework. Forked from grrr-amsterdam/garp3",
   "license": "BSD-3-Clause",
   "type": "library",
   "require": {
