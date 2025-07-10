@@ -211,7 +211,7 @@ EOF;
     /**
      * Help
      *
-     * @return Boolean
+     * @return void
      */
     protected function _help() {
         Garp_Cli::lineOut('Usage:');

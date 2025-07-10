@@ -134,6 +134,7 @@ class Garp_Auth_Adapter_Passwordless extends Garp_Auth_Adapter_Abstract {
      */
     public function createOrUpdateAuthRecord($userId) {
         $token = $this->_getToken($userId);
+        //@phpstan-ignore class.notFound
         $authPwlessModel = new Model_AuthPasswordless();
         $select = $authPwlessModel->select()->where('user_id = ?', $userId);
         if ($authRecord = $authPwlessModel->fetchRow($select)) {
@@ -263,6 +264,7 @@ class Garp_Auth_Adapter_Passwordless extends Garp_Auth_Adapter_Abstract {
     }
 
     protected function _getPasswordlessModel() {
+        //@phpstan-ignore class.notFound
         $authPwlessModel = new Model_AuthPasswordless();
         $userModel = new Model_User();
         $userConditions = $userModel->select()->from(
@@ -279,10 +281,9 @@ class Garp_Auth_Adapter_Passwordless extends Garp_Auth_Adapter_Abstract {
     }
 
     protected function _fetchExistingToken($userId) {
+        //@phpstan-ignore class.notFound
         $authPwlessModel = new Model_AuthPasswordless();
         $existingRow = $authPwlessModel->fetchByUserId($userId);
         return $existingRow ? $existingRow['token'] : null;
     }
 }
-
-

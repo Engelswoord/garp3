@@ -257,6 +257,7 @@ class Garp_Model_Behavior_Vimeoable extends Garp_Model_Behavior_Abstract {
             return;
         }
         $currentUser = $garpAuth->getUserData();
+        //@phpstan-ignore class.notFound
         $authVimeoModel = new Model_AuthVimeo();
         $authVimeoRecord = $authVimeoModel->fetchRow(
             $authVimeoModel->select()->where('user_id = ?', $currentUser['id'])

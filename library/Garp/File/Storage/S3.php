@@ -284,6 +284,7 @@ class Garp_File_Storage_S3 implements Garp_File_Storage_Protocol {
 
     protected function _getAwsCredentialsProvider(): callable {
         return function () {
+            //@phpstan-ignore function.notFound
             return Promise\promise_for(
                 new Credentials($this->_config['apikey'], $this->_config['secret'])
             );

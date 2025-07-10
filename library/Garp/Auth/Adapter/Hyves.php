@@ -35,6 +35,6 @@ class Garp_Auth_Adapter_Hyves extends Garp_Auth_Adapter_OpenId {
             1.1
         ));
 
-        return parent::authenticate($request);
+        return parent::authenticate($request, $response);
     }
 }

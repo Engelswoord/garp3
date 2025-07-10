@@ -49,8 +49,11 @@ class Garp_Auth_Adapter_Linkedin extends Garp_Auth_Adapter_Abstract {
             }
             $cookie->writeCookie();
 
+
             $authorizeUrl = $this->_getLinkedInInstance()->getLoginUrl(array(
+                //@phpstan-ignore class.notFound
                 LinkedIn::SCOPE_BASIC_PROFILE,
+                //@phpstan-ignore class.notFound
                 LinkedIn::SCOPE_EMAIL_ADDRESS
             ));
             Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')
@@ -78,6 +81,7 @@ class Garp_Auth_Adapter_Linkedin extends Garp_Auth_Adapter_Abstract {
         $userConditions = $userModel->select()
             ->from($userModel->getName(), $this->_getSessionColumns());
 
+        //@phpstan-ignore class.notFound
         $model = new Model_AuthLinkedin();
         $model->bindModel('Model_User', array(
             'conditions' => $userConditions,
@@ -108,6 +112,7 @@ class Garp_Auth_Adapter_Linkedin extends Garp_Auth_Adapter_Abstract {
             );
         }
         if (!$this->_linkedIn) {
+            //@phpstan-ignore class.notFound
             $this->_linkedIn = new LinkedIn(array(
                 'api_key' => $authVars->consumerKey,
                 'api_secret' => $authVars->consumerSecret,

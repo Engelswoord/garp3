@@ -1,9 +1,9 @@
 <?php
 /**
  * Garp_Form_SubForm_Array
- * This subform type arranges fields in arrays, by creating an even deeper 
+ * This subform type arranges fields in arrays, by creating an even deeper
  * nested subform per array index.
- * The whole bunch can be duplicated in its entirety, using scripts found in 
+ * The whole bunch can be duplicated in its entirety, using scripts found in
  * garp.front.js. Garp_Form_Subform_Array::isValid() makes sure elements added
  * dynamically are added back upon submit.
  * @author Harmen Janssen | grrr.nl
@@ -52,7 +52,7 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
 
     /**
      * Add element to the form.
-     * Make sure the element ends up in the right subform, as per 
+     * Make sure the element ends up in the right subform, as per
      * $options['index'] (default = 0).
      * @return Zend_Form
      */
@@ -71,12 +71,12 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
             $subform = $this->_createSubFormAtIndex($index);
             $this->addSubForm($subform);
         }
-        $subform->addElement($element, $name, $options);
+        return $subform->addElement($element, $name, $options);
     }
 
 
     /**
-     * Upon validation, we can check if there have been dynamically added input 
+     * Upon validation, we can check if there have been dynamically added input
      * fields, and if so, create elements for them.
      * @return Boolean
      */
@@ -95,7 +95,7 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
      * @param Array $defaults
      * @return Zend_Form
      */
-    public function setDefaults(array $defaults) {  
+    public function setDefaults(array $defaults) {
         $this->_incrementArray($defaults);
         return parent::setDefaults($defaults);
     }
@@ -107,7 +107,7 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
      * @return Void
      */
     protected function _incrementArray($data) {
-        // Sanity check: if there is no subform at index 0, there is nothing for 
+        // Sanity check: if there is no subform at index 0, there is nothing for
         // us to duplicate
         if (!$this->getSubForm('0')) {
             return;
@@ -168,5 +168,5 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
             }
         }
         return $subform;
-    }   
+    }
 }

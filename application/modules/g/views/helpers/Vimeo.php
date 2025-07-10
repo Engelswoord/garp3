@@ -63,7 +63,7 @@ class G_View_Helper_Vimeo extends Zend_View_Helper_HtmlElement {
      * Normalize some configuration values.
      *
      * @param array $options
-     * @return array Modified options
+     * @return void
      */
     protected function _setDefaultAttribs(&$options) {
         $options = $options instanceof Garp_Util_Configuration ?

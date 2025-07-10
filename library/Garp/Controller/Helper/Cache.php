@@ -70,14 +70,14 @@ class Garp_Controller_Helper_Cache extends Zend_Controller_Action_Helper_Cache {
     /**
      * Commence page caching for any cacheable actions
      *
-     * @return void
+     * @return mixed
      */
     public function preDispatch() {
         if ($this->getResponse()->isRedirect() || !$this->isEnabled() || $this->_requestUriTooLong()
         ) {
             return true;
         }
-        return parent::preDispatch();
+        parent::preDispatch();
     }
 
     /**

@@ -89,6 +89,7 @@ class Garp_Cli_Command_Gumball extends Garp_Cli_Command {
             $gumball->restore();
             $this->_broadcastGumballInstallation($version);
             Garp_Cli::lineOut('Done!', Garp_Cli::GREEN);
+            //@phpstan-ignore class.notFound
         } catch (Garp_Gumball_Exception_SourceEnvNotConfigured $e) {
             Garp_Cli::errorOut(self::ERROR_SOURCE_ENV_NOT_CONFIGURED);
             return false;

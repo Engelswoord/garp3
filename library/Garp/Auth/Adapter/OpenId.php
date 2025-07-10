@@ -77,7 +77,7 @@ class Garp_Auth_Adapter_OpenId extends Garp_Auth_Adapter_Abstract {
      * Store the user's profile data in the database, if it doesn't exist yet.
      * @param String $id The openid
      * @param Array $props The properties fetched thru Sreg
-     * @return Void
+     * @return mixed $data
      */
     protected function _getUserData($id, array $props) {
         $ini = Zend_Registry::get('config');
@@ -89,6 +89,7 @@ class Garp_Auth_Adapter_OpenId extends Garp_Auth_Adapter_Abstract {
         $userModel = new Model_User();
         $userConditions = $userModel->select()->from($userModel->getName(), $sessionColumns);
 
+        //@phpstan-ignore class.notFound
         $model = new Model_AuthOpenId();
         $model->bindModel('Model_User', array('conditions' => $userConditions));
         $userData = $model->fetchRow(

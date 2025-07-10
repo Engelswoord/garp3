@@ -82,7 +82,7 @@ class Garp_Cli_Ui_ProgressBar extends Garp_Cli_Ui {
     }
 
     public function displayError($string) {
-        return Garp_Cli::errorOut($string);
+        Garp_Cli::errorOut($string);
     }
 
     public function displayHeader($string) {

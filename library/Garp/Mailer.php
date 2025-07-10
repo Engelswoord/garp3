@@ -276,7 +276,7 @@ class Garp_Mailer {
      * For legacy reasons, mailing can be disabled both thru the mailer key or thru amazon ses
      * configuration.
      *
-     * @return void
+     * @return bool
      */
     protected function _isMailingDisabled() {
         $config = Zend_Registry::get('config');

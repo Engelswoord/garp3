@@ -47,7 +47,6 @@ class Garp_Model_Behavior_Authorable extends Garp_Model_Behavior_Abstract {
      * Before insert callback. Manipulate the new data here.
      *
      * @param array $args
-     * @return array
      */
     public function beforeInsert(array &$args) {
         $data  = &$args[1];
@@ -70,4 +69,3 @@ class Garp_Model_Behavior_Authorable extends Garp_Model_Behavior_Abstract {
     }
 
 }
-

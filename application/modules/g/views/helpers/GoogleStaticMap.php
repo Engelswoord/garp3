@@ -30,7 +30,7 @@ class G_View_Helper_GoogleStaticMap extends Zend_View_Helper_Abstract {
      * @param array $config
      * @return G_View_Helper_GoogleStaticMap|string
      */
-    public function googleStaticMap(array $config = null) {
+    public function googleStaticMap(?array $config = null) {
         if (!is_null($config)) {
             return $this->render($config);
         }

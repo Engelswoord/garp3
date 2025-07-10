@@ -95,6 +95,7 @@ class Garp_Cli_Command_PostcodeNl extends Garp_Cli_Command {
         $this->_progress->advance();
         $this->_progress->display('Importing zip codes', '%s left');
 
+        //@phpstan-ignore class.notFound
         $model = new Model_Location();
         $select = $model->select()->where('zip = ? AND number IS NULL', $zip->zipcode);
         $existingRow = $model->fetchRow($select);

@@ -40,7 +40,7 @@ class Garp_Cache_Manager {
      * @param Boolean $createClusterJob Whether this purge should create a job to clear the other
      *                                  nodes in this server cluster, if applicable.
      * @param String $cacheDir Directory which stores static HTML cache files.
-     * @return Void
+     * @return mixed $messageBag
      */
     public static function purge($tags = array(), $createClusterJob = true, $cacheDir = false) {
         $messageBag = array();
@@ -73,7 +73,7 @@ class Garp_Cache_Manager {
      *
      * @param Array|Garp_Model_Db $modelNames
      * @param Array $messageBag
-     * @return Void
+     * @return mixed
      */
     public static function purgeMemcachedCache($modelNames = array(), $messageBag = array()) {
         if (!Zend_Registry::isRegistered('CacheFrontend')) {
@@ -125,7 +125,7 @@ class Garp_Cache_Manager {
      * @param Array|Garp_Model_Db $modelNames Clear the cache of a specific bunch of models.
      * @param String $cacheDir Directory containing the cache files
      * @param Array $messageBag
-     * @return Void
+     * @return mixed $data
      */
     public static function purgeStaticCache($modelNames = array(), $cacheDir = false, $messageBag = array()) {
         if (!Zend_Registry::get('CacheFrontend')->getOption('caching')) {
@@ -190,7 +190,7 @@ class Garp_Cache_Manager {
      *
      * @param Array $messageBag
      *
-     * @return Void
+     * @return $messageBag
      */
     public static function purgeOpcache($messageBag = array()) {
         // This only clears the Opcache on CLI,
@@ -291,6 +291,7 @@ class Garp_Cache_Manager {
         if (count($tags)) {
             $cmd .= ' ' . implode(' ', $tags);
         }
+        //@phpstan-ignore class.notFound
         $scheduledJobModel = new Model_ScheduledJob();
         return $scheduledJobModel->insert(
             array(

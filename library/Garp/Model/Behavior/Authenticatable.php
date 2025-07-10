@@ -8,6 +8,8 @@
  */
 class Garp_Model_Behavior_Authenticatable extends Garp_Model_Behavior_Abstract {
 
+    protected $_model;
+
     protected function _setup($config = array()) {
         $this->_model = $config[0];
     }

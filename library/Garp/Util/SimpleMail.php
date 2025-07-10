@@ -300,11 +300,13 @@ class Garp_Util_SimpleMail {
         $postList = $this->composeListFromPost($this->_postParams);
         $mailer = new Garp_Mailer();
         return $mailer->send(
-            array(
-            'to' => array($this->_params['to'][0] => $this->_params['to'][1]),
-            'subject' => $this->_params['subject'],
-            'message' => $this- . _params['body'] . $postList
-            )
+            [
+                'to' => [
+                    $this->_params['to'][0] => $this->_params['to'][1]
+                ],
+                'subject' => $this->_params['subject'],
+                'message' => $this->_params['body'] . $postList
+            ]
         );
     }
 }

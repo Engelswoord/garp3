@@ -42,7 +42,9 @@ class Garp_Model_Behavior_Article extends Garp_Model_Behavior_Abstract {
      * @return void
      */
     public function bindWithChapters(Garp_Model_Db &$model) {
+        //@phpstan-ignore class.notFound
         $chapterModel = new Model_Chapter();
+        //@phpstan-ignore class.notFound
         $contentNodeModel = new Model_ContentNode();
         $contentNodeModel->setCmsContext($model->isCmsContext());
         $chapterModel->bindModel(
@@ -265,6 +267,7 @@ class Garp_Model_Behavior_Article extends Garp_Model_Behavior_Abstract {
              * The chapter will take care of storing and relating the
              * content nodes.
              */
+            //@phpstan-ignore class.notFound
             $chapterModel = new Model_Chapter();
             $chapterId = $chapterModel->insert(
                 array(

@@ -21,7 +21,7 @@ class G_View_Helper_Browsebox extends Zend_View_Helper_Abstract {
      * @param array $params Extra parameters sent to the partial
      * @return string
      */
-    public function browsebox(Garp_Browsebox $browsebox = null, $params = array()) {
+    public function browsebox(?Garp_Browsebox $browsebox = null, $params = array()) {
         if (is_null($browsebox)) {
             return $this;
         }

@@ -100,7 +100,7 @@ class Garp_Content_Upload_Storage_Type_RemoteWebserver extends Garp_Content_Uplo
             $baddies = array(' ', '-', "\n");
             $md5output = str_replace($baddies, '', $md5output);
             return $md5output;
-        } else throw new Exception("Could not fetch md5 sum of {$path}.");
+        } else throw new Exception("Could not fetch md5 sum of {$absPath}.");
     }
 
 

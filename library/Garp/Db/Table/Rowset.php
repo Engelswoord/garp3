@@ -5,7 +5,7 @@ use Garp\Functional\Types\TypeClasses\Semigroup;
  * @package Garp3
  * @author  Harmen Janssen <harmen@grrr.nl>
  */
-class Garp_Db_Table_Rowset extends Zend_Db_Table_Rowset_Abstract implements Semigroup {
+final class Garp_Db_Table_Rowset extends Zend_Db_Table_Rowset_Abstract implements Semigroup {
 
     public function getData(): array {
         return $this->_data;

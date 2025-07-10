@@ -44,11 +44,11 @@ class Garp_Assets_Minifier {
 
 
     /**
-     * Minify and concat a bunch of Javascript files into one 
+     * Minify and concat a bunch of Javascript files into one
      * tiny little file.
      * @param Array|String $sourceFileList The original files
      * @param String $targetFile The target filename
-     * @return Boolean
+     * @return void
      * @todo Add option that suppresses output
      */
     public function minifyJs($sourceFileList, $targetFile) {

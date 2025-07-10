@@ -228,6 +228,7 @@ class Garp_Cli_Command_Spawn extends Garp_Cli_Command {
             $minBaseModel = $model->renderJsBaseModel($modelSet);
             include_once GARP_APPLICATION_PATH .
                 '/../library/Garp/3rdParty/JsBeautifier/jsbeautifier.php';
+            //@phpstan-ignore function.notFound
             echo js_beautify($minBaseModel) . "\n";
         } else {
             Garp_Cli::errorOut("I don't know the model {$modelId}.");

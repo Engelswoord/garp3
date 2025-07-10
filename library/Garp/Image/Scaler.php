@@ -558,6 +558,8 @@ class Garp_Image_Scaler {
             ${'projection' . $leadDimension} = ${'canvas' . $leadDimension};
         }
 
+        list($projectionWidth, $projectionHeight) = $this->_getProjectionSize();
+
         if (isset($projectionWidth)) {
             $projectionHeight = $projectionWidth / $sourceRatio;
         } elseif (isset($projectionHeight)) {

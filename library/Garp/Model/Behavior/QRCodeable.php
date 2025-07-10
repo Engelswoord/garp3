@@ -20,7 +20,6 @@ class Garp_Model_Behavior_QRCodeable extends Garp_Model_Behavior_Abstract {
     /**
      * Make sure the config array is at least filled with some default values to work with.
      * @param Array $config Configuration values
-     * @return Array The modified array
      */
     protected function _setup($config) {
         $this->_fields = $config;

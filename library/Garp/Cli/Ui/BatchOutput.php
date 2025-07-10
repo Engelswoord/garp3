@@ -17,6 +17,6 @@ class Garp_Cli_Ui_BatchOutput extends Garp_Cli_Ui {
     }
 
     public function displayError($string) {
-        return Garp_Cli::errorOut($string);
+        Garp_Cli::errorOut($string);
     }
 }

@@ -46,7 +46,7 @@ class Garp_Form_Element_Text extends Zend_Form_Element_Text {
         self::FIELD_MONTH           => 'month',
         self::FIELD_WEEK            => 'week',
         self::FIELD_TIME            => 'time',
-        self::FIELD_DATE_TIME       => 'text',
+        // self::FIELD_DATE_TIME       => 'text',
         self::FIELD_DATE_TIME_LOCAL => 'datetime-local',
         self::FIELD_SEARCH          => 'search',
         self::FIELD_COLOR           => 'color',
@@ -67,7 +67,7 @@ class Garp_Form_Element_Text extends Zend_Form_Element_Text {
     }
 
     public function init() {
-        // When using the AlphaNumeric validator, extra niftyness can be added 
+        // When using the AlphaNumeric validator, extra niftyness can be added
         // by using the HTML5 pattern attribute.
         if ($this->getValidator('alnum')) {
             $this->setAttrib('pattern', '[A-Za-z0-9]+');

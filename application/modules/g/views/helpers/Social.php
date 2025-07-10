@@ -43,7 +43,7 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
         $url = 'http://twitter.com/?status=';
         if ($shortenUrls) {
             $msg = preg_replace_callback(
-                '~https?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?~i',
+                '~https?://([\w\-]+\.)+[\w\-]+(/[\w\- ./?%&=]*)?~i',
                 function ($matches) {
                     $_this = new G_View_Helper_Social();
                     return $_this->tinyUrl($matches[0]);
@@ -66,7 +66,7 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
         $url = 'whatsapp://send?text=';
         if ($shortenUrls) {
             $msg = preg_replace_callback(
-                '~https?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?~i',
+                '~https?://([\w\-]+\.)+[\w\-]+(/[\w\- ./?%&=]*)?~i',
                 function ($matches) {
                     $_this = new G_View_Helper_Social();
                     return $_this->tinyUrl($matches[0]);
@@ -468,4 +468,3 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
     }
 
 }
-

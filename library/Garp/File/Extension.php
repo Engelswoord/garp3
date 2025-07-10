@@ -8,6 +8,8 @@
  * @package      Garp_File
  */
 class Garp_File_Extension {
+
+    protected $_extension;
     // @todo Add every single mimetype known to man.
     protected $_mimeStore = array(
         'image/jpeg' => 'jpg',

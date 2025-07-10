@@ -9,7 +9,7 @@
 class Garp_Google {
     const INVALID_CREDENTIALS_EXCEPTION = 'Invalid credentials: apiKey and appName are required';
 
-    public static function getGoogleService($serviceName, array $credentials = null) {
+    public static function getGoogleService($serviceName, ?array $credentials = null) {
         if (!$credentials) {
             $credentials = static::getCredentials();
         }

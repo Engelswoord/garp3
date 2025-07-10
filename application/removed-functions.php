@@ -297,7 +297,7 @@ function array_set($key, $value, $a = null) {
  *
  * @deprecated Use `f\sort_by($fn)` @see https://grrr-amsterdam.github.io/garp-functional/#sort_by
  */
-function psort($fn = null, array $a = null) {
+function psort($fn = null, ?array $a = null) {
     if ($fn && !is_callable($fn)) {
         throw new InvalidArgumentException('psort expects parameter 1 to be a valid callback');
     }

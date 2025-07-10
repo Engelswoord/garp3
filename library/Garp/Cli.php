@@ -53,7 +53,7 @@ class Garp_Cli {
      * @param string $color Show string in color?
      * @param bool $appendNewline Wether to add a newline character
      * @param bool $echo Wether to echo
-     * @return void
+     * @return mixed
      */
     public static function lineOut($s, $color = null, $appendNewline = true, $echo = true) {
         if ($color) {

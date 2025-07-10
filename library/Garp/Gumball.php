@@ -220,6 +220,7 @@ class Garp_Gumball {
         Garp_Cli::lineOut('Restoring database...');
         $sourceEnv = $this->_getGumballConfig('sourceDbEnvironment');
         if (!$sourceEnv) {
+            //@phpstan-ignore class.notFound
             throw new Garp_Gumball_Exception_SourceEnvNotConfigured();
         }
 

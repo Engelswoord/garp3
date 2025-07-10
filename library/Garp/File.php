@@ -334,6 +334,7 @@ class Garp_File {
 
     protected function _initStorage($ini) {
         if (!empty(self::$_cachedStorage[$ini->cdn->type][$this->_path])
+            //@phpstan-ignore class.notFound
             && self::$_cachedStorage[$ini->cdn->type][$this->_path] instanceof Garp_File_Storage
         ) {
             $this->_storage = self::$_cachedStorage[$ini->cdn->type][$this->_path];
@@ -415,7 +416,6 @@ class Garp_File {
             return $decorator . implode($decorator . ", " . $decorator, $list) . $decorator .
                 " {$lastItemSeperator} " . $decorator . $last . $decorator;
         }
+        return '';
     }
 }
-
-

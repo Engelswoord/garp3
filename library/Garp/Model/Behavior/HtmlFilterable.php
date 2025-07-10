@@ -7,7 +7,7 @@
  * @author Harmen Janssen <harmen@grrr.nl>
  */
 class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
-    
+
     /**
      * HTMLPurifier_Config
      */
@@ -32,8 +32,7 @@ class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
     /**
      * Make sure the config array is at least filled with some default values to work with.
      *
-     * @param Array $config Configuration values
-     * @return Array The modified array
+     * @param mixed $config Configuration values
      */
     protected function _setup($config) {
         $this->_fields = $config;
@@ -58,7 +57,7 @@ class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
 
     /**
      * Set config.
-     * 
+     *
      * @param HTMLPurifier_Config $config
      * @return Void
      */
@@ -190,7 +189,7 @@ class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
         $config = Zend_Registry::get('config');
         if (isset($config->htmlFilterable->allowedElements)) {
             return array_merge(
-                $this->_defaultAllowedElements, 
+                $this->_defaultAllowedElements,
                 $config->htmlFilterable->allowedElements->toArray()
             );
         }

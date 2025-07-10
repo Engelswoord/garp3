@@ -92,7 +92,7 @@ class Garp_Auth_Adapter_Twitter extends Garp_Auth_Adapter_Abstract {
      *
      * @param Zend_Service_Twitter $twitterService
      * @param mixed $twitterUserId
-     * @return Void
+     * @return mixed $data
      * @throws Garp_Auth_Adapter_Exception
      * @throws Garp_Auth_Exception
      */
@@ -105,6 +105,7 @@ class Garp_Auth_Adapter_Twitter extends Garp_Auth_Adapter_Abstract {
             $userModel->getName(), $this->_getSessionColumns()
         );
 
+        //@phpstan-ignore class.notFound
         $model = new Model_AuthTwitter();
         $model->bindModel('Model_User', array(
             'conditions' => $userConditions,

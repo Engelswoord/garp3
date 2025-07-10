@@ -19,7 +19,7 @@ class Garp_Controller_Helper_FlashMessenger extends Zend_Controller_Action_Helpe
 
     /**
      * Class constructor
-     * @return Void 
+     * @return Void
      */
     public function __construct() {
         self::$_store = Garp_Store_Factory::getStore('FlashMessenger');
@@ -52,7 +52,7 @@ class Garp_Controller_Helper_FlashMessenger extends Zend_Controller_Action_Helpe
 
     /**
      * Get messages
-     * @param Boolean $preserveMessages Wether to keep the messages. 
+     * @param Boolean $preserveMessages Wether to keep the messages.
      * Of course this is not the general idea of the FlashMessenger. Usually messages are directly discardable.
      * @return Array
      */
@@ -80,7 +80,7 @@ class Garp_Controller_Helper_FlashMessenger extends Zend_Controller_Action_Helpe
      * @return $this
      */
     public function clearMessages() {
-        self::$_store->destroy();
+        return self::$_store->destroy();
     }
 
     /**

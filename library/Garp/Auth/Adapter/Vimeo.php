@@ -76,7 +76,7 @@ class Garp_Auth_Adapter_Vimeo extends Garp_Auth_Adapter_Abstract {
     /**
      * Store the user's profile data in the database, if it doesn't exist yet.
      * @param Zend_Oauth_Token_Access $accessToken
-     * @return Void
+     * @return mixed $data
      */
     protected function _getUserData(Zend_Oauth_Token_Access $accessToken) {
         $authVars = $this->_getAuthVars();
@@ -101,6 +101,7 @@ class Garp_Auth_Adapter_Vimeo extends Garp_Auth_Adapter_Abstract {
         $userModel = new Model_User();
         $userConditions = $userModel->select()->from($userModel->getName(), $sessionColumns);
 
+        //@phpstan-ignore class.notFound
         $model = new Model_AuthVimeo();
         $model->bindModel('Model_User', array('conditions' => $userConditions));
         $userData = $model->fetchRow(

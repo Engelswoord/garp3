@@ -81,7 +81,7 @@ class Garp_Cli_Crontab_Cronjob {
      * Parse an existing cron job rule from the crontab file.
      *
      * @param string $cronjob
-     * @return Garp_Cli_Crontab_Cronjob
+     * @return void //Garp_Cli_Crontab_Cronjob
      */
     public static function fromString($cronjob) {
         // implement me...

@@ -43,7 +43,6 @@ class Garp_Model_Behavior_Timestampable extends Garp_Model_Behavior_Abstract {
     /**
      * Before insert callback. Manipulate the new data here.
      * @param Array $options The new data is in $args[1]
-     * @return Array Or throw Exception if you wish to stop the insert
      */
     public function beforeInsert(array &$args) {
         $data = &$args[1];

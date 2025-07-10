@@ -30,6 +30,7 @@ class Garp_Cli_Command_Db extends Garp_Cli_Command {
 
     public function sync(array $args = array()) {
         $sourceEnv = $args ? current($args) : null;
+        //@phpstan-ignore class.notFound
         new Garp_Db_Synchronizer($sourceEnv);
     }
 

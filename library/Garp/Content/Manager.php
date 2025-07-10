@@ -341,7 +341,7 @@ class Garp_Content_Manager {
      * Delete (a) record(s)
      *
      * @param array $where WHERE clause, specifying which records to delete
-     * @return bool
+     * @return mixed
      */
     public function destroy(array $where) {
         $where = $this->_createWhereClause($where, 'AND', false);
@@ -453,7 +453,7 @@ class Garp_Content_Manager {
      * Unrelate entities from each other
      *
      * @param array $options
-     * @return bool
+     * @return mixed
      */
     public function unrelate(array $options) {
         $this->_checkAcl('relate');
@@ -953,7 +953,7 @@ class Garp_Content_Manager {
      * Check to see if the current model supports the requested method
      *
      * @param string $method The method
-     * @return bool
+     * @return void
      * @throws Garp_Content_Exception If the method is not supported
      */
     protected function _checkAcl($method) {

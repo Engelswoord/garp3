@@ -72,6 +72,7 @@ class Garp_Auth_Adapter_Facebook extends Garp_Auth_Adapter_Abstract {
                 ));
             }
             return $userData;
+        //@phpstan-ignore class.notFound
         } catch (FacebookApiException $e) {
             $this->_addError($e->getMessage());
             return false;
@@ -93,7 +94,7 @@ class Garp_Auth_Adapter_Facebook extends Garp_Auth_Adapter_Abstract {
      * Store the user's profile data in the database, if it doesn't exist yet.
      *
      * @param Array $facebookData The profile data received from Facebook
-     * @return Void
+     * @return mixed $data
      */
     protected function _getUserData(array $facebookData) {
         $uid = $facebookData['id'];
@@ -105,6 +106,7 @@ class Garp_Auth_Adapter_Facebook extends Garp_Auth_Adapter_Abstract {
         }
         $userModel = new Model_User();
         $userConditions = $userModel->select()->from($userModel->getName(), $sessionColumns);
+        //@phpstan-ignore class.notFound
         $model = new Model_AuthFacebook();
         $model->bindModel('Model_User', array(
             'conditions' => $userConditions,

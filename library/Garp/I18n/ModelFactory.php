@@ -102,7 +102,7 @@ class Garp_I18n_ModelFactory {
     /**
      * Go from a modelname to a model object
      * @param Mixed $model
-     * @return Garp_Model_Db
+     * @return void
      */
     protected function _normalizeModel(&$model) {
         if ($model instanceof Garp_Model_Db) {

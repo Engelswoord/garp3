@@ -196,7 +196,7 @@ class Garp_Cli_Command_Snippet extends Garp_Cli_Command {
      * Insert new snippet
      *
      * @param array $data Snippet data
-     * @return Garp_Db_Table_Row
+     * @return ?Garp_Db_Table_Row
      */
     protected function _create(array $data) {
         $this->_validateLoadable();

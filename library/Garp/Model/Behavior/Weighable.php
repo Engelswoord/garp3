@@ -47,7 +47,6 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
      * )
      * This will be validated immediately.
      * @param Array $config Configuration values
-     * @return Array The modified array
      */
     protected function _setup($config) {
         foreach ($config as $model => $relationOptions) {
@@ -58,7 +57,7 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
                     '\''.self::FOREIGN_KEY_COLUMN_KEY.'\' and \''.self::WEIGHT_COLUMN_KEY.'\' must be present.');
             }
         }
-        
+
         $this->_relationConfig = $config;
     }
 
@@ -73,9 +72,9 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
     }
 
     /**
-     * BeforeInsert callback, find and insert the current highest 'weight' value + 1 
+     * BeforeInsert callback, find and insert the current highest 'weight' value + 1
      * in the weight column
-     * @param Array $args 
+     * @param Array $args
      * @return Void
      */
     public function beforeInsert(&$args) {
@@ -100,30 +99,30 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
         $model = $args[0];
         $data = &$args[1];
         $where = $args[2];
-        
+
         foreach ($this->_relationConfig as $foreignModel => $modelRelationConfig) {
             $foreignKey = $modelRelationConfig[self::FOREIGN_KEY_COLUMN_KEY];
             $weightColumn = $modelRelationConfig[self::WEIGHT_COLUMN_KEY];
             /**
              * Only act if the foreign key field is filled, since weight is calculated per foreign key.
-             * This means duplicate weight values might occur in the database, but the foreign key 
+             * This means duplicate weight values might occur in the database, but the foreign key
              * will always differ.
              * You should be able to add a UNIQUE INDEX to your table containing the foreign key column and the
              * weight column.
              */
             if (array_key_exists($foreignKey, $data) && $data[$foreignKey]) {
                 /**
-                 * If the weight column is not given in the new data, fetch it. 
+                 * If the weight column is not given in the new data, fetch it.
                  * This is quite the pickle, since the given WHERE clause might update (and thus fetch)
-                 * multiple records, but we can only provide one set of modified data to apply to every 
-                 * matching record. 
+                 * multiple records, but we can only provide one set of modified data to apply to every
+                 * matching record.
                  * This is currently not fixed. If a WHERE clause is given that matches multiple records,
                  * the current weight of the first record found is used.
                  */
                 if (!array_key_exists($weightColumn, $data)) {
                     $data[$weightColumn] = $this->findCurrentWeight($model, $where, $data[$foreignKey], $modelRelationConfig);
                 }
-            
+
                 // only act if the foreign key column is filled, and the weight column is null
                 if (!$data[$weightColumn]) {
                     $maxWeight = $this->findHighestWeight($model, $data[$foreignKey], $modelRelationConfig);
@@ -161,7 +160,7 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
      * (which is possible using Zend's update() functionality) is not implemented.
      * @param Garp_Model $model
      * @param String $where
-     * @param Array $modelRelationConfig 
+     * @param Array $modelRelationConfig
      * @return Int
      */
     public function findCurrentWeight(Garp_Model $model, $where, $foreignKey, array $modelRelationConfig) {
@@ -192,14 +191,14 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
         // Save the existing ORDER clause.
         $originalOrder = $select->getPart(Zend_Db_Select::ORDER);
         $select->reset(Zend_Db_Select::ORDER);
-        
+
         $alias = '';
         if ($this->_modelAlias) {
             $alias = $this->_modelAlias . '.';
         }
 
         /**
-         * If a registered foreign key (see self::_relationConfig) is found, this query is 
+         * If a registered foreign key (see self::_relationConfig) is found, this query is
          * considered to be a related fetch() command, and an ORDER BY clause is added with
          * the registered weight column.
          */
@@ -210,7 +209,7 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
                 }
             }
         }
-        
+
         // Return the existing ORDER clause, only this time '<weight-column> DESC' will be in front of it
         foreach ($originalOrder as $order) {
             // [0] = column, [1] = direction
@@ -218,7 +217,7 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
                 $order = $order[0].' '.$order[1];
             }
             $select->order($order);
-        }       
+        }
     }
 
     /**
@@ -230,7 +229,7 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
         $this->_modelAlias = $modelAlias;
         return $this;
     }
-    
+
     /**
      * Get modelAlias
      * @return String

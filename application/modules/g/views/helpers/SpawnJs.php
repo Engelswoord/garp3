@@ -13,6 +13,8 @@ class G_View_Helper_SpawnJs extends Zend_View_Helper_Abstract {
 
     protected $_excludedFormFields = array('published', 'online_status');
 
+    protected $_model;
+
     /**
      * Central interface for this helper.
      * like so (in the view):
@@ -263,4 +265,3 @@ class G_View_Helper_SpawnJs extends Zend_View_Helper_Abstract {
         return 'null';
     }
 }
-

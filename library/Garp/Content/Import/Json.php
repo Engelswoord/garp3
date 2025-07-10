@@ -36,7 +36,7 @@ class Garp_Content_Import_Json extends Garp_Content_Import_Abstract {
                 $this->_insert($model, $datum, $mapping);
             } catch (Exception $e) {
                 if (!$options['ignoreErrors']) {
-                    $this->rollback($model, $pks);
+                    $this->rollback($model, null);
                 }
                 throw $e;
             }

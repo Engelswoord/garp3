@@ -8,6 +8,10 @@
  */
 abstract class Garp_Auth_Adapter_Passwordless_TokenMailerAbstract implements Garp_Auth_Adapter_Passwordless_TokenMailerInterface {
 
+    protected $_userId;
+    protected $_token;
+
+
     public function send() {
         $mailer = new Garp_Mailer();
         return $mailer->send(

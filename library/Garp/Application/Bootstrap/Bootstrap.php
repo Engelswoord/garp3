@@ -86,6 +86,7 @@ class Garp_Application_Bootstrap_Bootstrap extends Zend_Application_Bootstrap_Bo
     }
 
     protected function _getInfoModel() {
+        //@phpstan-ignore class.notFound
         $infoModel = new Model_Info();
         if ($infoModel->isMultilingual()) {
             $infoModel = (new Garp_I18n_ModelFactory())->getModel('Info');

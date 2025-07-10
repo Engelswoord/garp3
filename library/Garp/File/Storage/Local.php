@@ -123,7 +123,7 @@ class Garp_File_Storage_Local implements Garp_File_Storage_Protocol {
      * @return int
      */
     public function getTimestamp($filename): string {
-        return filemtime($this->_getFilePath($filemtime));
+        return filemtime($this->_getFilePath($filename));
     }
 
     /**

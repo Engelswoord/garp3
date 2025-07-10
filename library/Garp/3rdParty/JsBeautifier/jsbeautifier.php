@@ -74,7 +74,7 @@ class BeautifierFlags {
     function __construct($mode) {
     	$this->mode = $mode;
     }
-}	
+}
 
 
 function js_beautify($string, $options = null) {
@@ -332,12 +332,12 @@ class JSBeautifier {
 					$this->parser_pos++;
 					if ($this->parser_pos == strlen($this->input)) {
 						break;
-					} 
+					}
 				}
 			}
 
 			# small and surprisingly unugly hack for 1E-10 representation
-			if (($this->parser_pos != strlen($this->input)) && 
+			if (($this->parser_pos != strlen($this->input)) &&
 			    (strpos('+-', $this->input[$this->parser_pos]) !== false) &&
 			    preg_match('/^[0-9]+[Ee]$/', $c)) {
 			    $sign = $this->input[$this->parser_pos];
@@ -425,11 +425,11 @@ class JSBeautifier {
             }
 		}
 
-        if (($c == "'") || ($c == '"') || 
+        if (($c == "'") || ($c == '"') ||
             ($c == '/' && (($this->last_type == TK_WORD && in_array($this->last_text, Array('return', 'do'))) ||
                            (in_array($this->last_type, Array(TK_COMMENT, TK_START_EXPR, TK_START_BLOCK, TK_END_BLOCK, TK_OPERATOR,
                                                              TK_EQUALS, TK_EOF, TK_SEMICOLON)))))) {
-                                        
+
             $sep = $c;
             $esc = false;
             $resulting_string = $c;
@@ -491,7 +491,7 @@ class JSBeautifier {
         }
 
         if ($c == '#') {
-            
+
             # she-bang
             if (count($this->output) == 0 && strlen($this->input) > 1 && $this->input[$this->parser_pos] == '!') {
                 $resulting_string = $c;
@@ -682,7 +682,7 @@ class JSBeautifier {
                 # if TK_OPERATOR or TK_START_EXPR
                 if ($this->is_array($this->flags->previous_mode) && $this->last_text == ',') {
                     if ($this->last_last_text == '}') {
-                        
+
                         $this->append(' ');
                     } else {
                         $this->append_newline();
@@ -855,7 +855,7 @@ class JSBeautifier {
 
         $this->append($token_text);
         $this->last_word = $token_text;
-        
+
         if ($token_text == 'var') {
             $this->flags->var_line = true;
             $this->flags->var_line_reindented = false;

@@ -250,10 +250,14 @@ abstract class Garp_Content_Db_Server_Abstract implements Garp_Content_Db_Server
             $replacements[]     = "`" . strtolower($hardcodedTable) ."`";
         }
 
+        //@phpstan-ignore class.notFound
         $modelConfig = new Garp_Model_Spawn_Config_Model_Set(
+            //@phpstan-ignore class.notFound
             new Garp_Model_Spawn_Config_Storage_File($configDir, $extension),
+            //@phpstan-ignore class.notFound
             new Garp_Model_Spawn_Config_Format_Json
         );
+        //@phpstan-ignore class.notFound
         $modelSet = new Garp_Model_Spawn_ModelSet($modelConfig);
 
 
@@ -322,4 +326,3 @@ abstract class Garp_Content_Db_Server_Abstract implements Garp_Content_Db_Server
         // $dump = preg_replace($pattern, $replacement, $dump);
     }
 }
-
