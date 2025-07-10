@@ -38,7 +38,7 @@ class Garp_Cli_Command_Models extends Garp_Cli_Command {
                     $acc[$cur['name']] = Garp_Cli::prompt($cur['name']) ?: null;
                     return $acc;
                 },
-                array()
+                []
             );
         }
 
@@ -74,7 +74,7 @@ class Garp_Cli_Command_Models extends Garp_Cli_Command {
      */
     protected function _updateCropTemplateRefs() {
         $iniPaths = ['/configs/content.ini', '/configs/acl.ini'];
-        foreach ($iniPaths as $i => $path) {
+        foreach ($iniPaths as $path) {
             $content = file_get_contents(APPLICATION_PATH . $path);
             $content = str_replace('G_Model_CropTemplate', 'Garp_Model_Db_CropTemplate', $content);
             file_put_contents(APPLICATION_PATH . $path, $content);
@@ -84,7 +84,7 @@ class Garp_Cli_Command_Models extends Garp_Cli_Command {
     protected function _modifyModelFile($finfo) {
         $path = $finfo->getPath() . DIRECTORY_SEPARATOR . $finfo->getFilename();
         $contents = file_get_contents($path);
-        if (strpos($contents, 'extends G_Model_') === false) {
+        if (!str_contains($contents, 'extends G_Model_')) {
             return;
         }
         $contents = str_replace('extends G_Model_', 'extends Garp_Model_Db_', $contents);
@@ -100,7 +100,7 @@ class Garp_Cli_Command_Models extends Garp_Cli_Command {
         $query = 'Want to create a record (i)nteractively or shall I just ' .
             'insert a bunch of (g)ibberish?';
         $response = Garp_Cli::prompt($query);
-        if (in_array($response, array('i', 'g'))) {
+        if (in_array($response, ['i', 'g'])) {
             return $response;
         }
         Garp_Cli::lineOut('Please answer "i" or "g"');

@@ -72,7 +72,7 @@ function partial(string $filename, array $params = [], string $module = 'default
  * @deprecated Use `Garp_Log::factory($file)->log($message, Zend_Log::INFO)`
  */
 function dump($file, $message, $priority = Zend_Log::INFO) {
-    if (strpos($file, '.') === false) {
+    if (!str_contains($file, '.')) {
         $file .= '.log';
     }
 
@@ -90,7 +90,7 @@ function dump($file, $message, $priority = Zend_Log::INFO) {
 function __($str) {
     if (Zend_Registry::isRegistered('Zend_Translate')) {
         $translate = Zend_Registry::get('Zend_Translate');
-        return call_user_func_array(array($translate, '_'), func_get_args());
+        return call_user_func_array([$translate, '_'], func_get_args());
     }
     return $str;
 }
@@ -103,7 +103,7 @@ function __($str) {
  * @deprecated Use `function() {}`
  */
 function noop() {
-    return function () {
+    return function (): void {
     };
 }
 
@@ -139,9 +139,7 @@ function instance($obj) {
 // name but it's instead chosen to be in line with existing php functions.
 // @codingStandardsIgnoreStart
 function array_pluck($array, $column) {
-    return array_map(function($obj) use ($column) {
-        return isset($obj[$column]) ? $obj[$column] : null;
-    }, $array);
+    return array_map(fn($obj) => $obj[$column] ?? null, $array);
 }
 // @codingStandardsIgnoreEnd
 
@@ -173,9 +171,7 @@ function some($collection, $callback) {
  * @deprecated Use `f\unary($fn)`  @see https://grrr-amsterdam.github.io/garp-functional/#unary
  */
 function unary($fn) {
-    return function ($arg) use ($fn) {
-        return call_user_func($fn, $arg);
-    };
+    return fn($arg) => call_user_func($fn, $arg);
 }
 
 /**
@@ -188,7 +184,7 @@ function unary($fn) {
  * @deprecated Use `f\flatten` @see https://grrr-amsterdam.github.io/garp-functional/#flatten
  */
 function concatAll($array) {
-    $results = array();
+    $results = [];
     foreach ($array as $item) {
         // Merge arrays...
         if (is_array($item)) {
@@ -231,11 +227,9 @@ function concatAll($array) {
 function array_get($a, $key = null, $default = null) {
     if (func_num_args() === 1) {
         $key = $a;
-        return function ($a) use ($key) {
-            return array_get($a, $key);
-        };
+        return fn($a) => array_get($a, $key);
     }
-    return isset($a[$key]) ? $a[$key] : $default;
+    return $a[$key] ?? $default;
 }
 // @codingStandardsIgnoreEnd
 
@@ -335,9 +329,7 @@ function psort($fn = null, ?array $a = null) {
  * @deprecated Use `f\prop($key, $obj)` @see https://grrr-amsterdam.github.io/garp-functional/#prop
  */
 function getProperty($key, $obj = null) {
-    $getter = function ($obj) use ($key) {
-        return property_exists($obj, $key) ? $obj->{$key} : null;
-    };
+    $getter = (fn($obj) => property_exists($obj, $key) ? $obj->{$key} : null);
 
     if (is_null($obj)) {
         return $getter;
@@ -394,9 +386,7 @@ function propertyEquals($key, $value, $obj = null) {
  * @deprecated Use `f\call($method, $args, $obj)` @see https://grrr-amsterdam.github.io/garp-functional/#call
  */
 function callMethod($method, array $args, $obj = null) {
-    $caller = function ($obj) use ($method, $args) {
-        return call_user_func_array(array($obj, $method), $args);
-    };
+    $caller = (fn($obj) => call_user_func_array([$obj, $method], $args));
     if (is_null($obj)) {
         return $caller;
     }
@@ -527,7 +517,7 @@ function compose($f, $g) {
         $args = func_get_args();
         return call_user_func_array(
             $f,
-            array(call_user_func_array($g, $args))
+            [call_user_func_array($g, $args)]
         );
     };
 }

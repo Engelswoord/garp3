@@ -23,7 +23,7 @@ class Garp_Form_Element_Html extends Zend_Form_Element {
         if (!array_key_exists('decorators', $options)) {
             $this->clearDecorators();
             $this->setDecorators(
-                array('ViewHelper')
+                ['ViewHelper']
             );
         }
     }

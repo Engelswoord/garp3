@@ -16,7 +16,7 @@ abstract class Garp_Spawn_MySql_Table_Abstract {
      *
      * @var array
      */
-    public $columns = array();
+    public $columns = [];
 
     /**
      * @var Garp_Spawn_MySql_Keys
@@ -85,7 +85,7 @@ abstract class Garp_Spawn_MySql_Table_Abstract {
     }
 
     static public function exists($tableName) {
-        $tableName = strtolower($tableName);
+        $tableName = strtolower((string) $tableName);
         $adapter   = Zend_Db_Table::getDefaultAdapter();
         $dbConfig  = $adapter->getConfig();
         return (bool)$adapter->query(
@@ -196,7 +196,7 @@ abstract class Garp_Spawn_MySql_Table_Abstract {
     protected function _setPropsByCreateStatement(Garp_Spawn_Model_Abstract $model) {
         $createStatementLines = explode("\n", $this->_createStatement);
         $createStatementLine = null;
-        $columnStatements = array();
+        $columnStatements = [];
 
         foreach ($createStatementLines as $line) {
             if (Garp_Spawn_MySql_Statement::isColumnStatement($line)) {
@@ -219,8 +219,8 @@ abstract class Garp_Spawn_MySql_Table_Abstract {
     }
 
     protected function _getTableNameFromCreateStatement($line) {
-        $matches = array();
-        preg_match('/CREATE TABLE\s+`(?P<name>\w+)`/i', trim($line), $matches);
+        $matches = [];
+        preg_match('/CREATE TABLE\s+`(?P<name>\w+)`/i', trim((string) $line), $matches);
         if (!array_key_exists('name', $matches)) {
             throw new Exception("There was no table name found in the MySQL CREATE statement.");
         }
@@ -229,7 +229,7 @@ abstract class Garp_Spawn_MySql_Table_Abstract {
 
     protected function _validateCreateStatement($createStatement) {
         if (!is_string($createStatement)
-            || substr($createStatement, 0, 6) !== 'CREATE'
+            || !str_starts_with($createStatement, 'CREATE')
         ) {
             throw new Exception("The provided argument has to be a MySQL 'CREATE' statement.");
         }

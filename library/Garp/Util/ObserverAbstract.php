@@ -15,7 +15,7 @@ abstract class Garp_Util_ObserverAbstract implements Garp_Util_Observer {
      * @return string
      */
     public function getName() {
-        $className = get_class($this);
+        $className = static::class;
         $classParts = explode('_', $className);
         return array_pop($classParts);
     }
@@ -30,7 +30,7 @@ abstract class Garp_Util_ObserverAbstract implements Garp_Util_Observer {
      * @param array $params Collection of parameters (contextual to the event)
      * @return void
      */
-    public function receiveNotification($event, array $params = array()) {
+    public function receiveNotification($event, array $params = []) {
         if (method_exists($this, $event)) {
             $this->{$event}($params);
         }

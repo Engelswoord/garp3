@@ -12,17 +12,17 @@ class Garp_Model_Db_Image extends Model_Base_Image {
 
     public function init() {
         $scalableBehavior = new Garp_Model_Behavior_ImageScalable(
-            array(
-                'synchronouslyScaledTemplates' => array(
+            [
+                'synchronouslyScaledTemplates' => [
                     // @todo Make configurable? Or sensible defaults?
                     // Local model can always override.
                     'cms_list', 'cms_preview'
-                )
-            )
+                ]
+            ]
         );
         $this->registerObserver(new Garp_Model_Behavior_Timestampable())
             ->registerObserver($scalableBehavior)
-            ->registerObserver(new Garp_Model_Validator_NotEmpty(array('filename')));
+            ->registerObserver(new Garp_Model_Validator_NotEmpty(['filename']));
         parent::init();
     }
 
@@ -39,7 +39,7 @@ class Garp_Model_Db_Image extends Model_Base_Image {
         $templates = array_keys(Zend_Registry::get('config')->image->template->toArray());
         $iterator = new Garp_Db_Table_Rowset_Iterator(
             $results,
-            function ($result) use ($templates, $templateUrl) {
+            function ($result) use ($templates, $templateUrl): void {
                 if (!isset($result->id)) {
                     return;
                 }
@@ -51,7 +51,7 @@ class Garp_Model_Db_Image extends Model_Base_Image {
                             $acc[$cur] = sprintf($templateUrl, $cur, $result->id);
                             return $acc;
                         },
-                        array()
+                        []
                     )
                 );
             }
@@ -79,7 +79,7 @@ class Garp_Model_Db_Image extends Model_Base_Image {
             return null;
         }
 
-        return $this->insert(array('filename' => $response[$filename]));
+        return $this->insert(['filename' => $response[$filename]]);
     }
 
     protected function _getImageMime($bytes) {
@@ -91,17 +91,17 @@ class Garp_Model_Db_Image extends Model_Base_Image {
     }
 
     protected function _createFilenameFromUrl($imageUrl, $bytes) {
-        $filename = basename($imageUrl);
+        $filename = basename((string) $imageUrl);
         // Strip possible query parameters
-        if (strpos($filename, '?') !== false
-            && strpos($filename, '.') !== false
+        if (str_contains($filename, '?')
+            && str_contains($filename, '.')
             && strpos($filename, '?') > strrpos($filename, '.')
         ) {
             // Extract everything up until the "?"
             $filename = substr($filename, 0, strrpos($filename, '?'));
         }
         // Append extension based on mime-type
-        if (strpos($filename, '.') === false) {
+        if (!str_contains($filename, '.')) {
             $mime = $this->_getImageMime($bytes);
             if ($mime === 'application/x-gzip') {
                 $bytes = gzdecode($bytes);

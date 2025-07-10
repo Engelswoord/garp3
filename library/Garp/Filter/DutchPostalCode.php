@@ -14,7 +14,7 @@ class Garp_Filter_DutchPostalCode implements Zend_Filter_Interface {
      * @return mixed
      */
     public function filter($value) {
-        if (preg_match(Garp_Validate_DutchPostalCode::POSTALCODE_REGEXP, $value, $matches)) {
+        if (preg_match(Garp_Validate_DutchPostalCode::POSTALCODE_REGEXP, (string) $value, $matches)) {
             return $matches[1] . strtoupper($matches[2]);
         }
         return $value;

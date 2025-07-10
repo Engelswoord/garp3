@@ -26,11 +26,11 @@ class Garp_Browsebox_Filter_Related extends Garp_Browsebox_Filter_Abstract {
      * @param Array $params
      * @return Void
      */
-    public function __construct($id, array $config = array()) {
+    public function __construct($id, array $config = []) {
         // validate given config options
         $config = new Garp_Util_Configuration($config);
         $config->obligate('model')
-            ->setDefault('bindingOptions', array())
+            ->setDefault('bindingOptions', [])
             ;
 
         if (empty($config['bindingOptions']['bindingModel'])) {
@@ -47,7 +47,7 @@ class Garp_Browsebox_Filter_Related extends Garp_Browsebox_Filter_Abstract {
      * @param Array $params
      * @return Void
      */
-    public function init(array $params = array()) {
+    public function init(array $params = []) {
         $model = new $this->_config['model'];
         if (count($params) != count($model->info(Zend_Db_Table_Abstract::PRIMARY))) {
             throw new Garp_Browsebox_Exception('Not enough data given. We need a value for every column in the primary key.');
@@ -66,7 +66,7 @@ class Garp_Browsebox_Filter_Related extends Garp_Browsebox_Filter_Abstract {
         if (!empty($this->_params)) {
             $model = new $this->_config['model']();
             $bindingOptions = $this->_config['bindingOptions'];
-            $bindingOptions['modelClass'] = get_class($browsebox->getModel());
+            $bindingOptions['modelClass'] = $browsebox->getModel()::class;
             $bindingOptions['conditions'] = $select;
 
             $model->bindModel('__related__', $bindingOptions);
@@ -93,10 +93,10 @@ class Garp_Browsebox_Filter_Related extends Garp_Browsebox_Filter_Abstract {
             $bindingModel = new $this->_config['bindingOptions']['bindingModel']();
             $rule1 = !empty($this->_config['bindingOptions']['rule']) ? $this->_config['bindingOptions']['rule'] : null;
             $rule2 = !empty($this->_config['bindingOptions']['rule2']) ? $this->_config['bindingOptions']['rule2'] : null;
-            $modelReference = $bindingModel->getReference(get_class($model), $rule1);
+            $modelReference = $bindingModel->getReference($model::class, $rule1);
             $filterModelReference = $bindingModel->getReference($this->_config['model'], $rule2);
 
-            $joinConditions = array();
+            $joinConditions = [];
             foreach ($modelReference['refColumns'] as $i => $refColumn) {
                 $column = $modelReference['columns'][$i];
                 $joinCondition = '';
@@ -108,8 +108,8 @@ class Garp_Browsebox_Filter_Related extends Garp_Browsebox_Filter_Abstract {
             $joinConditions = implode(' AND ', $joinConditions);
 
             $countSelect = $model->select()
-                ->from($model->getName(), array('c' => 'COUNT(*)'))
-                ->join($bindingModel->getName(), $joinConditions, array());
+                ->from($model->getName(), ['c' => 'COUNT(*)'])
+                ->join($bindingModel->getName(), $joinConditions, []);
             if ($where = $browsebox->getOption('conditions')) {
                 $countSelect->where($where);
             }

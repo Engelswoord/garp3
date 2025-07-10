@@ -22,21 +22,21 @@ class Garp_Spawn_Relation_Set {
      *          Maar tot nu toe worden in die laag alleen extra velden toegevoegd, geen relaties.
      * @var array
      */
-    protected $_defaultBaseRelations = array(
-        'Author' => array(
+    protected $_defaultBaseRelations = [
+        'Author' => [
             'model' => 'User',
             'type' => 'hasOne',
             'inverse' => false,
             'label' => 'Created by'
-        ),
-        'Modifier' => array(
+        ],
+        'Modifier' => [
             'model' => 'User',
             'type' => 'hasOne',
             'inverse' => false,
             'editable' => false,
             'label' => 'Modified by'
-        )
-    );
+        ]
+    ];
 
     /**
      * Associative array, where the key is the name of the relation,
@@ -44,7 +44,7 @@ class Garp_Spawn_Relation_Set {
      *
      * @var array
      */
-    protected $_relations = array();
+    protected $_relations = [];
 
     /**
      * The model in which this relation set is defined.
@@ -83,15 +83,15 @@ class Garp_Spawn_Relation_Set {
         }
 
         if (count(func_get_args()) !== 2) {
-            $error = sprintf(self::ERROR_WRONG_ARGUMENT_NUMBER, get_class($this));
+            $error = sprintf(self::ERROR_WRONG_ARGUMENT_NUMBER, static::class);
             throw new Exception($error);
         }
 
-        $out = array();
+        $out = [];
         foreach ($this->_relations as $relName => $rel) {
-            $filterPropNames = is_array($filterPropName) ? $filterPropName : array($filterPropName);
+            $filterPropNames = is_array($filterPropName) ? $filterPropName : [$filterPropName];
             $filterPropValues = is_array($filterPropName) ?
-                $filterPropValue : array($filterPropValue);
+                $filterPropValue : [$filterPropValue];
 
             if ($rel->hasProperties($filterPropNames, $filterPropValues)) {
                 $out[$relName] = $rel;
@@ -101,7 +101,7 @@ class Garp_Spawn_Relation_Set {
     }
 
     public function getSingularRelations() {
-        $singularRels = array();
+        $singularRels = [];
 
         foreach ($this->_relations as $relName => $relation) {
             $singularRels = $this->_addSingularRelation($singularRels, $relName, $relation);
@@ -188,7 +188,7 @@ class Garp_Spawn_Relation_Set {
 
     protected function _mirrorHasManyRelations() {
         $singularRelations = $this->getSingularRelations();
-        $singularRelations = array_filter($singularRelations, array($this, '_hasManyShouldMirror'));
+        $singularRelations = array_filter($singularRelations, [$this, '_hasManyShouldMirror']);
 
         foreach ($singularRelations as $relation) {
             $this->_mirrorRelationsInModel($relation);
@@ -196,10 +196,10 @@ class Garp_Spawn_Relation_Set {
     }
 
     protected function _mirrorHabtmRelations() {
-        $habtmRelations = $this->getRelations('type', array('hasAndBelongsToMany'));
-        $habtmRelations = array_filter($habtmRelations, array($this, '_habtmShouldMirror'));
+        $habtmRelations = $this->getRelations('type', ['hasAndBelongsToMany']);
+        $habtmRelations = array_filter($habtmRelations, [$this, '_habtmShouldMirror']);
 
-        foreach ($habtmRelations as $relationName => $relation) {
+        foreach ($habtmRelations as $relation) {
             $this->_mirrorRelationsInModel($relation);
         }
     }
@@ -277,7 +277,7 @@ class Garp_Spawn_Relation_Set {
     }
 
     protected function _addDefaultBaseRelations() {
-        if (get_class($this->getModel()) !== 'Garp_Spawn_Model_Base') {
+        if ($this->getModel()::class !== 'Garp_Spawn_Model_Base') {
             return;
         }
 

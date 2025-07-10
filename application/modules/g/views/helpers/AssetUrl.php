@@ -17,6 +17,6 @@ class G_View_Helper_AssetUrl extends Zend_View_Helper_Abstract {
 
     public function __call($method, array $args) {
         $assetUrl = new Garp_Util_AssetUrl();
-        return call_user_func_array(array($assetUrl, $method), $args);
+        return call_user_func_array([$assetUrl, $method], $args);
     }
 }

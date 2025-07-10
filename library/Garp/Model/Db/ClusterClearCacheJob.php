@@ -28,7 +28,7 @@ class Garp_Model_Db_ClusterClearCacheJob extends Model_Base_ClusterClearCacheJob
      * @param Int $serverId Database id of the current server in the cluster
      * @param Array $tags Array of tags, for specific cache clearing
      */
-    public function create($serverId, array $tags = array()) {
+    public function create($serverId, array $tags = []) {
         $row = $this->createRow();
 
         $row->creator_id = $serverId;

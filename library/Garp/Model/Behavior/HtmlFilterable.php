@@ -20,14 +20,14 @@ class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
      */
     protected $_fields;
 
-    protected $_defaultAllowedClasses = array('figure', 'left', 'right', 'video-embed');
+    protected $_defaultAllowedClasses = ['figure', 'left', 'right', 'video-embed'];
 
-    protected $_defaultAllowedElements = array(
+    protected $_defaultAllowedElements = [
         'a', 'abbr', 'acronym', 'b', 'blockquote', 'br', 'caption', 'cite', 'code', 'dd', 'del',
         'dfn', 'div', 'dl', 'dt', 'em', 'embed', 'figure', 'figcaption', 'h1', 'h2', 'h3', 'h4',
         'h5', 'h6', 'hr', 'i', 'iframe', 'img', 'ins', 'kbd', 'li', 'object', 'ol', 'p',
         'param', 'pre', 's', 'small', 'span', 'strong', 'sub', 'sup', 'u', 'ul', 'var'
-    );
+    ];
 
     /**
      * Make sure the config array is at least filled with some default values to work with.
@@ -94,9 +94,9 @@ class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
         $config->set('Output.TidyFormat', false);
         $config->set('Attr.AllowedClasses', $this->_getAllowedClasses());
         $config->set(
-            'CSS.AllowedProperties', array(
+            'CSS.AllowedProperties', [
             'font-weight', 'font-style', 'float', 'vertical-align', 'width', 'height'
-            )
+            ]
         );
         $config->set('CSS.MaxImgLength', null);
         $cachePath = $this->_getCachePath();
@@ -107,10 +107,10 @@ class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
         $config->set('URI.MakeAbsolute', true);
         $config->set('URI.Base', (string)new Garp_Util_FullUrl('/'));
         $config->set(
-            'Filter.Custom', array(
+            'Filter.Custom', [
                 new Garp_Service_HTMLPurifier_Filter_MyIframe(),
                 new Garp_Service_HTMLPurifier_Filter_MyEmbed(),
-            )
+            ]
         );
 
         // add proprietary elements
@@ -121,27 +121,27 @@ class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
                 'Inline',   // content set
                 'Custom: #PCDATA',  // allowed children
                 'Common',   // attribute collection
-                array(      // attributes
+                [      // attributes
                     'src*' => 'URI',
                     'width*' => 'Number',
                     'height*' => 'Number',
                     'frameborder' => 'Text',
                     'scrolling' => 'Text',
                     'allowtransparency' => 'Text',
-                )
+                ]
             );
             $embed = $def->addElement(
                 'embed',
                 'Inline',
                 'Custom: #PCDATA',
                 'Common',
-                array(
+                [
                     'src*' => 'URI',
                     'type*' => 'Text',
                     'width*' => 'Number',
                     'height*' => 'Number',
                     'allowscriptaccess' => 'Text'
-                )
+                ]
             );
         }
         return $config;
@@ -198,10 +198,7 @@ class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
 
     protected function _getCachePath() {
         $config = Zend_Registry::get('config');
-        if (isset($config->htmlFilterable->cachePath)) {
-            return $config->htmlFilterable->cachePath;
-        }
-        return null;
+        return $config->htmlFilterable->cachePath ?? null;
     }
 
     protected function _addHtml5Elements($def) {
@@ -225,7 +222,7 @@ class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
         // http://developers.whatwg.org/the-video-element.html#the-video-element
         $def->addElement(
             'video', 'Block', 'Optional: (source, Flow) | (Flow, source) | Flow', 'Common',
-            array(
+            [
                 'src' => 'URI',
                 'type' => 'Text',
                 'width' => 'Length',
@@ -233,13 +230,13 @@ class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
                 'poster' => 'URI',
                 'preload' => 'Enum#auto,metadata,none',
                 'controls' => 'Bool',
-            )
+            ]
         );
         $def->addElement(
-            'source', 'Block', 'Flow', 'Common', array(
+            'source', 'Block', 'Flow', 'Common', [
                 'src' => 'URI',
                 'type' => 'Text',
-            )
+            ]
         );
 
         // http://developers.whatwg.org/text-level-semantics.html
@@ -252,10 +249,10 @@ class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
 
         // http://developers.whatwg.org/edits.html
         $def->addElement(
-            'ins', 'Block', 'Flow', 'Common', array('cite' => 'URI', 'datetime' => 'CDATA')
+            'ins', 'Block', 'Flow', 'Common', ['cite' => 'URI', 'datetime' => 'CDATA']
         );
         $def->addElement(
-            'del', 'Block', 'Flow', 'Common', array('cite' => 'URI', 'datetime' => 'CDATA')
+            'del', 'Block', 'Flow', 'Common', ['cite' => 'URI', 'datetime' => 'CDATA']
         );
 
         // TinyMCE

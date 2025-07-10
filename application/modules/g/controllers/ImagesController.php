@@ -6,7 +6,7 @@
  * @author  David Spreekmeester <david@grrr.nl>
  */
 class G_ImagesController extends Garp_Controller_Action {
-    protected $_scaleParams = array(
+    protected $_scaleParams = [
         'w',
         'h',
         'bgcolor',
@@ -14,14 +14,14 @@ class G_ImagesController extends Garp_Controller_Action {
         'cropfocus',
         'grow',
         'remote'    // <-- moet dit niet een autodetect zijn?
-    );
+    ];
 
     /**
      * Central entry point.
      *
      * @return void
      */
-    public function indexAction() {
+    public function indexAction(): never {
         // @codingStandardsIgnoreStart
         exit('Browsing the list of images is not allowed.');
         // @codingStandardsIgnoreEnd

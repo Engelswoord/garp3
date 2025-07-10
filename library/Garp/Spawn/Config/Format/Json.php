@@ -12,7 +12,7 @@ class Garp_Spawn_Config_Format_Json implements Garp_Spawn_Config_Format_Interfac
      * @return Array Key / values configuration pairs
      */
     public function parse($modelId, $rawConfig, $allowEmpty = false) {
-        $config = json_decode($rawConfig, true);
+        $config = json_decode((string) $rawConfig, true);
 
         if (!is_null($config)) {
             $this->_validate($config, $allowEmpty);

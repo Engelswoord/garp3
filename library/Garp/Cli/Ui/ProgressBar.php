@@ -163,7 +163,7 @@ class Garp_Cli_Ui_ProgressBar extends Garp_Cli_Ui {
             if ($errorCode == 0 && $terminalCols && array_key_exists(0, $terminalCols)) {
                 return (int)$terminalCols[0];
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         return self::DEFAULT_SCREEN_SIZE;

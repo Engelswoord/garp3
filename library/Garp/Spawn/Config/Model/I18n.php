@@ -54,7 +54,7 @@ class Garp_Spawn_Config_Model_I18n extends ArrayObject {
             $this->_extractI18nRelations($config),
             $this->_getRelationConfigToParent()
         );
-        $config['unique'] = array($this->_getUniqueColumnNames());
+        $config['unique'] = [$this->_getUniqueColumnNames()];
         $config = $this->_correctOrderProperty($config);
 
         return $config;
@@ -67,7 +67,7 @@ class Garp_Spawn_Config_Model_I18n extends ArrayObject {
     }
 
     protected function _filterUnnecessaryFields(array $config) {
-        $config['inputs'] = array_filter($config['inputs'], array($this, '_isI18nField'));
+        $config['inputs'] = array_filter($config['inputs'], [$this, '_isI18nField']);
         $config['behaviors'] = $this->_getI18nBehaviors($config['behaviors'], $config['inputs']);
         return $config;
     }
@@ -77,7 +77,7 @@ class Garp_Spawn_Config_Model_I18n extends ArrayObject {
             // The eventual relation in the i18n model doesn't need the 'multilingual' property
             $rel['multilingual'] = false;
             return $rel;
-        }, array_filter($config['relations'], array($this, '_isI18nField')));
+        }, array_filter($config['relations'], [$this, '_isI18nField']));
     }
 
     protected function _isI18nField(array $fieldConfig) {
@@ -86,7 +86,7 @@ class Garp_Spawn_Config_Model_I18n extends ArrayObject {
     }
 
     protected function _getI18nBehaviors($behaviors, $inputs) {
-        $i18nBehaviors = array();
+        $i18nBehaviors = [];
         foreach ($behaviors as $behaviorName => $behaviorConfig) {
             if (!Garp_Spawn_Behavior_Factory::isI18nBehavior(
                 $behaviorName, $behaviorConfig, $inputs)) {
@@ -112,10 +112,10 @@ class Garp_Spawn_Config_Model_I18n extends ArrayObject {
      * @return  Array   The names of the columns that are unique to this record ('lang' and parent relation column)
      */
     protected function _getUniqueColumnNames() {
-        $columns = array(
+        $columns = [
             self::LANGUAGE_COLUMN,
             $this->_getRelationColumnToParent()
-        );
+        ];
 
         return $columns;
     }
@@ -131,22 +131,22 @@ class Garp_Spawn_Config_Model_I18n extends ArrayObject {
     }
 
     protected function _getRelationConfigToParent() {
-        $relation = array(
-            $this->getParentId() => array(
+        $relation = [
+            $this->getParentId() => [
                 'type' => 'belongsTo'
-            )
-        );
+            ]
+        ];
 
         return $relation;
     }
 
     protected function _getI18nSpecificFields() {
-        $fields = array(
-            self::LANGUAGE_COLUMN => array(
+        $fields = [
+            self::LANGUAGE_COLUMN => [
                 'type' => 'text',
                 'maxLength' => 2
-            )
-        );
+            ]
+        ];
 
         return $fields;
     }

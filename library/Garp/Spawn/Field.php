@@ -17,14 +17,6 @@ class Garp_Spawn_Field {
         = "The 'options' parameter is only valid for the 'enum' fields.";
     const MISSING_OPTIONS_PARAM
         = "The 'options' parameter should contain an array with db enum values, or an object with db enum values as object keys, and labels as object values.";
-    // @codingStandardsIgnoreEnd
-
-    /**
-     * Lowercase, underscored name of the field, as it appears in the database.
-     *
-     * @var string
-     */
-    public $name;
 
     public $required = true;
     public $type = 'text';
@@ -63,7 +55,7 @@ class Garp_Spawn_Field {
      *
      * @var array
      */
-    public $options = array();
+    public $options = [];
 
     /**
      * Whether this is a floating point value, in case of a numeric field.
@@ -87,13 +79,6 @@ class Garp_Spawn_Field {
     public $rich = false;
 
     /**
-     * Context in which this field is added. Can be 'config', 'default', 'relation' or 'behavior'.
-     *
-     * @var string
-     */
-    public $origin;
-
-    /**
      * Type of singular relation that this field references.
      * Only set in case of singular relation fields. Can be 'hasOne' or 'belongsTo'.
      *
@@ -101,19 +86,19 @@ class Garp_Spawn_Field {
      */
     public $relationType;
 
-    protected $_types = array(
+    protected $_types = [
         'text', 'html', 'email', 'url', 'numeric', 'checkbox',
         'datetime', 'date', 'time', 'enum', 'set', 'document', 'imagefile'
-    );
+    ];
 
-    protected $_defaultTypeByNamePattern = array(
+    protected $_defaultTypeByNamePattern = [
         '/email$/'       => 'email',
         '/url$/'         => 'url',
         '/description$/' => 'html',
         '/(^|_)id$/'     => 'numeric',
         '/date$/'        => 'date',
         '/time$/'        => 'time'
-    );
+    ];
 
     /**
      * @param string $origin Context in which this field is added.
@@ -122,15 +107,19 @@ class Garp_Spawn_Field {
      * @param array  $config
      * @return void
      */
-    public function __construct($origin, $name, array $config) {
-        $this->origin = $origin;
-        $this->name = $name;
+    public function __construct(/**
+     * Context in which this field is added. Can be 'config', 'default', 'relation' or 'behavior'.
+     */
+    public $origin, /**
+     * Lowercase, underscored name of the field, as it appears in the database.
+     */
+    public $name, array $config) {
         $this->_loadParams($config);
         $this->_setConditionalDefaults($config);
     }
 
     public function isTextual() {
-        $textualTypes = array('text', 'html', 'email', 'url', 'document');
+        $textualTypes = ['text', 'html', 'email', 'url', 'document'];
         return in_array($this->type, $textualTypes);
     }
 
@@ -143,7 +132,7 @@ class Garp_Spawn_Field {
     }
 
     public function isSuitableAsLabel() {
-        $nonLabelFieldTypes = array('html', 'checkbox');
+        $nonLabelFieldTypes = ['html', 'checkbox'];
         $isSuitableType     = !in_array($this->type, $nonLabelFieldTypes);
         $isSuitableField    = $isSuitableType && !$this->isRelationField();
 
@@ -155,7 +144,7 @@ class Garp_Spawn_Field {
             if (!property_exists($this, $paramName)) {
                 $refl = new ReflectionObject($this);
                 $reflProps = $refl->getProperties(ReflectionProperty::IS_PUBLIC);
-                $publicProps = array();
+                $publicProps = [];
                 foreach ($reflProps as $reflProp) {
                     switch ($reflProp->name) {
                     case 'origin':
@@ -257,7 +246,7 @@ class Garp_Spawn_Field {
                     $this->name
             );
         } else {
-            $this->label = ucfirst($this->label);
+            $this->label = ucfirst((string) $this->label);
         }
 
         $this->required = (bool)$this->required;

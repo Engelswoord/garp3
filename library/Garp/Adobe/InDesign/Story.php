@@ -9,19 +9,13 @@
 class Garp_Adobe_InDesign_Story {
     const PATH = 'Stories/Story_%s.xml';
 
-    protected $_workingDir;
-
     protected $_path;
 
     protected $_xml;
 
-    protected $_id;
 
-
-    public function __construct($storyId, $workingDir) {
-        $this->_id         = $storyId;
-        $this->_workingDir = $workingDir;
-        $this->_path       = $this->_workingDir . sprintf(self::PATH, $storyId);
+    public function __construct(protected $_id, protected $_workingDir) {
+        $this->_path       = $this->_workingDir . sprintf(self::PATH, $this->_id);
         $storyContent      = file_get_contents($this->_path);
         $this->_xml        = new SimpleXMLElement($storyContent);
     }
@@ -61,7 +55,7 @@ class Garp_Adobe_InDesign_Story {
             $tagId = preg_replace(
                 '/XMLTag\/(\w+)/i',
                 '$1',
-                $storyChildren->XMLElement->attributes()->MarkupTag
+                (string) $storyChildren->XMLElement->attributes()->MarkupTag
             );
 
             if (array_key_exists($tagId, $newContent)) {

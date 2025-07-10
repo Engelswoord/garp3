@@ -17,7 +17,7 @@ class G_View_Helper_Video extends Zend_View_Helper_Abstract {
      * @param array $options Various rendering options
      * @return mixed
      */
-    public function video($video = null, array $options = array()) {
+    public function video($video = null, array $options = []) {
         if (!func_num_args()) {
             // provide fluent interface
             return $this;
@@ -37,12 +37,12 @@ class G_View_Helper_Video extends Zend_View_Helper_Abstract {
      * @param array $options Various rendering options
      * @return mixed
      */
-    public function render($video, $options = array()) {
+    public function render($video, $options = []) {
         $helper = $this->_getSpecializedHelper($video);
         return $helper->render($video, $options);
     }
 
-    public function withId($id, $options = array()) {
+    public function withId($id, $options = []) {
         $video = $this->_getVideoModel()->fetchById($id);
         return $this->video($video, $options);
     }
@@ -54,7 +54,7 @@ class G_View_Helper_Video extends Zend_View_Helper_Abstract {
      * @param array $options Various rendering options
      * @return string
      */
-    public function getPlayerUrl($video, $options = array()) {
+    public function getPlayerUrl($video, $options = []) {
         $helper = $this->_getSpecializedHelper($video);
         return $helper->getPlayerUrl($video, $options);
     }
@@ -67,8 +67,8 @@ class G_View_Helper_Video extends Zend_View_Helper_Abstract {
      */
     public function isVimeo($video) {
         $playerurl = (is_string($video) ? $video :
-            (isset($video['player']) ? $video['player'] : $video));
-        return preg_match('~player\.vimeo\.com~i', $playerurl);
+            ($video['player'] ?? $video));
+        return preg_match('~player\.vimeo\.com~i', (string) $playerurl);
     }
 
     /**
@@ -79,7 +79,7 @@ class G_View_Helper_Video extends Zend_View_Helper_Abstract {
      */
     public function isYoutube($video) {
         $playerurl = (is_string($video) ? $video :
-            (isset($video['player']) ? $video['player'] : ''));
+            ($video['player'] ?? ''));
         return preg_match('~youtube\.com~i', $playerurl);
     }
 

@@ -17,14 +17,14 @@ class G_View_Helper_HtmlLink extends Zend_View_Helper_HtmlElement {
      * @param bool         $escape     Wether to escape attributes and label
      * @return string
      */
-    public function htmlLink($url, $label, array $attributes = array(), $escape = true) {
+    public function htmlLink($url, $label, array $attributes = [], $escape = true) {
         if (is_array($url)) {
-            $url = call_user_func_array(array($this->view, 'url'), $url);
+            $url = call_user_func_array([$this->view, 'url'], $url);
         } elseif ($url instanceof Garp_Util_RoutedUrl) {
             $url = (string)$url;
         } else {
             $urlAttribs = parse_url($url);
-            if (empty($urlAttribs['scheme']) && substr($url, 0, 2) !== '//') {
+            if (empty($urlAttribs['scheme']) && !str_starts_with($url, '//')) {
                 $url = $this->view->baseUrl($url);
             }
         }

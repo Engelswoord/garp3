@@ -11,14 +11,10 @@
  */
 class Garp_Content_Cdn_AssetList extends ArrayObject {
 
-    protected $_bannedNodeSubstrings = array('.php', '.psd');
+    protected $_bannedNodeSubstrings = ['.php', '.psd'];
 
-    protected $_bannedNodeNames = array('uploads', 'cached', 'sass', 'system', 'pids', 'log');
-
-    protected $_baseDir;
+    protected $_bannedNodeNames = ['uploads', 'cached', 'sass', 'system', 'pids', 'log'];
     protected $_baseDirLength;
-
-    protected $_filterString;
 
     /**
      * A timestamp to be used as a filter for the file age.
@@ -43,14 +39,11 @@ class Garp_Content_Cdn_AssetList extends ArrayObject {
      *                              This should be in a format that can be fed to strtotime().
      *                              Defaults to self::DEFAULT_FILTER_DATE. Can be set to false to disable the filter.
      */
-    public function __construct($baseDir, $filterString = null, $filterDate = null) {
-        $this->_baseDir             = $baseDir;
-        $this->_baseDirLength       = strlen($baseDir);
-
-        $this->_filterString        = $filterString;
+    public function __construct(protected $_baseDir, protected $_filterString = null, $filterDate = null) {
+        $this->_baseDirLength       = strlen((string) $this->_baseDir);
         $this->_filterDate          = $this->_setFilterDate($filterDate);
 
-        $this->_crawlDirectory($baseDir);
+        $this->_crawlDirectory($this->_baseDir);
     }
 
 
@@ -68,7 +61,7 @@ class Garp_Content_Cdn_AssetList extends ArrayObject {
             $relThreshold = $filterDate;
         }
 
-        return strtotime($relThreshold);
+        return strtotime((string) $relThreshold);
     }
 
 
@@ -77,7 +70,7 @@ class Garp_Content_Cdn_AssetList extends ArrayObject {
             $this->_throwDirAccessError($dir);
         }
 
-        $validDirList = array_filter($dirList, array($this, '_isValidAssetName'));
+        $validDirList = array_filter($dirList, [$this, '_isValidAssetName']);
 
         foreach ($validDirList as $nodeName) {
             $nodePathAbs = $dir . DIRECTORY_SEPARATOR . $nodeName;
@@ -90,7 +83,7 @@ class Garp_Content_Cdn_AssetList extends ArrayObject {
     }
 
 
-    protected function _throwDirAccessError($dir) {
+    protected function _throwDirAccessError($dir): never {
         $errorMsg = sprintf(self::ERROR_CANT_OPEN_DIRECTORY, $dir);
         throw new Exception($errorMsg);
     }
@@ -98,10 +91,10 @@ class Garp_Content_Cdn_AssetList extends ArrayObject {
 
 
     protected function _addValidAssetFile($fileName, $filePathAbs) {
-        $filePathRel = substr($filePathAbs, $this->_baseDirLength);
+        $filePathRel = substr((string) $filePathAbs, $this->_baseDirLength);
 
         if (
-            (!$this->_filterString || stripos($filePathRel, $this->_filterString) !== false) &&
+            (!$this->_filterString || stripos($filePathRel, (string) $this->_filterString) !== false) &&
             $this->_isWithinTimeFrame($filePathAbs)
         ) {
             $this[] = $filePathRel;
@@ -128,7 +121,7 @@ class Garp_Content_Cdn_AssetList extends ArrayObject {
         $isBanned = false;
 
         foreach ($this->_bannedNodeSubstrings as $bannedString) {
-            if (stripos($nodeName, $bannedString) !== false) {
+            if (stripos((string) $nodeName, (string) $bannedString) !== false) {
                 return true;
             }
         }

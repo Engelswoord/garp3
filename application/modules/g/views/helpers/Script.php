@@ -12,7 +12,7 @@ class G_View_Helper_Script extends Zend_View_Helper_HtmlElement {
      *
      * @var Array
      */
-    protected static $_scripts = array();
+    protected static $_scripts = [];
 
     /**
      * Central interface for this helper, used for chainability.
@@ -55,7 +55,7 @@ class G_View_Helper_Script extends Zend_View_Helper_HtmlElement {
                 "Please configure assets.js.{$identifier}"
             );
         }
-        $jsRoot = rtrim($config->assets->js->basePath ?: '/js', '/') . '/';
+        $jsRoot = rtrim((string) $config->assets->js->basePath ?: '/js', '/') . '/';
         $config = $config->assets->js->{$identifier};
         if (!isset($config->disabled) || !$config->disabled) {
             // If minification is not disabled (for instance in a development environment),
@@ -88,14 +88,14 @@ class G_View_Helper_Script extends Zend_View_Helper_HtmlElement {
      * @param Array $attrs HTML attributes
      * @return Mixed
      */
-    public function block($code, $render = false, array $attrs = array()) {
+    public function block($code, $render = false, array $attrs = []) {
         return $this->_storeOrRender(
             'block',
-            array(
+            [
                 'value' => $code,
                 'render' => $render,
                 'attrs' => $attrs
-            )
+            ]
         );
     }
 
@@ -107,14 +107,14 @@ class G_View_Helper_Script extends Zend_View_Helper_HtmlElement {
      * @param Array $attrs HTML attributes
      * @return Mixed
      */
-    public function src($url, $render = false, array $attrs = array()) {
+    public function src($url, $render = false, array $attrs = []) {
         return $this->_storeOrRender(
             'src',
-            array(
+            [
                 'value' => $url,
                 'render' => $render,
                 'attrs' => $attrs
-            )
+            ]
         );
     }
 
@@ -126,7 +126,7 @@ class G_View_Helper_Script extends Zend_View_Helper_HtmlElement {
     public function render() {
         $string = '';
         foreach (static::$_scripts as $script) {
-            $method = '_render' . ucfirst($script['type']);
+            $method = '_render' . ucfirst((string) $script['type']);
             $string .= $this->{$method}($script['value'], $script['attrs']);
         }
         return $string;
@@ -144,11 +144,11 @@ class G_View_Helper_Script extends Zend_View_Helper_HtmlElement {
             $method = '_render' . ucfirst($type);
             return $this->{$method}($args['value'], $args['attrs']);
         }
-        static::$_scripts[] = array(
+        static::$_scripts[] = [
             'type'  => $type,
             'value' => $args['value'],
             'attrs' => $args['attrs']
-        );
+        ];
         return $this;
     }
 
@@ -159,7 +159,7 @@ class G_View_Helper_Script extends Zend_View_Helper_HtmlElement {
      * @param Array $attrs HTML attributes for the <script> tag
      * @return String
      */
-    protected function _renderBlock($code, array $attrs = array()) {
+    protected function _renderBlock($code, array $attrs = []) {
         $attrs = $this->_htmlAttribs($attrs);
         $html = "<script{$attrs}>\n\t%s\n</script>";
         return sprintf($html, $code);
@@ -172,10 +172,10 @@ class G_View_Helper_Script extends Zend_View_Helper_HtmlElement {
      * @param Array $attrs HTML attributes for the <script> tag
      * @return String
      */
-    protected function _renderSrc($url, array $attrs = array()) {
-        if ('http://' !== substr($url, 0, 7)
-            && 'https://' !== substr($url, 0, 8)
-            && '//' !== substr($url, 0, 2)
+    protected function _renderSrc($url, array $attrs = []) {
+        if (!str_starts_with($url, 'http://')
+            && !str_starts_with($url, 'https://')
+            && !str_starts_with($url, '//')
         ) {
             $url = $this->view->assetUrl($url);
         }

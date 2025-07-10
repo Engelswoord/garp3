@@ -48,7 +48,7 @@ class Garp_Service_Elasticsearch_Db_RowFilter extends Garp_Service_Elasticsearch
     }
 
     protected function _filterRow(array $rowWithRelations, array $columns) {
-        $filteredRow    = array();
+        $filteredRow    = [];
         
         foreach ($rowWithRelations as $columnName => $value) {
             if (
@@ -80,7 +80,7 @@ class Garp_Service_Elasticsearch_Db_RowFilter extends Garp_Service_Elasticsearch
             return $this->_flattenRelatedRow($relatedRowOrRowSet);
         }
         
-        $flattenedRowSet = array();
+        $flattenedRowSet = [];
         foreach ($relatedRowOrRowSet as $row) {
             $flattenedRowSet[] = $this->_flattenRelatedRow($row);
         }
@@ -137,7 +137,7 @@ class Garp_Service_Elasticsearch_Db_RowFilter extends Garp_Service_Elasticsearch
         $relations      = $model->getConfiguration('relations');
 
         if (!array_key_exists($relationName, $relations)) {
-            $error = sprintf(self::ERROR_RELATION_NOT_FOUND, $relationName, get_class($model));
+            $error = sprintf(self::ERROR_RELATION_NOT_FOUND, $relationName, $model::class);
             throw new Exception($error);
         }
 

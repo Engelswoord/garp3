@@ -11,16 +11,11 @@ class Garp_Util_TimedTask {
     const FORMAT_MINUTES = 1;
     const FORMAT_HOURS = 2;
 
-    protected $_units = array(
+    protected $_units = [
         self::FORMAT_SECONDS => 1,
         self::FORMAT_MINUTES => 60,
         self::FORMAT_HOURS   => 3600,
-    );
-
-    /**
-     * @var mixed Anything that gets accepted by call_user_func
-     */
-    protected $_executable;
+    ];
 
     /**
      * @var array
@@ -37,8 +32,13 @@ class Garp_Util_TimedTask {
      */
     protected $_timeTaken = 0;
 
-    public function __construct($executable, array $args = array()) {
-        $this->_executable = $executable;
+    /**
+     * @param mixed $executable
+     */
+    public function __construct(/**
+     * @var mixed Anything that gets accepted by call_user_func
+     */
+    protected $_executable, array $args = []) {
         $this->_args = $args;
     }
 

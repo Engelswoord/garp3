@@ -9,7 +9,7 @@
 class Garp_Exception extends Exception {
 
     public static function isDuplicateEntryException(Exception $e): bool {
-        return strpos($e->getMessage(), 'Duplicate entry') !== false;
+        return str_contains($e->getMessage(), 'Duplicate entry');
     }
 
 }

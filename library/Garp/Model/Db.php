@@ -34,7 +34,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      *
      * @var array
      */
-    protected $_bindable = array();
+    protected $_bindable = [];
 
     /**
      * Custom rowset class
@@ -55,7 +55,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      *
      * @var array
      */
-    protected $_observers = array();
+    protected $_observers = [];
 
     /**
      * Wether to cache queries
@@ -69,14 +69,14 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      *
      * @var array
      */
-    protected $_configuration = array();
+    protected $_configuration = [];
 
     /**
      * List fields
      *
      * @var array
      */
-    protected $_listFields = array();
+    protected $_listFields = [];
 
     /**
      * Parent model containing only the unilingual columns
@@ -150,7 +150,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @return string
      */
     public function getNameWithoutNamespace() {
-        $name = get_class($this);
+        $name = static::class;
         $name = explode('_', $name);
         return array_pop($name);
     }
@@ -161,7 +161,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @return string
      */
     public function getNamespace() {
-        $name = get_class($this);
+        $name = static::class;
         $name = explode('_', $name);
         return array_shift($name);
     }
@@ -202,7 +202,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
         if (!$column) {
             return $fields;
         }
-        foreach ($fields as $key => $value) {
+        foreach ($fields as $value) {
             if ($value['name'] == $column) {
                 return $value;
             }
@@ -238,7 +238,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @return string
      */
     public function arrayToWhereClause(array $data, $and = true) {
-        $out = array();
+        $out = [];
         $adapter = $this->getAdapter();
         foreach ($data as $key => $value) {
             $quotedKey = $adapter->quoteIdentifier($key);
@@ -314,10 +314,10 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
         if (!$theOtherModel instanceof Garp_Model_Db) {
             $theOtherModel = new $theOtherModel();
         }
-        $modelNames = array(
+        $modelNames = [
             $this->getNameWithoutNamespace(),
             $theOtherModel->getNameWithoutNamespace()
-        );
+        ];
         sort($modelNames);
         $namespace = 'Model_';
 
@@ -361,7 +361,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
         $refAlias   = $refAlias ?: $refModel->getName();
         $refAlias   = $refAdapter->quoteIdentifier($refAlias);
 
-        $on = array();
+        $on = [];
         foreach ($ref['columns'] as $i => $col) {
             $col = $thisAdapter->quoteIdentifier($col);
             $refCol = $refAdapter->quoteIdentifier($ref['refColumns'][$i]);
@@ -397,9 +397,9 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      *                                               $options['bindingModel'].
      * @return Garp_Model $this
      */
-    public function bindModel($alias, $options = array()) {
+    public function bindModel($alias, $options = []) {
         if ($alias instanceof Garp_Model_Db) {
-            $alias = get_class($alias);
+            $alias = $alias::class;
         }
 
         if (!is_array($options) && !$options instanceof Garp_Util_Configuration) {
@@ -408,7 +408,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
 
         if (empty($options['modelClass'])
             && empty($options['rule'])
-            && substr($alias, 0, 6) !== 'Model_'
+            && !str_starts_with($alias, 'Model_')
         ) {
             // Assume $alias is actually a rule and fetch the required info from
             // the reference.
@@ -426,8 +426,8 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
         if (is_array($options)) {
             $options = new Garp_Util_Configuration($options);
         }
-        $this->notifyObservers('beforeBindModel', array($this, $alias, &$options));
-        Garp_Model_Db_BindingManager::storeBinding(get_class($this), $alias, $options);
+        $this->notifyObservers('beforeBindModel', [$this, $alias, &$options]);
+        Garp_Model_Db_BindingManager::storeBinding(static::class, $alias, $options);
         return $this;
     }
 
@@ -438,8 +438,8 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @return Garp_Model $this
      */
     public function unbindModel($alias) {
-        $this->notifyObservers('beforeUnbindModel', array($this, &$alias));
-        Garp_Model_Db_BindingManager::removeBinding(get_class($this), $alias);
+        $this->notifyObservers('beforeUnbindModel', [$this, &$alias]);
+        Garp_Model_Db_BindingManager::removeBinding(static::class, $alias);
         return $this;
     }
 
@@ -461,7 +461,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @return array
      */
     public function getBindings() {
-        return Garp_Model_Db_BindingManager::getBindings(get_class($this));
+        return Garp_Model_Db_BindingManager::getBindings(static::class);
     }
 
     /**
@@ -485,10 +485,10 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
         $prevSelect->where($quotedSortColumn . ' < ?', $sortValue)->order($prevSortOrder);
         $nextSelect->where($quotedSortColumn . ' > ?', $sortValue)->order($nextSortOrder);
 
-        $neighbours = array(
+        $neighbours = [
             'prev' => $this->fetchRow($prevSelect),
             'next' => $this->fetchRow($nextSelect)
-        );
+        ];
         return $neighbours;
     }
 
@@ -537,7 +537,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      */
     public function quoteValues(array &$values) {
         $adapter = $this->getAdapter();
-        $quoteInto = function (&$item) use ($adapter) {
+        $quoteInto = function (&$item) use ($adapter): void {
             $item = $adapter->quote($item);
         };
         array_walk($values, $quoteInto);
@@ -555,11 +555,11 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
             $where = implode(' AND ', $where);
         }
         $pkColumns = $this->info(Zend_Db_Table_Abstract::PRIMARY);
-        $pkValues = array();
+        $pkValues = [];
         foreach ($pkColumns as $pk) {
-            $regexp = '/(?:`?' . preg_quote($this->getName()) . '`?\.)?`?(?:' . preg_quote($pk) .
+            $regexp = '/(?:`?' . preg_quote($this->getName()) . '`?\.)?`?(?:' . preg_quote((string) $pk) .
                 ')`?\s?=\s?(?:(?P<q>[\'"])(?P<value>(?:(?!\k<q>).)*)\k<q>|(?P<rest>\w*))/';
-            if (preg_match($regexp, $where, $matches)) {
+            if (preg_match($regexp, (string) $where, $matches)) {
                 // Note: backreference "rest" is there to catch unquoted
                 // values. (id = 100 instead of id = "100")
                 if (!empty($matches['rest'])) {
@@ -682,11 +682,11 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
          * instead of the database.
          */
         $results = -1;
-        $this->notifyObservers('beforeFetch', array($this, $select, &$results));
+        $this->notifyObservers('beforeFetch', [$this, $select, &$results]);
         // Results was untouched, fetch a live result.
         if ($results === -1) {
             $results = parent::$method($select);
-            $this->notifyObservers('afterFetch', array($this, &$results, $select));
+            $this->notifyObservers('afterFetch', [$this, &$results, $select]);
         }
         return $results;
     }
@@ -702,7 +702,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
         if (!$select) {
             $select = $this->select();
         }
-        $select->from($this->getName(), array('count' => new Zend_Db_Expr('COUNT(*)')));
+        $select->from($this->getName(), ['count' => new Zend_Db_Expr('COUNT(*)')]);
         if ($row = $this->fetchRow($select)) {
             return (int)$row->count;
         }
@@ -716,9 +716,9 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @return mixed         The primary key of the row inserted.
      */
     public function insert(array $data) {
-        $this->notifyObservers('beforeInsert', array($this, &$data));
+        $this->notifyObservers('beforeInsert', [$this, &$data]);
         $pkData = parent::insert($data);
-        $this->notifyObservers('afterInsert', array($this, $data, $pkData));
+        $this->notifyObservers('afterInsert', [$this, $data, $pkData]);
         return $pkData;
     }
 
@@ -730,9 +730,9 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @return int          The number of rows updated.
      */
     public function update(array $data, $where) {
-        $this->notifyObservers('beforeUpdate', array($this, &$data, &$where));
+        $this->notifyObservers('beforeUpdate', [$this, &$data, &$where]);
         $result = parent::update($data, $where);
-        $this->notifyObservers('afterUpdate', array($this, $result, $data, $where));
+        $this->notifyObservers('afterUpdate', [$this, $result, $data, $where]);
         return $result;
     }
 
@@ -743,9 +743,9 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @return int          The number of rows deleted.
      */
     public function delete($where) {
-        $this->notifyObservers('beforeDelete', array($this, &$where));
+        $this->notifyObservers('beforeDelete', [$this, &$where]);
         $result = parent::delete($where);
-        $this->notifyObservers('afterDelete', array($this, $result, $where));
+        $this->notifyObservers('afterDelete', [$this, $result, $where]);
         return $result;
     }
 
@@ -793,8 +793,8 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @param array $args The arguments you wish to pass to the observers
      * @return Garp_Util_Observable $this
      */
-    public function notifyObservers($event, array $args = array()) {
-        $first = $middle = $last = array();
+    public function notifyObservers($event, array $args = []) {
+        $first = $middle = $last = [];
 
         // Distribute observers to the different arrays
         foreach ($this->_observers as $observer) {
@@ -813,7 +813,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
         }
 
         // Do the actual execution
-        foreach (array($first, $middle, $last) as $observerCollection) {
+        foreach ([$first, $middle, $last] as $observerCollection) {
             foreach ($observerCollection as $observer) {
                 $observer->receiveNotification($event, $args);
             }
@@ -856,7 +856,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @param array $params Collection of parameters (contextual to the event)
      * @return void
      */
-    public function receiveNotification($event, array $params = array()) {
+    public function receiveNotification($event, array $params = []) {
         if (method_exists($this, $event)) {
             $this->{$event}($params);
         }

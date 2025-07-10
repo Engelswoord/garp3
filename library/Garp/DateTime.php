@@ -32,10 +32,10 @@ class Garp_DateTime extends DateTime {
         $ini = Zend_Registry::get('config');
         $format = $ini->date->format->$type;
 
-        if (strpos($format, '%') !== false) {
-            return strftime($format, strtotime($date));
+        if (str_contains((string) $format, '%')) {
+            return strftime($format, strtotime((string) $date));
         } else {
-            return date($format, strtotime($date));
+            return date($format, strtotime((string) $date));
         }
     }
 }

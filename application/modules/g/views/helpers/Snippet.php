@@ -22,7 +22,7 @@ class G_View_Helper_Snippet extends Zend_View_Helper_Abstract {
      *                      without any Snippet functionality.
      * @return string
      */
-    public function snippet($identifier = false, $partial = false, array $params = array()) {
+    public function snippet($identifier = false, $partial = false, array $params = []) {
         if (!func_num_args()) {
             return $this;
         }
@@ -63,7 +63,7 @@ class G_View_Helper_Snippet extends Zend_View_Helper_Abstract {
      * @return string
      */
     public function render(
-        Zend_Db_Table_Row_Abstract $snippet, $partial = false, array $params = array()
+        Zend_Db_Table_Row_Abstract $snippet, $partial = false, array $params = []
     ) {
         $module = $partial ? 'default' : 'g';
         $partial = $partial ?: 'partials/snippet.phtml';
@@ -89,7 +89,7 @@ class G_View_Helper_Snippet extends Zend_View_Helper_Abstract {
         }
         $snippetModel->bindModel(
             'Image',
-            array('modelClass' => 'Model_Image')
+            ['modelClass' => 'Model_Image']
         );
         return $snippetModel;
     }

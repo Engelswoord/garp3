@@ -26,13 +26,13 @@ class Garp_Spawn_Behavior_Type_Translatable extends Garp_Spawn_Behavior_Type_Abs
         }
 
         $fieldNames = array_merge(
-            array_map(function($field) { return $field->name; },
+            array_map(fn($field) => $field->name,
                 $model->fields->getFields('multilingual', true)),
-            array_map(function($rel) { return $rel->column; },
+            array_map(fn($rel) => $rel->column,
                 $model->relations->getRelations('multilingual', true))
         );
 
-        $params = array('columns' => array_values($fieldNames));
+        $params = ['columns' => array_values($fieldNames)];
         return $params;
     }
 }

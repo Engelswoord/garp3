@@ -95,13 +95,13 @@ class Garp_Controller_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 
         $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector');
         $redirectMethod = 'gotoUrlAndExit';
-        $redirectParams = array('/g/auth/login');
+        $redirectParams = ['/g/auth/login'];
 
         if (!empty($authVars['login']['route'])) {
             $redirectMethod = 'gotoRoute';
-            $redirectParams = array(array(), $authVars['login']['route']);
+            $redirectParams = [[], $authVars['login']['route']];
         }
-        call_user_func_array(array($redirector, $redirectMethod), $redirectParams);
+        call_user_func_array([$redirector, $redirectMethod], $redirectParams);
     }
 
     /**

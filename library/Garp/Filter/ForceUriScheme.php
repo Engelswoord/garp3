@@ -16,7 +16,7 @@ class Garp_Filter_ForceUriScheme implements Zend_Filter_Interface {
      * @return mixed
      */
     public function filter($value) {
-        if ($value && !preg_match('~^[a-z]+://~i', $value)) {
+        if ($value && !preg_match('~^[a-z]+://~i', (string) $value)) {
             $value = 'http://'.$value;
         }
         return $value;

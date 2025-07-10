@@ -43,10 +43,10 @@ class G_View_Helper_Image extends Zend_View_Helper_HtmlElement {
      * @param   string  $partial     Custom partial for rendering an upload
      * @return  string
      */
-    public function render($image, $template = null, $htmlAttribs = array(), $partial = null) {
+    public function render($image, $template = null, $htmlAttribs = [], $partial = null) {
         if ($this->_isFilename($image)) {
             // When calling for a static image, you can use the second param as $htmlAttribs.
-            $htmlAttribs = $template ?: array();
+            $htmlAttribs = $template ?: [];
             return $this->_renderStatic($image, $htmlAttribs);
         }
         if (!$template) {
@@ -131,7 +131,7 @@ class G_View_Helper_Image extends Zend_View_Helper_HtmlElement {
      * @return bool
      */
     protected function _isFilename($image) {
-        return is_string($image) && strpos($image, '.') !== false;
+        return is_string($image) && str_contains($image, '.');
     }
 
     /**
@@ -141,7 +141,7 @@ class G_View_Helper_Image extends Zend_View_Helper_HtmlElement {
      * @param array $htmlAttribs
      * @return string
      */
-    protected function _renderStatic($filename, array $htmlAttribs = array()) {
+    protected function _renderStatic($filename, array $htmlAttribs = []) {
         $file = new Garp_Image_File(Garp_File::FILE_VARIANT_STATIC);
         $src = $file->getUrl($filename);
 
@@ -165,7 +165,7 @@ class G_View_Helper_Image extends Zend_View_Helper_HtmlElement {
      * @return string                Full image tag string, containing attributes and full path
      */
     protected function _renderUpload(
-        $imageIdOrRecord, $template = null, array $htmlAttribs = array(), $partial = ''
+        $imageIdOrRecord, $template = null, array $htmlAttribs = [], $partial = ''
     ) {
         if (!empty($template)) {
             $scaler = $this->_getImageScaler();
@@ -203,10 +203,10 @@ class G_View_Helper_Image extends Zend_View_Helper_HtmlElement {
             return $this->view->partial(
                 $partial,
                 $module,
-                array(
+                [
                     'imgTag' => $imgTag,
                     'imgObject' => $imageIdOrRecord
-                )
+                ]
             );
         } else {
             return $imgTag;
@@ -222,7 +222,7 @@ class G_View_Helper_Image extends Zend_View_Helper_HtmlElement {
      * @return array
      */
     protected function _getHtmlAttribsFromSizeParams($scalingParams) {
-        $attribs = array();
+        $attribs = [];
         if (array_key_exists('w', $scalingParams) && $scalingParams['w']) {
             $attribs['width'] = $scalingParams['w'];
         }

@@ -20,7 +20,7 @@ final class Garp_Db_Table_Rowset extends Zend_Db_Table_Rowset_Abstract implement
     public function concat(Semigroup $that): Semigroup {
         if (!$that instanceof self) {
             throw new LogicException(
-                sprintf('Unable to concatenate semigroups %s and %s', get_class($this), get_class($that))
+                sprintf('Unable to concatenate semigroups %s and %s', self::class, $that::class)
             );
         }
         return new static([
@@ -35,7 +35,7 @@ final class Garp_Db_Table_Rowset extends Zend_Db_Table_Rowset_Abstract implement
     public function push(Garp_Db_Table_Row $row): Garp_Db_Table_Rowset {
         if (!$row instanceof $this->_rowClass) {
             throw new LogicException(
-                sprintf('Unable to push row of type %s to this rowset. Expected: %s', get_class($row), $this->_rowClass)
+                sprintf('Unable to push row of type %s to this rowset. Expected: %s', $row::class, $this->_rowClass)
             );
         }
         return $this->concat(new static([
@@ -50,7 +50,7 @@ final class Garp_Db_Table_Rowset extends Zend_Db_Table_Rowset_Abstract implement
     public function prepend(Garp_Db_Table_Row $row): Garp_Db_Table_Rowset {
         if (!$row instanceof $this->_rowClass) {
             throw new LogicException(
-                sprintf('Unable to prepend row of type %s to this rowset. Expected: %s', get_class($row), $this->_rowClass)
+                sprintf('Unable to prepend row of type %s to this rowset. Expected: %s', $row::class, $this->_rowClass)
             );
         }
         return (new static([
@@ -69,7 +69,7 @@ final class Garp_Db_Table_Rowset extends Zend_Db_Table_Rowset_Abstract implement
      * @return array
      */
     public function flatten($column) {
-        $out = array();
+        $out = [];
         foreach ($this as $row) {
             $out[] = $row->flatten($column);
         }

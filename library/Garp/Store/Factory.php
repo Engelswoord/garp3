@@ -20,7 +20,7 @@ class Garp_Store_Factory {
             $type = !empty($ini->store->type) ? $ini->store->type : 'Cookie';
         }
         $type = ucfirst($type);
-        if (!in_array($type, array('Session', 'Cookie'))) {
+        if (!in_array($type, ['Session', 'Cookie'])) {
             throw new Garp_Store_Exception(
                 'Invalid Store type selected. Must be Session or Cookie.'
             );

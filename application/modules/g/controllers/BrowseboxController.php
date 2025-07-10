@@ -33,9 +33,9 @@ class G_BrowseboxController extends Garp_Controller_Action {
         $bb = Garp_Browsebox::factory($request->getParam('id'));
 
         if ($request->getParam('conditions')) {
-            $options = unserialize(base64_decode($request->getParam('conditions')));
+            $options = unserialize(base64_decode((string) $request->getParam('conditions')));
             if (!empty($options['filters'])) {
-                $conditions = base64_decode($options['filters']);
+                $conditions = base64_decode((string) $options['filters']);
                 $conditions = explode(
                     Garp_Browsebox::BROWSEBOX_QUERY_FILTER_SEPARATOR,
                     $conditions

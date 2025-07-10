@@ -41,7 +41,7 @@ class Garp_Content_Relation_Manager {
              * If this succeeds, it's a regular relationship where the foreign key
              * resides inside modelA. Continue as usual.
              */
-            $reference = $modelA->getReference(get_class($modelB), $options['rule']);
+            $reference = $modelA->getReference($modelB::class, $options['rule']);
         } catch (Exception $e) {
             if (!self::isInvalidReferenceException($e)) {
                 throw $e;
@@ -53,7 +53,7 @@ class Garp_Content_Relation_Manager {
                  * the given configuration.
                  * Call self::relate() recursively with these new options.
                  */
-                $reference = $modelB->getReference(get_class($modelA), $options['rule']);
+                $reference = $modelB->getReference($modelA::class, $options['rule']);
 
                 $keyA = $options['keyA'];
                 $keyB = $options['keyB'];
@@ -75,7 +75,7 @@ class Garp_Content_Relation_Manager {
             }
         }
 
-        $rowA = call_user_func_array(array($options['modelA'], 'find'), (array)$options['keyA']);
+        $rowA = call_user_func_array([$options['modelA'], 'find'], (array)$options['keyA']);
         if (!count($rowA)) {
             $errorMsg = sprintf(
                 self::EXCEPTION_ROW_NOT_FOUND_BY_PRIMARY_KEY,
@@ -113,8 +113,8 @@ class Garp_Content_Relation_Manager {
          * - also, we assume the references can be found from the bindingModel. There will be
          *   no trying nor catching, if the reference is not here, we just crash the heck out of it.
          */
-        $referenceA = $bindingModel->getReference(get_class($modelA), $ruleA);
-        $referenceB = $bindingModel->getReference(get_class($modelB), $ruleB);
+        $referenceA = $bindingModel->getReference($modelA::class, $ruleA);
+        $referenceB = $bindingModel->getReference($modelB::class, $ruleB);
 
         // The only place where extraFields is used: to fill fields other than the primary key
         // references in the binding row
@@ -150,7 +150,7 @@ class Garp_Content_Relation_Manager {
             ->setDefault('rule', null)
             ->setDefault('ruleA', null)
             ->setDefault('ruleB', null)
-            ->setDefault('extraFields', array())
+            ->setDefault('extraFields', [])
             ->setDefault('bindingModel', null)
             ->setDefault('bidirectional', true);
         // use models, not class names
@@ -207,7 +207,7 @@ class Garp_Content_Relation_Manager {
              * If this succeeds, it's a regular relationship where the foreign key
              * resides inside modelA. Continue as usual.
              */
-            $reference = $modelA->getReference(get_class($modelB), $options['rule']);
+            $reference = $modelA->getReference($modelB::class, $options['rule']);
         } catch (Exception $e) {
             if (!self::isInvalidReferenceException($e)) {
                 throw $e;
@@ -219,7 +219,7 @@ class Garp_Content_Relation_Manager {
                  * given configuration.
                  * Call self::relate() recursively with these new options.
                  */
-                $reference = $modelB->getReference(get_class($modelA), $options['rule']);
+                $reference = $modelB->getReference($modelA::class, $options['rule']);
 
                 $keyA = $options['keyA'];
                 $keyB = $options['keyB'];
@@ -250,13 +250,13 @@ class Garp_Content_Relation_Manager {
          * UPDATE modelA SET foreignkey = NULL WHERE foreignkey = keyB
          */
         $query = 'UPDATE `' . $modelA->getName() . '` SET ';
-        $columnsToValues = array();
+        $columnsToValues = [];
         foreach ($reference['columns'] as $column) {
             $columnsToValues[] = '`' . $column . '` = NULL';
         }
         $columnsToValues = implode(' AND ', $columnsToValues);
         $query .= $columnsToValues;
-        $whereColumnsToValues = array();
+        $whereColumnsToValues = [];
         if ($options['keyA']) {
             $useColumns = 'refColumns';
             $useKeys = 'keyA';
@@ -299,13 +299,13 @@ class Garp_Content_Relation_Manager {
          * - also, we assume the references can be found from the bindingModel. There will be
          *   no trying nor catching, if the reference is not here, we just crash the heck out of it.
          */
-        $referenceA = $bindingModel->getReference(get_class($modelA), $ruleA);
-        $referenceB = $bindingModel->getReference(get_class($modelB), $ruleB);
+        $referenceA = $bindingModel->getReference($modelA::class, $ruleA);
+        $referenceB = $bindingModel->getReference($modelB::class, $ruleB);
 
         // Construct WHERE clause
-        $where = array();
+        $where = [];
         $createWhereBit = function ($reference, $values) {
-            $w = array();
+            $w = [];
             foreach ($reference['columns'] as $i => $column) {
                 $w[] = '`' . $column . '` = ' . $values[$i];
             }
@@ -324,7 +324,7 @@ class Garp_Content_Relation_Manager {
 
         // Homophyllic relations can be deleted bidirectionally
         if ($options['bidirectional'] && $modelA->getName() == $modelB->getName()) {
-            $homoWhere = array();
+            $homoWhere = [];
             if ($keyA) {
                 $homoWhere[] = $createWhereBit($referenceB, $keyA);
             }

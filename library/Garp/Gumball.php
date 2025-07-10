@@ -28,13 +28,13 @@ class Garp_Gumball {
     protected $_gumballConfig;
 
     // Paths that are not copied into the gumball
-    protected $_ignoredPaths = array(
+    protected $_ignoredPaths = [
         '.DS_Store',
         'node_modules',
         'bower_components',
         'gumballs',
         'sql'
-    );
+    ];
 
     /**
      * Class constructor
@@ -43,7 +43,7 @@ class Garp_Gumball {
      * @param array $options
      * @return void
      */
-    public function __construct(Garp_Version $version, array $options = array()) {
+    public function __construct(Garp_Version $version, array $options = []) {
         $this->_version = $version;
         $this->_useDatabase = f\prop('useDatabase', $options) ?? false;
         $this->_dbEnv = f\prop('databaseSourceEnvironment', $options);
@@ -103,7 +103,7 @@ class Garp_Gumball {
         } else {
             // Execute a spawn call in batch mode, to make sure all new columns are there
             $spawnCmd = new Garp_Cli_Command_Spawn();
-            $spawnCmd->main(array('b' => true, 'only' => 'db'));
+            $spawnCmd->main(['b' => true, 'only' => 'db']);
         }
 
         // set permissions on folders
@@ -155,15 +155,15 @@ class Garp_Gumball {
      * @return void
      */
     public function addSettingsFile() {
-        $config = new Zend_Config(array(), true);
-        $config->gumball = array();
+        $config = new Zend_Config([], true);
+        $config->gumball = [];
         $config->gumball->sourceDbEnvironment = $this->_dbEnv;
 
         $writer = new Zend_Config_Writer_Ini(
-            array(
+            [
                 'config' => $config,
                 'filename' => $this->_getTargetDirectoryPath() . '/application/configs/gumball.ini'
-            )
+            ]
         );
         $writer->setRenderWithoutSections();
         $writer->write();
@@ -227,7 +227,7 @@ class Garp_Gumball {
         $mediator = new Garp_Content_Db_Mediator($sourceEnv, APPLICATION_ENV);
         $target = $mediator->getTarget();
         $dump = file_get_contents(
-            APPLICATION_PATH . '/data/sql/' . basename($this->_getDataDumpLocation())
+            APPLICATION_PATH . '/data/sql/' . basename((string) $this->_getDataDumpLocation())
         );
         $target->restore($dump);
     }
@@ -245,9 +245,9 @@ class Garp_Gumball {
     protected function _createMissingDirectories() {
         $appData = APPLICATION_PATH . '/data';
         $appDataCache = "{$appData}/cache";
-        $paths = array(
+        $paths = [
             'public/cached', $appDataCache, "$appDataCache/tags",
-            "$appDataCache/HTML", "$appDataCache/URI", "$appDataCache/CSS");
+            "$appDataCache/HTML", "$appDataCache/URI", "$appDataCache/CSS"];
 
         foreach ($paths as $path) {
             if (!file_exists($path)) {
@@ -264,7 +264,7 @@ class Garp_Gumball {
     protected function _hasDatabaseDump() {
         return file_exists(
             APPLICATION_PATH . '/data/sql/' .
-            basename($this->_getDataDumpLocation())
+            basename((string) $this->_getDataDumpLocation())
         );
     }
 
@@ -273,7 +273,7 @@ class Garp_Gumball {
             return true;
         }
         $fromPath = $finfo->getPath() . '/' . $finfo->getFilename();
-        $toPath = rtrim($this->_getTargetDirectoryPath(), '/') . '/';
+        $toPath = rtrim((string) $this->_getTargetDirectoryPath(), '/') . '/';
         exec(sprintf(self::COPY_SOURCEFILE_CMD, $fromPath, $toPath), $output, $status);
         return $status === 0;
     }
@@ -282,7 +282,7 @@ class Garp_Gumball {
         // ignore dot files...
         return $finfo->isDot() ||
             // ...git files...
-            strpos($finfo->getFilename(), '.git') === 0 ||
+            str_starts_with($finfo->getFilename(), '.git') ||
             // ...and known ignored paths.
             in_array(basename($finfo->getFilename()), $this->_ignoredPaths);
     }
@@ -301,7 +301,7 @@ class Garp_Gumball {
             $iterator,
             RecursiveIteratorIterator::CHILD_FIRST
         ) as $file) {
-            if (in_array($file->getFilename(), array('.', '..'))) {
+            if (in_array($file->getFilename(), ['.', '..'])) {
                 continue;
             }
             if (!$file->isLink() && $file->isDir()) {

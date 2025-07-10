@@ -33,14 +33,14 @@ class Garp_Model_Behavior_FileRelatable extends Garp_Model_Behavior_Abstract {
      * The columns holding files
      * @var Array
      */
-    protected $_fields = array();
+    protected $_fields = [];
 
 
     /**
      * The new columns and values (saved beforeUpdate)
      * @var Array
      */
-    protected $_newValues = array();
+    protected $_newValues = [];
 
 
     /**
@@ -55,7 +55,7 @@ class Garp_Model_Behavior_FileRelatable extends Garp_Model_Behavior_Abstract {
      * @param mixed $config Configuration options
      * @return Void
      */
-    protected function _setup(mixed $config) {
+    protected function _setup(mixed $config): never {
         throw new Garp_Model_Behavior_Exception('This behavior may not be used yet. See note in docblock.');
         $this->_fields = $config;
     }
@@ -113,7 +113,7 @@ class Garp_Model_Behavior_FileRelatable extends Garp_Model_Behavior_Abstract {
     protected function _deleteFile($filename) {
         $ini = Zend_Registry::get('config');
         $uploadPath = $ini->app->uploadsDirectory;
-        $uploadPath = rtrim($uploadPath, '/\\').DIRECTORY_SEPARATOR;
+        $uploadPath = rtrim((string) $uploadPath, '/\\').DIRECTORY_SEPARATOR;
         $filePath   = $uploadPath.$filename;
         if (file_exists($filePath) && is_file($filePath)) {
             unlink($filePath);

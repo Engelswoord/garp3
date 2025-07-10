@@ -16,10 +16,10 @@ class Garp_Spawn_Behavior_Type_HtmlFilterable extends Garp_Spawn_Behavior_Type_A
         $model  = $this->getModel();        
 
         $params = $model->fields->getFieldNames('type', 'html');
-        $params = array_filter($params, array($this, $model->isTranslated() ?
+        $params = array_filter($params, [$this, $model->isTranslated() ?
             '_isMultilingualField' :
             '_isUnilingualField'
-        ));
+        ]);
         
         return $params;
     }

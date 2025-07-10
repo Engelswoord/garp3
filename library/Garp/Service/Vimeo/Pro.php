@@ -28,7 +28,7 @@ class Garp_Service_Vimeo_Pro extends Zend_Service_Abstract {
      *
      * @var Array
      */
-    protected static $_methods = array(
+    protected static $_methods = [
         'activity',
         'albums',
         'channels',
@@ -38,7 +38,7 @@ class Garp_Service_Vimeo_Pro extends Zend_Service_Abstract {
         'people',
         'test',
         'videos'
-    );
+    ];
 
 
     /**
@@ -220,13 +220,13 @@ class Garp_Service_Vimeo_Pro extends Zend_Service_Abstract {
         $url = self::VIMEO_API_URL . '?' . $queryString;
 
         $oAuthHttpUtility = new Zend_Oauth_Http_Utility();
-        $params = array(
+        $params = [
             'oauth_consumer_key'     => $this->getConsumerKey(),
             'oauth_nonce'            => $oAuthHttpUtility->generateNonce(),
             'oauth_timestamp'        => $oAuthHttpUtility->generateTimestamp(),
             'oauth_signature_method' => 'HMAC-SHA1',
             'oauth_version'          => '1.0'
-        );
+        ];
 
         if ($this->getAccessToken()) {
             $params['oauth_token'] = $this->getAccessToken();

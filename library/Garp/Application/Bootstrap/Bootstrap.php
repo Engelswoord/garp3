@@ -77,8 +77,8 @@ class Garp_Application_Bootstrap_Bootstrap extends Zend_Application_Bootstrap_Bo
             Zend_Registry::set('config', $staticConfig);
         } catch(Exception $e) {
             $msg = $e->getMessage();
-            if (strpos($msg, 'Unknown database') === false
-                && strpos($msg, "doesn't exist") === false
+            if (!str_contains($msg, 'Unknown database')
+                && !str_contains($msg, "doesn't exist")
             ) {
                 throw $e;
             }

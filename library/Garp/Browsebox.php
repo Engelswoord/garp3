@@ -41,7 +41,7 @@ class Garp_Browsebox {
      * The fetched records
      * @var Array|Zend_Db_Table_Rowset
      */
-    protected $_results = array();
+    protected $_results = [];
     
     
     /**
@@ -55,7 +55,7 @@ class Garp_Browsebox {
      * Custom filters
      * @var Array
      */
-    protected $_filters = array();
+    protected $_filters = [];
     
     
     /**
@@ -130,8 +130,8 @@ class Garp_Browsebox {
                 ->setDefault('order', null)
                 ->setDefault('conditions', null)
                 ->setDefault('viewPath', 'partials/browsebox/'.$options['id'].'.phtml')
-                ->setDefault('bindings', array())
-                ->setDefault('filters', array())
+                ->setDefault('bindings', [])
+                ->setDefault('filters', [])
                 ->setDefault('cycle', false)
                 ->setDefault('javascriptOptions', new Garp_Util_Configuration())
                 ->setDefault('select', null)
@@ -150,7 +150,7 @@ class Garp_Browsebox {
      * @return Array
      */
     protected function _parseFilters(array $filters) {
-        $out = array();
+        $out = [];
         foreach ($filters as $key => $value) {
             // The deprecated way
             if (is_string($key) && is_array($value)) {
@@ -181,7 +181,7 @@ class Garp_Browsebox {
      * @return Mixed
      */
     public function getOption($key) {
-        if (array_key_exists($key, $this->_options)) {
+        if (property_exists($this->_options, $key)) {
             return $this->_options[$key];
         }
         throw new Garp_Browsebox_Exception('Undefined key given: '.$key);
@@ -214,7 +214,7 @@ class Garp_Browsebox {
      * @param Array $params Filter values (by order of $this->_options['filters'][$filterId])
      * @return Garp_Browsebox $this
      */
-    public function setFilter($filterId, array $params = array()) {
+    public function setFilter($filterId, array $params = []) {
         if (!array_key_exists($filterId, $this->_options['filters'])) {
             throw new Garp_Browsebox_Exception('Filter "'.$filterId.'" not found in browsebox '.$this->getId().'.');
         }
@@ -223,7 +223,7 @@ class Garp_Browsebox {
         
         try {
             $filter->modifySelect($this->_select);
-        } catch (Garp_Browsebox_Filter_Exception_NotApplicable $e) {
+        } catch (Garp_Browsebox_Filter_Exception_NotApplicable) {
             // It's okay, this filter makes no modifications to the Select object
         }
 
@@ -269,7 +269,7 @@ class Garp_Browsebox {
             try {
                 $content = $filter->fetchResults($select, $this);
                 return $content;
-            } catch (Garp_Browsebox_Filter_Exception_NotApplicable $e) {
+            } catch (Garp_Browsebox_Filter_Exception_NotApplicable) {
                 // It's ok, this filter does not return content
             }
         }
@@ -290,7 +290,7 @@ class Garp_Browsebox {
                ->reset(Zend_Db_Select::ORDER)
                ->reset(Zend_Db_Select::GROUP)
         ;
-        $select->from($model->getName(), array('c' => $count));
+        $select->from($model->getName(), ['c' => $count]);
 
         if ($max = $this->_fetchMaxChunksFromFilters($select)) {
             return $max;
@@ -312,7 +312,7 @@ class Garp_Browsebox {
             try {
                 $content = $filter->fetchMaxChunks($select, $this);
                 return $content;
-            } catch (Garp_Browsebox_Filter_Exception_NotApplicable $e) {
+            } catch (Garp_Browsebox_Filter_Exception_NotApplicable) {
                 // It's ok, this filter does not return content
             }
         }
@@ -379,7 +379,7 @@ class Garp_Browsebox {
      * @return String
      */
     public function getFilters($encoded = true) {
-        $out = array();
+        $out = [];
         foreach ($this->_filters as $filterId => $params) {
             $out[] = $filterId.':'.implode(Garp_Browsebox::BROWSEBOX_QUERY_FILTER_PROP_SEPARATOR, $params);
         }
@@ -394,11 +394,11 @@ class Garp_Browsebox {
      */
     public function getJavascriptOptions() {
         $out = $this->_options['javascriptOptions'];
-        $out['options'] = base64_encode(serialize(array(
+        $out['options'] = base64_encode(serialize([
             'pageSize' => $this->_options['pageSize'],
             'viewPath' => $this->_options['viewPath'],
             'filters'  => $this->getFilters()
-        )));
+        ]));
         return $out;
     }
     
@@ -435,7 +435,7 @@ class Garp_Browsebox {
      */
     protected function _getCurrentStateFromRequest() {
         $here = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
-        $queryString = parse_url($here, PHP_URL_QUERY);
+        $queryString = parse_url((string) $here, PHP_URL_QUERY);
         parse_str($queryString, $queryComponents);      
         if (!empty($queryComponents[Garp_Browsebox::BROWSEBOX_QUERY_IDENTIFIER][$this->getId()])) {
             $chunk = $queryComponents[Garp_Browsebox::BROWSEBOX_QUERY_IDENTIFIER][$this->getId()];          
@@ -457,7 +457,7 @@ class Garp_Browsebox {
      */
     public function createStateUrl($chunk) {
         $here = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
-        $queryString = parse_url($here, PHP_URL_QUERY);
+        $queryString = parse_url((string) $here, PHP_URL_QUERY);
         parse_str($queryString, $queryComponents);
         $nextChunkState = $chunk;
         $queryComponents[Garp_Browsebox::BROWSEBOX_QUERY_IDENTIFIER][$this->getId()] = $nextChunkState;

@@ -22,7 +22,7 @@ abstract class Garp_Auth_Adapter_Abstract {
      * Collection of errors
      * @var Array
      */
-    protected $_errors = array();
+    protected $_errors = [];
 
     /**
      * Redirect elsewhere after authenticate()
@@ -30,7 +30,7 @@ abstract class Garp_Auth_Adapter_Abstract {
      */
     protected $_redirect = null;
 
-    protected $_extendedUserColumns = array();
+    protected $_extendedUserColumns = [];
 
     /**
      * Authenticate a user.
@@ -52,7 +52,7 @@ abstract class Garp_Auth_Adapter_Abstract {
      */
     public function getUserData($sessionData) {
         $userModel = new Model_User();
-        $userData  = call_user_func_array(array($userModel, 'find'), (array)$sessionData);
+        $userData  = call_user_func_array([$userModel, 'find'], (array)$sessionData);
         return $userData->current();
     }
 
@@ -79,7 +79,7 @@ abstract class Garp_Auth_Adapter_Abstract {
      */
     protected function _getAuthVars() {
         if (!$this->_configKey) {
-            throw new Garp_Auth_Exception('No config key found in '.__CLASS__.'::_configKey.');
+            throw new Garp_Auth_Exception('No config key found in '.self::class.'::_configKey.');
         }
         $config = Zend_Registry::get('config');
         if ($config->auth && $config->auth->adapters && $config->auth->adapters->{$this->_configKey}) {
@@ -104,7 +104,7 @@ abstract class Garp_Auth_Adapter_Abstract {
             $cols = $mapper->map($props);
         }
         if ($authVars->mapping && !empty($authVars->mapping)) {
-            $cols = array();
+            $cols = [];
             foreach ($authVars->mapping as $mappedProp => $col) {
                 if ($col) {
                     $cols[$col] = !empty($props[$mappedProp]) ? $props[$mappedProp] : null;
@@ -157,7 +157,7 @@ abstract class Garp_Auth_Adapter_Abstract {
      * @return $this
      */
     protected function _clearErrors() {
-        $this->_errors = array();
+        $this->_errors = [];
         return $this;
     }
 

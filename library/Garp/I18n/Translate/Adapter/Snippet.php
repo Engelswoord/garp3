@@ -17,19 +17,19 @@ class Garp_I18n_Translate_Adapter_Snippet extends Zend_Translate_Adapter {
      * @param  array         $options OPTIONAL Options to use
      * @return array
      */
-    protected function _loadTranslationData($data, $locale, array $options = array()) {
-        $data = array();
+    protected function _loadTranslationData($data, $locale, array $options = []) {
+        $data = [];
         try {
             $i18nModelFactory = new Garp_I18n_ModelFactory($locale);
             $snippetModel = $i18nModelFactory->getModel('Snippet');
 
-            $out = array();
+            $out = [];
             $data = $snippetModel->fetchAll(
                 $snippetModel->select()
-                ->from($snippetModel->getName(), array(
+                ->from($snippetModel->getName(), [
                     'identifier',
                     'text' => new Zend_Db_Expr('IF(text IS NULL, IF(name IS NULL, identifier, name), text)'),
-                ))
+                ])
                 ->where('has_text = ?', 1)
                 ->orWhere('has_name = ?', 1)
                 ->order('identifier ASC')
@@ -49,7 +49,7 @@ class Garp_I18n_Translate_Adapter_Snippet extends Zend_Translate_Adapter {
      * @return Array
      */
     protected function _reformatData(Garp_Db_Table_Rowset $data) {
-        $out = array();
+        $out = [];
         foreach ($data as $datum) {
             $out[$datum->identifier] = $datum->text;
         }

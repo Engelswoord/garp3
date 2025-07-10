@@ -16,9 +16,9 @@ class Garp_Cli_Command_Snippet extends Garp_Cli_Command {
      */
     protected $_overwrite = false;
 
-    protected $_allowedArguments = array(
-        'create' => array('i', 'interactive', 'file', 'overwrite')
-    );
+    protected $_allowedArguments = [
+        'create' => ['i', 'interactive', 'file', 'overwrite']
+    ];
 
     /**
      * Wether the Snippet model can be autoloaded
@@ -33,7 +33,7 @@ class Garp_Cli_Command_Snippet extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function create(array $args = array()) {
+    public function create(array $args = []) {
         $this->_overwrite = isset($args['overwrite']) && $args['overwrite'];
         if (isset($args['i']) || isset($args['interactive'])) {
             return $this->_createInteractive();
@@ -50,7 +50,7 @@ class Garp_Cli_Command_Snippet extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function storeI18nStrings(array $args = array()) {
+    public function storeI18nStrings(array $args = []) {
         // @todo Adapt for multiple languages
         $nl = $this->_loadI18nStrings('nl');
         $en = $this->_loadI18nStrings('en');
@@ -60,14 +60,14 @@ class Garp_Cli_Command_Snippet extends Garp_Cli_Command {
         $this->_overwrite = isset($args['overwrite']) && $args['overwrite'];
 
         foreach ($nl as $key => $value) {
-            $snippet = array(
+            $snippet = [
                 'has_text' => 1,
                 'identifier' => $key,
                 'is_editable' => $editable,
-                'text' => array(
+                'text' => [
                     'nl' => $value
-                )
-            );
+                ]
+            ];
             if (array_key_exists($key, $en)) {
                 $snippet['text']['en'] = $en[$key];
             }
@@ -116,8 +116,7 @@ class Garp_Cli_Command_Snippet extends Garp_Cli_Command {
         foreach ($snippets as $identifier => $data) {
             $identifier = $this->_normalizeIdentifier($identifier);
             $snippetData = $data->toArray();
-            $snippetData['identifier'] = isset($snippetData['identifier']) ?
-                $snippetData['identifier'] : $identifier;
+            $snippetData['identifier'] ??= $identifier;
             $existing = $this->_fetchExisting($snippetData['identifier']);
             if (!$this->_overwrite && $existing) {
                 Garp_Cli::lineOut(
@@ -149,21 +148,21 @@ class Garp_Cli_Command_Snippet extends Garp_Cli_Command {
      */
     protected function _createInteractive() {
         Garp_Cli::lineOut('Please provide the following values');
-        $data = array(
+        $data = [
             'identifier' => Garp_Cli::prompt('Identifier')
-        );
+        ];
         if ($snippet = $this->_fetchExisting($data['identifier'])) {
             Garp_Cli::lineOut('Snippet already exists. Id: #' . $snippet->id, Garp_Cli::GREEN);
             return true;
         }
 
         $data['uri'] = Garp_Cli::prompt('Url');
-        $checks = array(
-            array('has_name', 'Does this snippet have a name?', 'y'),
-            array('has_html', 'Does this snippet contain HTML?', 'y'),
-            array('has_text', 'Does this snippet contain text?', 'n'),
-            array('has_image', 'Does this snippet have an image?', 'n'),
-        );
+        $checks = [
+            ['has_name', 'Does this snippet have a name?', 'y'],
+            ['has_html', 'Does this snippet contain HTML?', 'y'],
+            ['has_text', 'Does this snippet contain text?', 'n'],
+            ['has_image', 'Does this snippet have an image?', 'n'],
+        ];
         foreach ($checks as $check) {
             $key = $check[0];
             $question = $check[1];
@@ -295,7 +294,7 @@ class Garp_Cli_Command_Snippet extends Garp_Cli_Command {
         Garp_Cli::lineOut('');
     }
 
-    protected function _parseFileFromArguments(array $args = array()) {
+    protected function _parseFileFromArguments(array $args = []) {
         if (array_key_exists('file', $args)) {
             return $args['file'];
         }

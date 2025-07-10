@@ -42,8 +42,8 @@ class Garp_Cache_Manager {
      * @param String $cacheDir Directory which stores static HTML cache files.
      * @return mixed $messageBag
      */
-    public static function purge($tags = array(), $createClusterJob = true, $cacheDir = false) {
-        $messageBag = array();
+    public static function purge($tags = [], $createClusterJob = true, $cacheDir = false) {
+        $messageBag = [];
 
         if ($tags instanceof Garp_Model_Db) {
             $tags = self::getTagsFromModel($tags);
@@ -75,7 +75,7 @@ class Garp_Cache_Manager {
      * @param Array $messageBag
      * @return mixed
      */
-    public static function purgeMemcachedCache($modelNames = array(), $messageBag = array()) {
+    public static function purgeMemcachedCache($modelNames = [], $messageBag = []) {
         if (!Zend_Registry::isRegistered('CacheFrontend')) {
             $messageBag[] = 'Memcached: No caching enabled';
             return $messageBag;
@@ -110,7 +110,7 @@ class Garp_Cache_Manager {
                     $modelFactory = new Garp_I18n_ModelFactory($locale);
                     $i18nModel = $modelFactory->getModel($model);
                     self::_incrementMemcacheVersion($i18nModel);
-                } catch (Garp_I18n_ModelFactory_Exception_ModelAlreadyLocalized $e) {
+                } catch (Garp_I18n_ModelFactory_Exception_ModelAlreadyLocalized) {
                     // all good in the hood  ｡^‿^｡
                 }
             }
@@ -127,7 +127,7 @@ class Garp_Cache_Manager {
      * @param Array $messageBag
      * @return mixed $data
      */
-    public static function purgeStaticCache($modelNames = array(), $cacheDir = false, $messageBag = array()) {
+    public static function purgeStaticCache($modelNames = [], $cacheDir = false, $messageBag = []) {
         if (!Zend_Registry::get('CacheFrontend')->getOption('caching')) {
             // caching is disabled (yes, this particular frontend is not in charge of static
             // cache, but in practice this toggle is used to enable/disable caching globally, so
@@ -162,13 +162,13 @@ class Garp_Cache_Manager {
             $messageBag[] = 'Static cache: No cache tags found';
             return $messageBag;
         }
-        $_purged = array();
+        $_purged = [];
         foreach ($modelNames as $tag) {
             if (!$tagList->{$tag}) {
                 continue;
             }
             foreach ($tagList->{$tag} as $path) {
-                while (strpos($path, '..') !== false) {
+                while (str_contains((string) $path, '..')) {
                     $path = str_replace('..', '.', $path);
                 }
                 $filePath = $cacheDir . $path;
@@ -192,7 +192,7 @@ class Garp_Cache_Manager {
      *
      * @return $messageBag
      */
-    public static function purgeOpcache($messageBag = array()) {
+    public static function purgeOpcache($messageBag = []) {
         // This only clears the Opcache on CLI,
         // which is often separate from the HTTP Opcache.
         if (function_exists('opcache_reset')) {
@@ -244,7 +244,7 @@ class Garp_Cache_Manager {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // in case of multilingual sites
         curl_setopt($ch, CURLOPT_URL, "{$serverName}/g/content/opcachereset");
         curl_setopt(
-            $ch, CURLOPT_HTTPHEADER, array('Host: ' . $hostName)
+            $ch, CURLOPT_HTTPHEADER, ['Host: ' . $hostName]
         );
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
@@ -278,7 +278,7 @@ class Garp_Cache_Manager {
      *              Note that it's hard to determine if this is true. I have, for instance,
      *              not yet found a way to determine if the atrun daemon actually is active.
      */
-    public static function scheduleClear($timestamp, array $tags = array()) {
+    public static function scheduleClear($timestamp, array $tags = []) {
         // Use ScheduledJob model if available, otherwise fall back to `at`
         if (!class_exists('Model_ScheduledJob')) {
             return static::createAtCommand($timestamp, $tags);
@@ -286,7 +286,7 @@ class Garp_Cache_Manager {
         return static::createScheduledJob($timestamp, $tags);
     }
 
-    public static function createScheduledJob($timestamp, array $tags = array()) {
+    public static function createScheduledJob($timestamp, array $tags = []) {
         $cmd = 'Cache clear';
         if (count($tags)) {
             $cmd .= ' ' . implode(' ', $tags);
@@ -294,10 +294,10 @@ class Garp_Cache_Manager {
         //@phpstan-ignore class.notFound
         $scheduledJobModel = new Model_ScheduledJob();
         return $scheduledJobModel->insert(
-            array(
+            [
                 'command' => $cmd,
                 'at' => date('Y-m-d H:i:s', $timestamp),
-            )
+            ]
         );
     }
 
@@ -309,7 +309,7 @@ class Garp_Cache_Manager {
      * @deprecated More or less. You can use it, but ScheduledJob does it better
      * @return bool
      */
-    public static function createAtCommand($timestamp, array $tags = array()) {
+    public static function createAtCommand($timestamp, array $tags = []) {
         $time = date('H:i d.m.y', $timestamp);
 
         // Sanity check: are php and at available?
@@ -353,7 +353,7 @@ class Garp_Cache_Manager {
      * @return Array
      */
     public static function getTagsFromModel(Garp_Model_Db $model) {
-        $tags = array(get_class($model));
+        $tags = [$model::class];
         foreach ($model->getBindableModels() as $modelName) {
             if (!in_array($modelName, $tags)) {
                 $tags[] = $modelName;
@@ -439,7 +439,7 @@ class Garp_Cache_Manager {
     }
 
     protected static function _getGarpCliScriptPath() {
-        if (strpos(APPLICATION_PATH, 'releases') === false) {
+        if (!str_contains(APPLICATION_PATH, 'releases')) {
             return realpath(GARP_APPLICATION_PATH . '/../scripts/garp.php');
         }
         // When `releases` is in the path, assume Capistrano setup and point to the `current`

@@ -185,15 +185,11 @@ class Garp_Spawn_MySql_I18nForker {
     }
 
     protected function _getSqlSetStatementsForUpdate($fromTable, $toTable, $columns) {
-        return array_map(function ($col) use ($fromTable, $toTable) {
-            return "`$toTable`.`$col` = `$fromTable`.`$col`";
-        }, $columns);
+        return array_map(fn($col) => "`$toTable`.`$col` = `$fromTable`.`$col`", $columns);
     }
 
     protected function getOverlappingColumnsFromBase($multilingualColumns) {
-        return array_values(array_intersect($multilingualColumns, array_map(function ($col) {
-            return $col->name;
-        }, $this->getTarget()->getColumns())));
+        return array_values(array_intersect($multilingualColumns, array_map(fn($col) => $col->name, $this->getTarget()->getColumns())));
     }
 
     protected function _getDefaultLanguage() {
@@ -209,12 +205,8 @@ class Garp_Spawn_MySql_I18nForker {
 
     protected function _getMultilingualFieldNames() {
         return array_merge(
-            array_map(function ($field) {
-                return $field->name;
-            }, $this->getModel()->fields->getFields('multilingual', true)),
-            array_map(function ($rel) {
-                return $rel->column;    ;
-            }, $this->getModel()->relations->getRelations('multilingual', true))
+            array_map(fn($field) => $field->name, $this->getModel()->fields->getFields('multilingual', true)),
+            array_map(fn($rel) => $rel->column, $this->getModel()->relations->getRelations('multilingual', true))
         );
     }
 

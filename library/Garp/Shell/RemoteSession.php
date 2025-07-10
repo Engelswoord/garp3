@@ -71,7 +71,7 @@ class Garp_Shell_RemoteSession {
         $host = $this->getHost();
         $user = $this->getUser();
 
-        $sshSession = ssh2_connect($host, 22, array('hostkey' => 'ssh-dss'));
+        $sshSession = ssh2_connect($host, 22, ['hostkey' => 'ssh-dss']);
 
         if ($sshSession) {
             if (ssh2_auth_agent($sshSession, $user)) {

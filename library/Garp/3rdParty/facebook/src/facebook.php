@@ -55,7 +55,7 @@ class Facebook extends BaseFacebook
   }
 
   protected static $kSupportedKeys =
-    array('state', 'code', 'access_token', 'user_id');
+    ['state', 'code', 'access_token', 'user_id'];
 
   protected function initSharedSession() {
     $cookie_name = $this->getSharedSessionCookieName();
@@ -73,15 +73,15 @@ class Facebook extends BaseFacebook
     $base_domain = $this->getBaseDomain();
     $this->sharedSessionID = md5(uniqid(mt_rand(), true));
     $cookie_value = $this->makeSignedRequest(
-      array(
+      [
         'domain' => $base_domain,
         'id' => $this->sharedSessionID,
-      )
+      ]
     );
     $_COOKIE[$cookie_name] = $cookie_value;
     if (!headers_sent()) {
       $expire = time() + self::FBSS_COOKIE_EXPIRE;
-      setcookie($cookie_name, $cookie_value, $expire, '/', '.'.$base_domain);
+      setcookie($cookie_name, $cookie_value, ['expires' => $expire, 'path' => '/', 'domain' => '.'.$base_domain]);
     } else {
       // @codeCoverageIgnoreStart
       self::errorLog(
@@ -116,8 +116,7 @@ class Facebook extends BaseFacebook
     }
 
     $session_var_name = $this->constructSessionVariableName($key);
-    return isset($_SESSION[$session_var_name]) ?
-      $_SESSION[$session_var_name] : $default;
+    return $_SESSION[$session_var_name] ?? $default;
   }
 
   protected function clearPersistentData($key) {
@@ -143,7 +142,7 @@ class Facebook extends BaseFacebook
     $cookie_name = $this->getSharedSessionCookieName();
     unset($_COOKIE[$cookie_name]);
     $base_domain = $this->getBaseDomain();
-    setcookie($cookie_name, '', 1, '/', '.'.$base_domain);
+    setcookie($cookie_name, '', ['expires' => 1, 'path' => '/', 'domain' => '.'.$base_domain]);
   }
 
   protected function getSharedSessionCookieName() {
@@ -151,7 +150,7 @@ class Facebook extends BaseFacebook
   }
 
   protected function constructSessionVariableName($key) {
-    $parts = array('fb', $this->getAppId(), $key);
+    $parts = ['fb', $this->getAppId(), $key];
     if ($this->sharedSessionID) {
       array_unshift($parts, $this->sharedSessionID);
     }

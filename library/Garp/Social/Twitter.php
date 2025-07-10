@@ -55,11 +55,11 @@ class Garp_Social_Twitter {
 
         if (isset($this->config->twitter->userList)) {
             foreach ($this->config->twitter->userList as $name => $list) {
-                $config['userList'][] = array(
+                $config['userList'][] = [
                     'name'  =>  $name,
                     'owner' =>  $list->owner,
                     'slug'  =>  $list->slug
-                );
+                ];
             }
         }
 

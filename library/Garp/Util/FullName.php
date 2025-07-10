@@ -6,7 +6,7 @@
  * @package Garp_Util
  * @author  David Spreekmeester <david@grrr.nl>
  */
-class Garp_Util_FullName {
+class Garp_Util_FullName implements \Stringable {
     protected $_fullName;
 
     /**
@@ -28,7 +28,7 @@ class Garp_Util_FullName {
      *
      * @return string
      */
-    public function __toString() {
+    public function __toString(): string {
         return (string)$this->_fullName;
     }
 

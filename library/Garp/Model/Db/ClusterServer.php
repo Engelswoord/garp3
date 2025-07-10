@@ -28,10 +28,10 @@ class Garp_Model_Db_ClusterServer extends Model_Base_ClusterServer {
         $serverRow->modified = $now;
         $serverId = $serverRow->save();
 
-        return array(
+        return [
             $serverId,
             $lastCheckIn
-        );
+        ];
     }
 
 

@@ -30,10 +30,10 @@ class Garp_Service_Gofilex extends Zend_Service_Abstract {
             }
             $wdsl = $ini->gofilex->wdsl;
         }
-        $this->_client = new Zend_Soap_Client($wdsl, array(
+        $this->_client = new Zend_Soap_Client($wdsl, [
             'compression' => SOAP_COMPRESSION_ACCEPT,
             'soap_version' => SOAP_1_1
-        ));
+        ]);
     }
 
 
@@ -93,22 +93,22 @@ class Garp_Service_Gofilex extends Zend_Service_Abstract {
             $this->_throwException($e, 'GETPRINTSTATUS', $args);
         }
 
-        $out = array();
+        $out = [];
         foreach ($response->PRINTSTATUSARRAY as $medium) {
             if (!is_object($medium)) {
                 continue;
             }
             if (!array_key_exists($medium->TYPEDRAGER, $out)) {
-                $out[$medium->TYPEDRAGER] = array();
+                $out[$medium->TYPEDRAGER] = [];
             }
             // Fools leave whitespace instead of NULL
             $medium->GEBLOKKEERDEPERIODE = trim($medium->GEBLOKKEERDEPERIODE);
             if ($medium->GEBLOKKEERDEPERIODE) {
                 $dates = explode('-', $medium->GEBLOKKEERDEPERIODE);
-                $out[$medium->TYPEDRAGER][] = array(
+                $out[$medium->TYPEDRAGER][] = [
                     strtotime($dates[0]),
                     strtotime($dates[1])
-                );
+                ];
             }
         }
         return $out;
@@ -213,7 +213,7 @@ class Garp_Service_Gofilex extends Zend_Service_Abstract {
      * @param Array $args
      * @return Void
      */
-    protected function _throwException(Exception $e, $method, $args = array()) {
+    protected function _throwException(Exception $e, $method, $args = []) {
         $this->_logTraffic();
 
         // Mail Amstelfilm about this error
@@ -242,11 +242,11 @@ class Garp_Service_Gofilex extends Zend_Service_Abstract {
             }
 
             $mailer = new Garp_Mailer();
-            $mailer->send(array(
+            $mailer->send([
                 'to' => $to,
                 'subject' => $subject,
                 'message' => $message
-            ));
+            ]);
         }
 
         throw $e;

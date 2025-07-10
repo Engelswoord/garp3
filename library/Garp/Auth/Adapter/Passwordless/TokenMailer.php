@@ -8,17 +8,8 @@
  */
 class Garp_Auth_Adapter_Passwordless_TokenMailer extends Garp_Auth_Adapter_Passwordless_TokenMailerAbstract {
 
-    protected $_email;
-    protected $_userId;
-
-    protected $_token;
-    protected $_authVars;
-
-    public function __construct($email, $userId, $token, $authVars) {
-        $this->_email    = $email;
-        $this->_userId   = $userId;
-        $this->_token    = $token;
-        $this->_authVars = $authVars;
+    public function __construct(protected $_email, protected $_userId, protected $_token, protected $_authVars)
+    {
     }
 
     protected function _getEmailTo(): string {
@@ -38,11 +29,11 @@ class Garp_Auth_Adapter_Passwordless_TokenMailer extends Garp_Auth_Adapter_Passw
             && $this->_authVars->email_body_snippet_identifier
         ) {
             return $this->_interpolateEmailBody(
-                $this->_getSnippet($this->_authVars->email_body_snippet_identifier)->text, $this->_userId, $this->_token
+                $this->_getSnippet($this->_authVars->email_body_snippet_identifier)->text
             );
         }
         if (!empty($this->_authVars->email_body)) {
-            return $this->_interpolateEmailBody($this->_authVars->email_body, $this->_userId, $this->_token);
+            return $this->_interpolateEmailBody($this->_authVars->email_body);
         }
 
         throw new Garp_Auth_Adapter_Passwordless_Exception(

@@ -27,15 +27,15 @@ class Garp_Content_Api {
      * @return stdClass
      */
     public function getLayout() {
-        $methods = array(
+        $methods = [
         //  Method            These are the rights in ACL that allow for the method to be executed
-            'fetch'        => array('fetch', 'fetch_own'),
+            'fetch'        => ['fetch', 'fetch_own'],
             'create',
-            'update'       => array('update', 'update_own'),
-            'destroy'      => array('destroy', 'destroy_own'),
-            'count'        => array('fetch'),
+            'update'       => ['update', 'update_own'],
+            'destroy'      => ['destroy', 'destroy_own'],
+            'count'        => ['fetch'],
             'relate'
-        );
+        ];
         $auth = Garp_Auth::getInstance();
 
         if (is_null($this->_layout)) {
@@ -45,19 +45,19 @@ class Garp_Content_Api {
             $config = Garp_Content_Api::_getConfig();
             $classes = $config->content->commands;
             $api = new stdClass();
-            $api->actions = array();
+            $api->actions = [];
             foreach ($classes as $key => $class) {
                 $alias = !empty($class->alias) ? $class->alias : $key;
                 $modelName = self::modelAliasToClass($alias);
 
                 if (!array_key_exists($alias, $api->actions)) {
-                    $api->actions[$alias] = array();
+                    $api->actions[$alias] = [];
                 }
                 
                 foreach ($methods as $method => $privileges) {
                     if (is_numeric($method)) {
                         $method = $privileges;
-                        $privileges = array($method);
+                        $privileges = [$method];
                     }
                     // Check if any of the given privileges allow for the method to be executed
                     $allowed = false;
@@ -72,10 +72,10 @@ class Garp_Content_Api {
                         continue;
                     }
 
-                    $api->actions[$alias][] = array(
+                    $api->actions[$alias][] = [
                         'name'  => $method,
                         'len'   => 1 // always expect 1 argument: an array containing named arguments
-                    );
+                    ];
                 }
             }
             $this->_layout = $api;

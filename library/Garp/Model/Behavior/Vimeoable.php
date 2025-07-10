@@ -24,8 +24,8 @@ class Garp_Model_Behavior_Vimeoable extends Garp_Model_Behavior_Abstract {
      *
      * @var array
      */
-    protected $_fields = array(
-        'simple' => array(
+    protected $_fields = [
+        'simple' => [
             // Internal name  => database / form name
             'id'              => 'identifier',
             'title'           => 'name',
@@ -36,8 +36,8 @@ class Garp_Model_Behavior_Vimeoable extends Garp_Model_Behavior_Abstract {
             'thumbnail_large' => 'image',
             'thumbnail_small' => 'thumbnail',
             'user_name'       => 'video_author',
-        ),
-        'advanced' => array(
+        ],
+        'advanced' => [
             'id'                              => 'identifier',
             'title'                           => 'name',
             'description'                     => 'description',
@@ -46,8 +46,8 @@ class Garp_Model_Behavior_Vimeoable extends Garp_Model_Behavior_Abstract {
             'thumbnails.thumbnail.2._content' => 'image',
             'owner.display_name'              => 'video_author',
             'url'                             => 'url'
-        )
-    );
+        ]
+    ];
 
     /**
      * Wether to use the Vimeo Pro service
@@ -124,7 +124,7 @@ class Garp_Model_Behavior_Vimeoable extends Garp_Model_Behavior_Abstract {
             throw new Garp_Model_Behavior_Exception(sprintf(self::EXCEPTION_VIDEO_NOT_FOUND, $url));
         }
 
-        $out = array();
+        $out = [];
         $source = $this->_fields[$sourceApiKey];
         foreach ($source as $vimeoKey => $garpKey) {
             $this->_addDataKey($out, $input, $videoData, $vimeoKey, $garpKey);
@@ -173,7 +173,7 @@ class Garp_Model_Behavior_Vimeoable extends Garp_Model_Behavior_Abstract {
      */
     protected function _extractValue(array $videoData, $key) {
         // Allow dot-notation to walk thru arrays
-        if (strpos($key, '.') === false) {
+        if (!str_contains($key, '.')) {
             return $videoData[$key];
         }
         $keyParts = explode('.', $key);
@@ -200,7 +200,7 @@ class Garp_Model_Behavior_Vimeoable extends Garp_Model_Behavior_Abstract {
      * @return void
      */
     protected function _populateOutput(array &$output, $key, $value) {
-        if (strpos($key, '.') === false) {
+        if (!str_contains($key, '.')) {
             $output[$key] = $value;
             return;
         }
@@ -287,7 +287,7 @@ class Garp_Model_Behavior_Vimeoable extends Garp_Model_Behavior_Abstract {
      * @return bool
      */
     protected function _valueMaybeOverwritten($key) {
-        return in_array($key, array('name', 'description'));
+        return in_array($key, ['name', 'description']);
     }
 
     /**

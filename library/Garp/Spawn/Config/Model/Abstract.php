@@ -4,17 +4,17 @@
  * @author David Spreekmeester | grrr.nl
  */
 abstract class Garp_Spawn_Config_Model_Abstract extends ArrayObject {
-    protected $_defaults = array(
+    protected $_defaults = [
         'order' => "created DESC",
         'creatable' => true,
         'deletable' => true,
         'quickAddable' => false,
         'visible' => true,
-        'listFields' => array(),
+        'listFields' => [],
         'module' => 'default',
-        'relations' => array(),
-        'behaviors' => array()
-    );
+        'relations' => [],
+        'behaviors' => []
+    ];
 
 
     public function __construct(
@@ -52,11 +52,11 @@ abstract class Garp_Spawn_Config_Model_Abstract extends ArrayObject {
     }
 
     protected function _addModelLabel($id) {
-        $defaults = array(
+        $defaults = [
             'label' => ucfirst(Garp_Spawn_Util::underscored2readable(
                 Garp_Spawn_Util::camelcased2underscored($this['id'])
             ))
-        );
+        ];
 
         foreach ($defaults as $prop => $defaultValue) {
             if (

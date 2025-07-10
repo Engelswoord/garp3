@@ -32,18 +32,18 @@ class Garp_Service_Elasticsearch extends Zend_Service_Abstract {
             $request    = new Garp_Service_Elasticsearch_Request('GET', '/_mapping');
             $response   = $request->execute();
             return $response->isOk();
-        } catch (Exception $e) {}
+        } catch (Exception) {}
 
         return false;
     }
 
     public function remap() {
         $mappingJson    = $this->_getMapping();
-        $mapping        = json_decode($mappingJson, true);
+        $mapping        = json_decode((string) $mappingJson, true);
 
         foreach ($mapping as $type => $typeMapping) {
             $path       = '/' . $type . '/_mapping';
-            $typeMappingJson = json_encode(array($type => $typeMapping));
+            $typeMappingJson = json_encode([$type => $typeMapping]);
             $request    = new Garp_Service_Elasticsearch_Request('PUT', $path, $mapping);
             $response   = $request->execute();          
         }

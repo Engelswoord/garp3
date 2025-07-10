@@ -106,7 +106,7 @@ class Garp_File_Storage_S3 implements Garp_File_Storage_Protocol {
         $this->_verifyPath();
 
         // strip off preceding slash, add trailing one.
-        $path = substr($this->_config['path'], 1) . '/';
+        $path = substr((string) $this->_config['path'], 1) . '/';
         return $this->_getApi()->listObjects([
             'Bucket' => $this->_config['bucket'],
             'Prefix' => $path
@@ -192,8 +192,8 @@ class Garp_File_Storage_S3 implements Garp_File_Storage_Protocol {
             }
         }
 
-        if (false !== strpos($filename, '.')) {
-            $ext = substr($filename, strrpos($filename, '.')+1);
+        if (str_contains((string) $filename, '.')) {
+            $ext = substr((string) $filename, strrpos((string) $filename, '.')+1);
             if (array_key_exists($ext, $this->_knownMimeTypes)) {
                 $mime = $this->_knownMimeTypes[$ext];
             } else {
@@ -237,7 +237,7 @@ class Garp_File_Storage_S3 implements Garp_File_Storage_Protocol {
         $this->_verifyPath();
         // Note: AWS SDK does not want the URI to start with a slash, as opposed to the old Zend
         // Framework implementation.
-        $path = trim($this->_config['path'], '/');
+        $path = trim((string) $this->_config['path'], '/');
         return $path . '/' . $filename;
     }
 
@@ -283,12 +283,11 @@ class Garp_File_Storage_S3 implements Garp_File_Storage_Protocol {
     }
 
     protected function _getAwsCredentialsProvider(): callable {
-        return function () {
+        return fn() =>
             //@phpstan-ignore function.notFound
-            return Promise\promise_for(
-                new Credentials($this->_config['apikey'], $this->_config['secret'])
-            );
-        };
+            Promise\promise_for(
+            new Credentials($this->_config['apikey'], $this->_config['secret'])
+        );
     }
 
     protected function _verifyPath() {
@@ -298,7 +297,7 @@ class Garp_File_Storage_S3 implements Garp_File_Storage_Protocol {
     }
 
     protected function _gzipIsAllowedForFilename($filename): bool {
-        $ext = substr($filename, strrpos($filename, '.')+1);
+        $ext = substr((string) $filename, strrpos((string) $filename, '.')+1);
         if (!$ext) {
             return true;
         }

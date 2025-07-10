@@ -16,7 +16,7 @@ class Garp_Config_Ini extends Zend_Config_Ini {
      *
      * @var array
      */
-    protected static $_store = array();
+    protected static $_store = [];
 
     /**
      * Receive a config ini file from cache

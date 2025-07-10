@@ -12,7 +12,7 @@ class Garp_Model_Db_Chapter extends Model_Base_Chapter {
      * Content nodes. Saved here from beforeInsert til afterInsert
      * @var Array
      */
-    protected $_contentNodeList = array();
+    protected $_contentNodeList = [];
 
 
     /**
@@ -89,7 +89,7 @@ class Garp_Model_Db_Chapter extends Model_Base_Chapter {
         if (!empty($this->_contentNodeList)) {
             $this->relateContentNodes($this->_contentNodeList, $id);
             // Reset queue.
-            $this->_contentNodeList = array();
+            $this->_contentNodeList = [];
         }
     }
 
@@ -129,12 +129,12 @@ class Garp_Model_Db_Chapter extends Model_Base_Chapter {
             }
 
             // Relate the ContentNode to the subtype record
-            Garp_Content_Relation_Manager::relate(array(
+            Garp_Content_Relation_Manager::relate([
                 'modelA' => 'Model_ContentNode',
                 'modelB' => $contentTypeModel,
                 'keyA'   => $contentNodeId,
                 'keyB'   => $contentTypeId,
-            ));
+            ]);
         }
     }
 
@@ -146,12 +146,12 @@ class Garp_Model_Db_Chapter extends Model_Base_Chapter {
      */
     protected function _insertContentNode(Garp_Util_Configuration $contentNodeData) {
         $contentNodeModel = new Model_ContentNode();
-        $contentNodeId = $contentNodeModel->insert(array(
+        $contentNodeId = $contentNodeModel->insert([
             'columns'    => $contentNodeData['columns'],
             'classes'    => $contentNodeData['classes'],
             'type'       => $contentNodeData['type'],
             'chapter_id' => $contentNodeData['chapter_id'],
-        ));
+        ]);
         return $contentNodeId;
     }
 

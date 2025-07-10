@@ -35,17 +35,10 @@ class Garp_Content_Import_Factory {
     public static function mapExtensionToType($dataFile) {
         $ext = substr(strrchr($dataFile, '.'), 1);
         $ext = strtolower($ext);
-        switch ($ext) {
-            case 'xls':
-            case 'xlsx':
-                return 'Excel';
-            break;
-            case 'json':
-                return 'Json';
-            break;
-            default:
-                throw new Garp_Content_Import_Exception("Could not find importer for type $ext");
-            break;
-        }
+        return match ($ext) {
+            'xls', 'xlsx' => 'Excel',
+            'json' => 'Json',
+            default => throw new Garp_Content_Import_Exception("Could not find importer for type $ext"),
+        };
     }
 }

@@ -113,7 +113,7 @@ class Garp_Model_Behavior_Cachable extends Garp_Model_Behavior_Core {
      * @return String
      */
     public function createCacheKey(Garp_Model $model, Zend_Db_Select $select) {
-        $boundModels = serialize(Garp_Model_Db_BindingManager::getBindingTree(get_class($model)));
+        $boundModels = serialize(Garp_Model_Db_BindingManager::getBindingTree($model::class));
         $hash = md5(
             md5($select).
             md5($boundModels)

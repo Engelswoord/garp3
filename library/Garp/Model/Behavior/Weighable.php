@@ -28,7 +28,7 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
      * Store relationships, the foreign keys and the weight column here
      * @var Array
      */
-    protected $_relationConfig = array();
+    protected $_relationConfig = [];
 
     /**
      * Use this table alias in the query
@@ -49,7 +49,7 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
      * @param Array $config Configuration values
      */
     protected function _setup($config) {
-        foreach ($config as $model => $relationOptions) {
+        foreach ($config as $relationOptions) {
             if (!is_array($relationOptions) ||
                 !array_key_exists(self::FOREIGN_KEY_COLUMN_KEY, $relationOptions) ||
                 !array_key_exists(self::WEIGHT_COLUMN_KEY, $relationOptions)) {
@@ -80,7 +80,7 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
     public function beforeInsert(&$args) {
         $model = $args[0];
         $data = &$args[1];
-        foreach ($this->_relationConfig as $foreignModel => $modelRelationConfig) {
+        foreach ($this->_relationConfig as $modelRelationConfig) {
             $foreignKey = $modelRelationConfig[self::FOREIGN_KEY_COLUMN_KEY];
             // only act if the foreign key column is filled
             if (!empty($data[$foreignKey])) {
@@ -100,7 +100,7 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
         $data = &$args[1];
         $where = $args[2];
 
-        foreach ($this->_relationConfig as $foreignModel => $modelRelationConfig) {
+        foreach ($this->_relationConfig as $modelRelationConfig) {
             $foreignKey = $modelRelationConfig[self::FOREIGN_KEY_COLUMN_KEY];
             $weightColumn = $modelRelationConfig[self::WEIGHT_COLUMN_KEY];
             /**
@@ -143,7 +143,7 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
         $foreignKeyColumn = $model->getAdapter()->quoteIdentifier($modelRelationConfig[self::FOREIGN_KEY_COLUMN_KEY]);
         $weightColumn     = $model->getAdapter()->quoteIdentifier($modelRelationConfig[self::WEIGHT_COLUMN_KEY]);
         $select = $model->select()
-                        ->from($model->getName(), array('max' => 'MAX('.$weightColumn.')'))
+                        ->from($model->getName(), ['max' => 'MAX('.$weightColumn.')'])
                         ->where($foreignKeyColumn.' = ?', $foreignKey)
                         ;
 
@@ -167,7 +167,7 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
         $foreignKeyColumn = $model->getAdapter()->quoteIdentifier($modelRelationConfig[self::FOREIGN_KEY_COLUMN_KEY]);
         $weightColumn     = $modelRelationConfig[self::WEIGHT_COLUMN_KEY];
         $select = $model->select()
-                        ->from($model->getName(), array('weight' => $weightColumn))
+                        ->from($model->getName(), ['weight' => $weightColumn])
                         ->where($foreignKeyColumn.' = ?', $foreignKey)
                         ;
         $where = (array)$where;
@@ -203,8 +203,8 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
          * the registered weight column.
          */
         foreach ($where as $w) {
-            foreach ($this->_relationConfig as $model => $modelRelationConfig) {
-                if (strpos($w, $modelRelationConfig[self::FOREIGN_KEY_COLUMN_KEY]) !== false) {
+            foreach ($this->_relationConfig as $modelRelationConfig) {
+                if (str_contains((string) $w, (string) $modelRelationConfig[self::FOREIGN_KEY_COLUMN_KEY])) {
                     $select->order($alias . $modelRelationConfig[self::WEIGHT_COLUMN_KEY].' DESC');
                 }
             }
@@ -243,8 +243,8 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
      * @return Array
      */
     public function getWeightColumns() {
-        $out = array();
-        foreach ($this->_relationConfig as $i => $conf) {
+        $out = [];
+        foreach ($this->_relationConfig as $conf) {
             $out[] = $conf[self::WEIGHT_COLUMN_KEY];
         }
         return $out;

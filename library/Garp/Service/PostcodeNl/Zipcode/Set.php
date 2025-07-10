@@ -20,7 +20,7 @@ class Garp_Service_PostcodeNl_Zipcode_Set extends ArrayObject {
         // remove header row
         unset($lines[0]);
 
-        array_walk($lines, array($this, '_loadNode'));
+        array_walk($lines, [$this, '_loadNode']);
     }
 
     protected function _loadNode($line) {

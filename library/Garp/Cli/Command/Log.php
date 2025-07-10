@@ -33,7 +33,7 @@ class Garp_Cli_Command_Log extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function clean(array $args = array()) {
+    public function clean(array $args = []) {
         // Resolve parameters
         $logRoot = f\prop('root', $args) ?? APPLICATION_PATH . '/data/logs';
         $pattern = f\prop('pattern', $args) ?? '/\.log$/i';

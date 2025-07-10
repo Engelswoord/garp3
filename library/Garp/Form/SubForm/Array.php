@@ -23,7 +23,7 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
      * Duplicatable options
      * @var Array
      */
-    protected $_duplicatableOptions = array();
+    protected $_duplicatableOptions = [];
 
 
     /**
@@ -35,7 +35,7 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
 
         if ($duplicatableOptions = $this->getAttrib('duplicatable')) {
             $this->_duplicatable = true;
-            $this->_duplicatableOptions = is_array($duplicatableOptions) ? $duplicatableOptions : array();
+            $this->_duplicatableOptions = is_array($duplicatableOptions) ? $duplicatableOptions : [];
         }
         $this->setAttrib('duplicatable', null);
     }
@@ -58,7 +58,7 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
      */
     public function addElement($element, $name = null, $options = null) {
         if (is_string($element)) {
-            $index = isset($options['index']) ? $options['index'] : 0;
+            $index = $options['index'] ?? 0;
             unset($options['index']);
         } elseif ($element instanceof Zend_Form_Element) {
             $index = $element->getAttrib('index') ?: 0;
@@ -140,10 +140,10 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
         if ($this->isDuplicatable()) {
             $class .= ' duplicatable';
         }
-        $subform = new Garp_Form_SubForm(array(
+        $subform = new Garp_Form_SubForm([
             'name' => (string)$index,
             'class' => $class
-        ));
+        ]);
         if (is_array($this->_duplicatableOptions)) {
             if (!empty($this->_duplicatableOptions['buttonClass'])) {
                 $subform->getDecorator('HtmlTag')->setOption('data-button-class', $this->_duplicatableOptions['buttonClass']);

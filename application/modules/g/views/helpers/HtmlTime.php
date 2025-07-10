@@ -16,16 +16,16 @@ class G_View_Helper_HtmlTime extends Zend_View_Helper_HtmlElement {
      * @param array $options Additional options
      * @return string
      */
-    public function htmlTime($datetime, $formatForHumans, $options = array()) {
+    public function htmlTime($datetime, $formatForHumans, $options = []) {
         $time = !is_numeric($datetime) ? strtotime($datetime) : $datetime;
         $this->_setDefaultOptions($options);
         $datetime = new Garp_DateTime('@' . $time);
 
         $attributes = array_merge(
             $options['attributes'],
-            array(
+            [
                 'datetime' => $datetime->format_local($options['formatForRobots'])
-            )
+            ]
         );
 
         $label = $datetime->format_local($formatForHumans);
@@ -42,7 +42,7 @@ class G_View_Helper_HtmlTime extends Zend_View_Helper_HtmlElement {
     protected function _setDefaultOptions(&$options) {
         $options = new Garp_Util_Configuration($options);
         $options->setDefault('formatForRobots', '%Y-%m-%d')
-            ->setDefault('attributes', array());
+            ->setDefault('attributes', []);
         $options = (array)$options;
     }
 }

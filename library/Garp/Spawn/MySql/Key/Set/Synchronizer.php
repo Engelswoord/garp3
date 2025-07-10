@@ -23,9 +23,9 @@ class Garp_Spawn_MySql_Key_Set_Synchronizer {
      *
      * @var array
      */
-    public $droppedForeignKeyNamesDuringColumnSync = array();
+    public $droppedForeignKeyNamesDuringColumnSync = [];
 
-    protected $_types = array('foreign', 'unique', 'index');
+    protected $_types = ['foreign', 'unique', 'index'];
 
     /**
      * @var Garp_Spawn_MySql_Key_Set
@@ -166,7 +166,7 @@ class Garp_Spawn_MySql_Key_Set_Synchronizer {
         $inSync   = true;
         $liveKeys = $this->getTarget();
 
-        if ($keysToAdd = $this->_getKeysToAdd($keyType, $liveKeys)) {
+        if ($keysToAdd = $this->_getKeysToAdd($keyType)) {
             switch ($keyType) {
             case 'unique':
                 $this->_addUniqueKeys($keysToAdd);
@@ -181,7 +181,7 @@ class Garp_Spawn_MySql_Key_Set_Synchronizer {
                 $error = "Syncing {$keyType} keys is not yet supported. ";
                 if ($keysToAdd) {
                     $error.= "You're trying to add: ";
-                    $keysToAddColumns = array();
+                    $keysToAddColumns = [];
                     foreach ($keysToAdd as $key) {
                         $keyToAdd = $keyType === 'primary' ? $key : $key->remoteColumn;
                         $keysToAddColumns[] = $keyToAdd;
@@ -200,7 +200,7 @@ class Garp_Spawn_MySql_Key_Set_Synchronizer {
         $tableName = $this->getSource()->getTableName();
         $liveKeys  = $this->getTarget();
 
-        if ($keysToModify = $this->_getKeysToModify($keyType, $liveKeys)) {
+        if ($keysToModify = $this->_getKeysToModify($keyType)) {
             switch ($keyType) {
             case 'foreign':
                 foreach ($keysToModify as $key) {
@@ -226,7 +226,7 @@ class Garp_Spawn_MySql_Key_Set_Synchronizer {
             }
         }
 
-        $this->_setPrimaryKey($liveKeys);
+        $this->_setPrimaryKey();
 
         return $inSync;
     }
@@ -279,7 +279,7 @@ class Garp_Spawn_MySql_Key_Set_Synchronizer {
         $inSync   = true;
         $liveKeys = $this->getTarget();
 
-        if ($keysToRemove = $this->_getKeysToRemove($keyType, $liveKeys)) {
+        if ($keysToRemove = $this->_getKeysToRemove($keyType)) {
             switch ($keyType) {
             case 'unique':
                 $this->_removeUniqueKeys($keysToRemove);
@@ -294,7 +294,7 @@ class Garp_Spawn_MySql_Key_Set_Synchronizer {
                 $error = "Syncing {$keyType} keys is not yet supported. ";
                 if ($keysToRemove) {
                     $error.= "You're trying to delete: ";
-                    $keysToDelColumns = array();
+                    $keysToDelColumns = [];
                     foreach ($keysToRemove as $key) {
                         $keyToDel = $keyType === 'primary' ? $key : $key->remoteColumn;
                         $keysToDelColumns[] = $keyToDel;
@@ -341,7 +341,7 @@ class Garp_Spawn_MySql_Key_Set_Synchronizer {
         ;
         $configuredTypeKeys = (array)$this->getSource()->{$keyTypeVarName};
         $existingTypeKeys   = (array)$this->getTarget()->{$keyTypeVarName};
-        $keysToAdd          = array();
+        $keysToAdd          = [];
 
         foreach ($configuredTypeKeys as $key) {
             switch ($keyType) {
@@ -384,7 +384,7 @@ class Garp_Spawn_MySql_Key_Set_Synchronizer {
         $configuredTypeKeys = (array)$this->{$keyTypeVarName};
         $liveKeys           = $this->getTarget();
         $existingTypeKeys   = (array)$liveKeys->{$keyTypeVarName};
-        $keysToModify       = array();
+        $keysToModify       = [];
 
         foreach ($configuredTypeKeys as $key) {
             switch ($keyType) {
@@ -416,7 +416,7 @@ class Garp_Spawn_MySql_Key_Set_Synchronizer {
 
         $configuredTypeKeys = (array)$this->getSource()->{$keyTypeVarName};
         $existingTypeKeys   = (array)$this->getTarget()->{$keyTypeVarName};
-        $keysToRemove       = array();
+        $keysToRemove       = [];
 
         foreach ($existingTypeKeys as $key) {
             switch ($keyType) {

@@ -39,8 +39,8 @@ class Garp_Auth_Factory {
         if (!$classKey) {
             $classKey = $key;
         }
-        $className = strpos($classKey, '_') === false ?
-            self::AUTH_NAMESPACE . ucfirst($classKey) : $classKey;
+        $className = !str_contains((string) $classKey, '_') ?
+            self::AUTH_NAMESPACE . ucfirst((string) $classKey) : $classKey;
         $obj = new $className();
         if (!$obj instanceof Garp_Auth_Adapter_Abstract) {
             throw new Garp_Auth_Exception(sprintf(self::EXCEPTION_INVALID_CLASS, $className));

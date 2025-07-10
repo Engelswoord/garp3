@@ -57,7 +57,7 @@ class Garp_Model_Behavior_QRCodeable extends Garp_Model_Behavior_Abstract {
 
         // provide uniform interface, so we can always loop
         if (!$results instanceof Garp_Db_Table_Rowset) {
-            $results = array($results);
+            $results = [$results];
         }
 
         foreach ($results as $row) {

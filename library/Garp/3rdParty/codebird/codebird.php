@@ -32,13 +32,13 @@ foreach ($constants as $i => $id) {
     $id = 'CODEBIRD_RETURNFORMAT_' . $id;
     defined($id) or define($id, $i);
 }
-$constants = array(
+$constants = [
     'CURLE_SSL_CERTPROBLEM' => 58,
     'CURLE_SSL_CACERT' => 60,
     'CURLE_SSL_CACERT_BADFILE' => 77,
     'CURLE_SSL_CRL_BADFILE' => 82,
     'CURLE_SSL_ISSUER_ERROR' => 83
-);
+];
 foreach ($constants as $id => $i) {
     defined($id) or define($id, $i);
 }
@@ -102,7 +102,7 @@ class Codebird
     /**
      * The file formats that Twitter accepts as image uploads
      */
-    protected $_supported_media_files = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG);
+    protected $_supported_media_files = [IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG];
 
     /**
      * The current Codebird version
@@ -229,8 +229,8 @@ class Codebird
      */
     public function getApiMethods()
     {
-        static $apimethods = array(
-            'GET' => array(
+        static $apimethods = [
+            'GET' => [
                 // Timelines
                 'statuses/mentions_timeline',
                 'statuses/user_timeline',
@@ -317,8 +317,8 @@ class Codebird
                 'help/privacy',
                 'help/tos',
                 'application/rate_limit_status'
-            ),
-            'POST' => array(
+            ],
+            'POST' => [
                 // Tweets
                 'statuses/destroy/:id',
                 'statuses/update',
@@ -376,8 +376,8 @@ class Codebird
                 'oauth/request_token',
                 'oauth2/token',
                 'oauth2/invalidate_token'
-            )
-        );
+            ]
+        ];
         return $apimethods;
     }
 
@@ -393,12 +393,12 @@ class Codebird
     public function __call($fn, $params)
     {
         // parse parameters
-        $apiparams = array();
+        $apiparams = [];
         if (count($params) > 0) {
             if (is_array($params[0])) {
                 $apiparams = $params[0];
             } else {
-                parse_str($params[0], $apiparams);
+                parse_str((string) $params[0], $apiparams);
                 // remove auto-added slashes if on magic quotes steroids
                 if (get_magic_quotes_gpc()) {
                     foreach($apiparams as $key => $value) {
@@ -441,7 +441,7 @@ class Codebird
             $method .= $path[$i];
         }
         // undo replacement for URL parameters
-        $url_parameters_with_underscore = array('screen_name');
+        $url_parameters_with_underscore = ['screen_name'];
         foreach ($url_parameters_with_underscore as $param) {
             $param = strtoupper($param);
             $replacement_was = str_replace('_', '/', $param);
@@ -450,7 +450,7 @@ class Codebird
 
         // replace AA by URL parameters
         $method_template = $method;
-        $match   = array();
+        $match   = [];
         if (preg_match('/[A-Z_]{2,}/', $method, $match)) {
             foreach ($match as $param) {
                 $param_l = strtolower($param);
@@ -547,9 +547,9 @@ class Codebird
             throw new \Exception('To obtain a bearer token, the consumer key must be set.');
         }
         $ch  = false;
-        $post_fields = array(
+        $post_fields = [
             'grant_type' => 'client_credentials'
-        );
+        ];
         $url = self::$_endpoint_oauth . 'oauth2/token';
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -562,22 +562,22 @@ class Codebird
         curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
 
         curl_setopt($ch, CURLOPT_USERPWD, self::$_oauth_consumer_key . ':' . self::$_oauth_consumer_secret);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Expect:'
-        ));
+        ]);
         $reply = curl_exec($ch);
 
         // certificate validation results
         $validation_result = curl_errno($ch);
         if (in_array(
                 $validation_result,
-                array(
+                [
                     CURLE_SSL_CERTPROBLEM,
                     CURLE_SSL_CACERT,
                     CURLE_SSL_CACERT_BADFILE,
                     CURLE_SSL_CRL_BADFILE,
                     CURLE_SSL_ISSUER_ERROR
-                )
+                ]
             )
         ) {
             throw new \Exception('Error ' . $validation_result . ' while validating the Twitter API certificate.');
@@ -622,26 +622,26 @@ class Codebird
     private function _url($data)
     {
         if (is_array($data)) {
-            return array_map(array(
+            return array_map([
                 $this,
                 '_url'
-            ), $data);
+            ], $data);
         } elseif (is_scalar($data)) {
-            return str_replace(array(
+            return str_replace([
                 '+',
                 '!',
                 '*',
                 "'",
                 '(',
                 ')'
-            ), array(
+            ], [
                 ' ',
                 '%21',
                 '%2A',
                 '%27',
                 '%28',
                 '%29'
-            ), rawurlencode($data));
+            ], rawurlencode($data));
         } else {
             return '';
         }
@@ -690,19 +690,19 @@ class Codebird
      *
      * @return string Authorization HTTP header
      */
-    protected function _sign($httpmethod, $method, $params = array())
+    protected function _sign($httpmethod, $method, $params = [])
     {
         if (self::$_oauth_consumer_key == null) {
             throw new \Exception('To generate a signature, the consumer key must be set.');
         }
-        $sign_params      = array(
+        $sign_params      = [
             'consumer_key' => self::$_oauth_consumer_key,
             'version' => '1.0',
             'timestamp' => time(),
             'nonce' => $this->_nonce(),
             'signature_method' => 'HMAC-SHA1'
-        );
-        $sign_base_params = array();
+        ];
+        $sign_base_params = [];
         foreach ($sign_params as $key => $value) {
             $sign_base_params['oauth_' . $key] = $this->_url($value);
         }
@@ -721,9 +721,9 @@ class Codebird
         $sign_base_string = substr($sign_base_string, 0, -1);
         $signature        = $this->_sha1($httpmethod . '&' . $this->_url($method) . '&' . $this->_url($sign_base_string));
 
-        $params = array_merge($oauth_params, array(
+        $params = array_merge($oauth_params, [
             'oauth_signature' => $signature
-        ));
+        ]);
         ksort($params);
         $authorization = 'Authorization: OAuth ';
         foreach ($params as $key => $value) {
@@ -767,7 +767,7 @@ class Codebird
      */
     protected function _detectMultipart($method)
     {
-        $multiparts = array(
+        $multiparts = [
             // Tweets
             'statuses/update_with_media',
 
@@ -775,7 +775,7 @@ class Codebird
             'account/update_profile_background_image',
             'account/update_profile_image',
             'account/update_profile_banner'
-        );
+        ];
         return in_array($method, $multiparts);
     }
 
@@ -796,14 +796,14 @@ class Codebird
         }
 
         // only check specific parameters
-        $possible_files = array(
+        $possible_files = [
             // Tweets
             'statuses/update_with_media' => 'media[]',
             // Accounts
             'account/update_profile_background_image' => 'image',
             'account/update_profile_image' => 'image',
             'account/update_profile_banner' => 'banner'
-        );
+        ];
         // method might have files?
         if (! in_array($method, array_keys($possible_files))) {
             return;
@@ -874,7 +874,7 @@ class Codebird
      */
     protected function _getEndpoint($method, $method_template)
     {
-        if (substr($method, 0, 5) == 'oauth') {
+        if (str_starts_with($method, 'oauth')) {
             $url = self::$_endpoint_oauth . $method;
         } else {
             $url = self::$_endpoint . $method . '.json';
@@ -895,7 +895,7 @@ class Codebird
      * @return mixed The API reply, encoded in the set return_format
      */
 
-    protected function _callApi($httpmethod, $method, $method_template, $params = array(), $multipart = false, $app_only_auth = false)
+    protected function _callApi($httpmethod, $method, $method_template, $params = [], $multipart = false, $app_only_auth = false)
     {
         if (! function_exists('curl_init')) {
             throw new \Exception('To make API requests, the PHP curl extension must be available.');
@@ -911,7 +911,7 @@ class Codebird
             $ch = curl_init($url_with_params);
         } else {
             if ($multipart) {
-                $authorization = $this->_sign($httpmethod, $url, array());
+                $authorization = $this->_sign($httpmethod, $url, []);
                 $params        = $this->_buildMultipart($method_template, $params);
             } else {
                 $authorization = $this->_sign($httpmethod, $url, $params);
@@ -931,15 +931,15 @@ class Codebird
             }
             $authorization = 'Authorization: Bearer ' . self::$_oauth_bearer_token;
         }
-        $request_headers = array();
+        $request_headers = [];
         if (isset($authorization)) {
             $request_headers[] = $authorization;
             $request_headers[] = 'Expect:';
         }
         if ($multipart) {
-            $first_newline      = strpos($params, "\r\n");
-            $multipart_boundary = substr($params, 2, $first_newline - 2);
-            $request_headers[]  = 'Content-Length: ' . strlen($params);
+            $first_newline      = strpos((string) $params, "\r\n");
+            $multipart_boundary = substr((string) $params, 2, $first_newline - 2);
+            $request_headers[]  = 'Content-Length: ' . strlen((string) $params);
             $request_headers[]  = 'Content-Type: multipart/form-data; boundary='
                 . $multipart_boundary;
         }
@@ -966,13 +966,13 @@ class Codebird
         $validation_result = curl_errno($ch);
         if (in_array(
                 $validation_result,
-                array(
+                [
                     CURLE_SSL_CERTPROBLEM,
                     CURLE_SSL_CACERT,
                     CURLE_SSL_CACERT_BADFILE,
                     CURLE_SSL_CRL_BADFILE,
                     CURLE_SSL_ISSUER_ERROR
-                )
+                ]
             )
         ) {
             throw new \Exception('Error ' . $validation_result . ' while validating the Twitter API certificate.');
@@ -999,18 +999,18 @@ class Codebird
     protected function _parseApiReply($method, $reply)
     {
         // split headers and body
-        $headers = array();
+        $headers = [];
         $reply = explode("\r\n\r\n", $reply, 4);
 
         // check if using proxy
-        if (substr($reply[0], 0, 35) === 'HTTP/1.1 200 Connection Established') {
+        if (str_starts_with($reply[0], 'HTTP/1.1 200 Connection Established')) {
             array_shift($reply);
         } elseif (count($reply) > 2) {
             $headers = array_shift($reply);
-            $reply = array(
+            $reply = [
                 $headers,
                 implode("\r\n", $reply)
-            );
+            ];
         }
 
         $headers_array = explode("\r\n", $reply[0]);
@@ -1033,14 +1033,14 @@ class Codebird
         if ($reply == '[]') {
             switch ($this->_return_format) {
                 case CODEBIRD_RETURNFORMAT_ARRAY:
-                    return array();
+                    return [];
                 case CODEBIRD_RETURNFORMAT_JSON:
                     return '{}';
                 case CODEBIRD_RETURNFORMAT_OBJECT:
                     return new \stdClass;
             }
         }
-        $parsed = array();
+        $parsed = [];
         if (! $parsed = json_decode($reply, $need_array)) {
             if ($reply) {
                 if (stripos($reply, '<' . '?xml version="1.0" encoding="UTF-8"?' . '>') === 0) {
@@ -1056,7 +1056,7 @@ class Codebird
                     $reply = explode('&', $reply);
                     foreach ($reply as $element) {
                         if (stristr($element, '=')) {
-                            list($key, $value) = explode('=', $element);
+                            [$key, $value] = explode('=', $element);
                             $parsed[$key] = $value;
                         } else {
                             $parsed['message'] = $element;
@@ -1066,15 +1066,12 @@ class Codebird
             }
             $reply = json_encode($parsed);
         }
-        switch ($this->_return_format) {
-            case CODEBIRD_RETURNFORMAT_ARRAY:
-                return $parsed;
-            case CODEBIRD_RETURNFORMAT_JSON:
-                return $reply;
-            case CODEBIRD_RETURNFORMAT_OBJECT:
-                return (object) $parsed;
-        }
-        return $parsed;
+        return match ($this->_return_format) {
+            CODEBIRD_RETURNFORMAT_ARRAY => $parsed,
+            CODEBIRD_RETURNFORMAT_JSON => $reply,
+            CODEBIRD_RETURNFORMAT_OBJECT => (object) $parsed,
+            default => $parsed,
+        };
     }
 }
 

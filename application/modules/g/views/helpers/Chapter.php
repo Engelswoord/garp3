@@ -23,7 +23,7 @@ class G_View_Helper_Chapter extends Zend_View_Helper_Abstract {
      * @param array $params Additional parameters for the partial.
      * @return string
      */
-    public function render(array $chapter, array $params = array()) {
+    public function render(array $chapter, array $params = []) {
         $partial = 'partials/chapters/' . ($chapter['type'] ?: 'default') . '.phtml';
         $params['content'] = $chapter['content'];
         return $this->view->partial($partial, 'default', $params);
@@ -36,11 +36,11 @@ class G_View_Helper_Chapter extends Zend_View_Helper_Abstract {
      * @param array $params Additional parameters for the partial
      * @return string
      */
-    public function renderContentNode(array $contentNode, array $params = array()) {
+    public function renderContentNode(array $contentNode, array $params = []) {
         if (empty($contentNode)) {
             return '';
         }
-        $model = strtolower($contentNode['model']);
+        $model = strtolower((string) $contentNode['model']);
         $type  = $contentNode['type'] ?: 'default';
         $partial = "partials/chapters/$model/$type.phtml";
         $params['contentNode'] = $contentNode;

@@ -13,19 +13,19 @@ class Garp_Log extends Zend_Log {
      * @param  array|Zend_Config $config Array or instance of Zend_Config
      * @return Zend_Log
      */
-    static public function factory($config = array()) {
+    static public function factory($config = []) {
         if (is_string($config)) {
             // Assume $config is a filename
             $filename = $config;
-            $config = array(
+            $config = [
                 'timestampFormat' => 'Y-m-d',
-                array(
+                [
                     'writerName' => 'Stream',
-                    'writerParams' => array(
+                    'writerParams' => [
                         'stream' => self::_getLoggingDirectory() . DIRECTORY_SEPARATOR . $filename
-                    )
-                )
-            );
+                    ]
+                ]
+            ];
         }
         return parent::factory($config);
     }

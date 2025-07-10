@@ -103,9 +103,9 @@ class Garp_Model_Behavior_Bitlyable extends Garp_Model_Behavior_Abstract {
             $bitly = new Garp_Service_Bitly();
             $view = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('view');
             $url = sprintf($this->_url, $data[$this->_column]);
-            $response = $bitly->shorten(array(
+            $response = $bitly->shorten([
                 'longUrl' => $view->fullUrl($url)
-            ));
+            ]);
             if ($response['status_code'] == 200) {
                 $shortenedUrl = $response['data']['url'];
                 $data[$this->_targetColumn] = $shortenedUrl;

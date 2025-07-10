@@ -50,13 +50,13 @@ class Garp_Spawn_Model_Binding_Factory {
         if ($relation->weighable) {
             $weightCol1 = Garp_Spawn_Util::camelcased2underscored($rules[0] . $rules[1]) . '_weight';
             $weightCol2 = Garp_Spawn_Util::camelcased2underscored($rules[1] . $rules[0]) . '_weight';
-            $config['inputs'][$weightCol1] = array('type' => 'numeric');
-            $config['inputs'][$weightCol2] = array('type' => 'numeric');
+            $config['inputs'][$weightCol1] = ['type' => 'numeric'];
+            $config['inputs'][$weightCol2] = ['type' => 'numeric'];
         }
 
         $bindingModelConfig = new Garp_Spawn_Config_Model_Binding(
             $habtmModelId,
-            new Garp_Spawn_Config_Storage_PhpArray(array($habtmModelId => $config)),
+            new Garp_Spawn_Config_Storage_PhpArray([$habtmModelId => $config]),
             new Garp_Spawn_Config_Format_PhpArray
         );
 
@@ -90,12 +90,12 @@ class Garp_Spawn_Model_Binding_Factory {
 
         $hasNameConflict = $relation->name === $localModel->id;
         if ($hasNameConflict) {
-            return array($relation->name . '1', $relation->name . '2');
+            return [$relation->name . '1', $relation->name . '2'];
         }
 
         $modelIds = $this->_getModelIdsAlphabetically();
 
-        $rules = array($relation->name, $this->_getSecondRule());
+        $rules = [$relation->name, $this->_getSecondRule()];
         $rules = $this->_sortRulesEgocentrically($rules);
 
         return $rules;
@@ -130,7 +130,7 @@ class Garp_Spawn_Model_Binding_Factory {
     protected function _getModelIds() {
         $relation = $this->getRelation();
         $localModel = $relation->getLocalModel();
-        $modelIds = array($localModel->id, $relation->model);
+        $modelIds = [$localModel->id, $relation->model];
 
         return $modelIds;
     }
@@ -190,20 +190,20 @@ class Garp_Spawn_Model_Binding_Factory {
         $localModel = $relation->getLocalModel();
         $models = $this->_getModelIdsByRuleSort();
     
-        $config = array(
+        $config = [
             'listFields' => $relation->column,
-            'inputs' => $relation->inputs ?: array(),
-            'relations' => array(
-                $rules[0] => array(
+            'inputs' => $relation->inputs ?: [],
+            'relations' => [
+                $rules[0] => [
                     'type' => 'belongsTo',
                     'model' => $models[0]
-                ),
-                $rules[1] => array(
+                ],
+                $rules[1] => [
                     'type' => 'belongsTo',
                     'model' => $models[1]
-                )
-            )
-        );
+                ]
+            ]
+        ];
 
         return $config;
     }

@@ -104,7 +104,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
         if (!$intersectionTable instanceof Zend_Db_Table_Abstract) {
             $type = gettype($intersectionTable);
             if ($type == 'object') {
-                $type = get_class($intersectionTable);
+                $type = $intersectionTable::class;
             }
             throw new Zend_Db_Table_Row_Exception("Intersection table must be a Zend_Db_Table_Abstract, but it is $type");
         }
@@ -114,7 +114,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
         if (($tableDefinition = $this->_table->getDefinition()) !== null
             && ($intersectionTable->getDefinition() == null)
         ) {
-            $intersectionTable->setOptions(array(Zend_Db_Table_Abstract::DEFINITION => $tableDefinition));
+            $intersectionTable->setOptions([Zend_Db_Table_Abstract::DEFINITION => $tableDefinition]);
         }
 
         if (is_string($matchTable)) {
@@ -124,7 +124,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
         if (! $matchTable instanceof Zend_Db_Table_Abstract) {
             $type = gettype($matchTable);
             if ($type == 'object') {
-                $type = get_class($matchTable);
+                $type = $matchTable::class;
             }
             throw new Zend_Db_Table_Row_Exception("Match table must be a Zend_Db_Table_Abstract, but it is $type");
         }
@@ -134,7 +134,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
         if (($tableDefinition = $this->_table->getDefinition()) !== null
             && ($matchTable->getDefinition() == null)
         ) {
-            $matchTable->setOptions(array(Zend_Db_Table_Abstract::DEFINITION => $tableDefinition));
+            $matchTable->setOptions([Zend_Db_Table_Abstract::DEFINITION => $tableDefinition]);
         }
 
         if ($select === null) {
@@ -147,10 +147,10 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
         $interInfo = $intersectionTable->info();
         $interDb   = $intersectionTable->getAdapter();
         $interName = $interInfo['name'];
-        $interSchema = isset($interInfo['schema']) ? $interInfo['schema'] : null;
+        $interSchema = $interInfo['schema'] ?? null;
         $matchInfo = $matchTable->info();
         $matchName = $matchInfo['name'];
-        $matchSchema = isset($matchInfo['schema']) ? $matchInfo['schema'] : null;
+        $matchSchema = $matchInfo['schema'] ?? null;
 
         $matchMap = $this->_prepareReference($intersectionTable, $matchTable, $matchRefRule);
 
@@ -163,7 +163,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
 
         $currentFromPart = $select->getPart(Zend_Db_Select::FROM);
         if (!is_array($currentFromPart) || !array_key_exists('m', $currentFromPart)) {
-            $select->from(array('m' => $matchName), Zend_Db_Select::SQL_WILDCARD, $matchSchema);
+            $select->from(['m' => $matchName], Zend_Db_Select::SQL_WILDCARD, $matchSchema);
         }
 
         $select->joinInner(['i' => $interName], $joinCond, [], $interSchema)->setIntegrityCheck(false);
@@ -181,20 +181,20 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
         }
 
         // Manually trigger 'beforeFetch' thru the intersection table, so it may manipulate the SELECT object.
-        $intersectionTable->notifyObservers('beforeFetch', array($intersectionTable, $select));
+        $intersectionTable->notifyObservers('beforeFetch', [$intersectionTable, $select]);
 
         // Same on the match table
-        $matchTable->notifyObservers('beforeFetch', array($matchTable, $select));
+        $matchTable->notifyObservers('beforeFetch', [$matchTable, $select]);
 
         $stmt = $select->query();
 
-        $config = array(
+        $config = [
             'table'    => $matchTable,
             'data'     => $stmt->fetchAll(Zend_Db::FETCH_ASSOC),
             'rowClass' => $matchTable->getRowClass(),
             'readOnly' => false,
             'stored'   => true
-        );
+        ];
 
         $rowsetClass = $matchTable->getRowsetClass();
         if (!class_exists($rowsetClass)) {
@@ -226,7 +226,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
          *
          * This is why we've chosen to not trigger 'afterFetch' on the intersection table.
          */
-        $matchTable->notifyObservers('afterFetch', array($matchTable, $rowset));
+        $matchTable->notifyObservers('afterFetch', [$matchTable, $rowset]);
         return $rowset;
     }
 
@@ -260,7 +260,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
         if (!$parentTable instanceof Zend_Db_Table_Abstract) {
             $type = gettype($parentTable);
             if ($type == 'object') {
-                $type = get_class($parentTable);
+                $type = $parentTable::class;
             }
             throw new Zend_Db_Table_Row_Exception("Parent table must be a Zend_Db_Table_Abstract, but it is $type");
         }
@@ -270,7 +270,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
         if (($tableDefinition = $this->_table->getDefinition()) !== null
             && ($parentTable->getDefinition() == null)
         ) {
-            $parentTable->setOptions(array(Zend_Db_Table_Abstract::DEFINITION => $tableDefinition));
+            $parentTable->setOptions([Zend_Db_Table_Abstract::DEFINITION => $tableDefinition]);
         }
 
         if ($select === null) {
@@ -318,7 +318,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      */
     public function getPrimaryKey($useDirty = true) {
         $primary = (array)$this->_getTable()->info(Zend_Db_Table::PRIMARY);
-        $out = array();
+        $out = [];
         foreach ($primary as $key) {
             if (!isset($this->$key)) {
                 throw new Garp_Db_Table_Row_Exception_PrimaryKeyNotInRow("$key was not in the row");
@@ -336,7 +336,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      * @return Garp_Db_Table_Row $this
      */
     public function setRelated($binding, $rowset) {
-        $this->_related[$binding] = !is_null($rowset) ? $rowset : array();
+        $this->_related[$binding] = !is_null($rowset) ? $rowset : [];
         return $this;
     }
 
@@ -466,7 +466,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      */
     public function toArray() {
         $data = parent::toArray();
-        foreach (array('_related', '_virtual') as $prop) {
+        foreach (['_related', '_virtual'] as $prop) {
             foreach ($this->{$prop} as $key => $val) {
                 if ($val instanceof Zend_Db_Table_Row_Abstract
                     || $val instanceof Zend_Db_Table_Rowset_Abstract

@@ -13,7 +13,7 @@ class Garp_Cli_Command_Figlet extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function display(array $args = array()) {
+    public function display(array $args = []) {
         if (empty($args)) {
             Garp_Cli::errorOut('The least you can do is provide a text...');
         } else {

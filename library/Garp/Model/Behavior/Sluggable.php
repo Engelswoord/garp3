@@ -45,7 +45,7 @@ class Garp_Model_Behavior_Sluggable extends Garp_Model_Behavior_Abstract {
             throw new Garp_Model_Behavior_Exception(sprintf(self::EXCEPTION_MISSING_CONFIG, 'baseField'));
         }
         $this->_normalizeBaseFieldConfiguration($config);
-        $config['slugField'] = array_key_exists('slugField', $config) ? (array)$config['slugField'] : array('slug');
+        $config['slugField'] = array_key_exists('slugField', $config) ? (array)$config['slugField'] : ['slug'];
 
         $baseFieldCount = count($config['baseField']);
         $slugFieldCount = count($config['slugField']);
@@ -106,7 +106,7 @@ class Garp_Model_Behavior_Sluggable extends Garp_Model_Behavior_Abstract {
         $localizedModel = $i18nModelFactory->getModel($unilingualModel);
         $localizedModel->unregisterObserver('Translatable');
         $localizedModel->unregisterObserver('Draftable');
-        $referenceMap = $model->getReference(get_class($unilingualModel));
+        $referenceMap = $model->getReference($unilingualModel::class);
 
         // Construct a query that fetches the base fields from the parent model
         $baseFields = $this->_config['baseField'];
@@ -135,7 +135,7 @@ class Garp_Model_Behavior_Sluggable extends Garp_Model_Behavior_Abstract {
      * @return Array
      */
     protected function _baseFieldConfigToColumns(array $baseFields) {
-        $out = array();
+        $out = [];
         foreach ($baseFields as $baseField) {
             $out[] = $baseField['column'];
         }
@@ -152,7 +152,7 @@ class Garp_Model_Behavior_Sluggable extends Garp_Model_Behavior_Abstract {
     protected function _addSlugFromMultiple(Garp_Model_Db $model, array &$targetData, array $referenceData) {
         $baseFields = $this->_config['baseField'];
         $slugField  = $this->_config['slugField'][0];
-        $baseData = array();
+        $baseData = [];
         if (!empty($targetData[$slugField])) {
             return;
         }
@@ -199,7 +199,7 @@ class Garp_Model_Behavior_Sluggable extends Garp_Model_Behavior_Abstract {
      */
     protected function _getBaseString($baseField, $data) {
         $type = $baseField['type'];
-        $method = '_getBaseStringFrom' . ucfirst($type);
+        $method = '_getBaseStringFrom' . ucfirst((string) $type);
         return $this->{$method}($data, $baseField);
     }
 
@@ -229,7 +229,7 @@ class Garp_Model_Behavior_Sluggable extends Garp_Model_Behavior_Abstract {
         if (!array_key_exists($col, $data)) {
             return '';
         }
-        return date($format, strtotime($data[$col]));
+        return date($format, strtotime((string) $data[$col]));
     }
 
     /**
@@ -311,13 +311,13 @@ class Garp_Model_Behavior_Sluggable extends Garp_Model_Behavior_Abstract {
      */
     protected function _normalizeBaseFieldConfiguration(&$config) {
         $bf_config = (array)$config['baseField'];
-        $nbf_config = array();
-        $defaults = array(
+        $nbf_config = [];
+        $defaults = [
             'type' => 'text',
             'format' => null
-        );
+        ];
         foreach ($bf_config as $bf) {
-            $bf = is_string($bf) ? array('column' => $bf) : $bf;
+            $bf = is_string($bf) ? ['column' => $bf] : $bf;
             $bf = array_merge($defaults, $bf);
             $nbf_config[] = $bf;
         }

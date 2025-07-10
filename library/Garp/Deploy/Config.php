@@ -16,9 +16,9 @@ class Garp_Deploy_Config {
 
     protected $_genericContent;
 
-    protected $_deployParams = array(
+    protected $_deployParams = [
         'server', 'deploy_to', 'user', 'application', 'repo_url', 'branch'
-    );
+    ];
 
     public function __construct() {
         $this->_genericContent = $this->_fetchGenericContent();
@@ -79,8 +79,8 @@ class Garp_Deploy_Config {
      * @return Array
      */
     protected function _parseContent($content) {
-        $output = array();
-        $matches = array();
+        $output = [];
+        $matches = [];
         $paramsString = implode('|', $this->_deployParams);
         $pattern = '/:?(?P<paramName>' . $paramsString
             . ')[,:]? [\'"](?P<paramValue>[^\'"]*)[\'"]/';
@@ -95,9 +95,7 @@ class Garp_Deploy_Config {
         foreach ($this->_deployParams as $p) {
             $indices = array_keys(
                 array_filter(
-                    $matches['paramName'], function ($pn) use ($p) {
-                        return $pn === $p;
-                    }
+                    $matches['paramName'], fn($pn) => $pn === $p
                 )
             );
             if (!count($indices)) {
@@ -117,10 +115,10 @@ class Garp_Deploy_Config {
             $output['server'] = array_map(
                 function ($serverConfig) {
                     $bits = explode('@', $serverConfig, 2);
-                    return array(
+                    return [
                     'user' => $bits[0],
                     'server' => $bits[1]
-                    );
+                    ];
                 }, $output['server']
             );
         }

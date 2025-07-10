@@ -41,35 +41,35 @@ class Garp_Util_SimpleMail {
      *
      * @var Array
      */
-    protected $_params = array();
+    protected $_params = [];
 
     /**
      * Submitted post values
      *
      * @var Array
      */
-    protected $_postParams = array();
+    protected $_postParams = [];
 
     /**
      * Skippable keys, don't add these to the list.
      *
      * @var Array
      */
-    protected $_skippableKeys = array('controller', 'module', 'action', 'locale', 'ts', 'hp');
+    protected $_skippableKeys = ['controller', 'module', 'action', 'locale', 'ts', 'hp'];
 
     /**
      * Errors
      *
      * @var Array
      */
-    protected $_errors = array();
+    protected $_errors = [];
 
     /**
      * Use aliases for keys
      *
      * @var Array
      */
-    protected $_aliases = array();
+    protected $_aliases = [];
 
     /**
      * Class constructor
@@ -130,7 +130,7 @@ class Garp_Util_SimpleMail {
      */
     public function setFrom($from) {
         if (!is_array($from)) {
-            $from = array($from, '');
+            $from = [$from, ''];
         }
         $this->_params['from'] = $from;
         return $this;
@@ -153,7 +153,7 @@ class Garp_Util_SimpleMail {
      */
     public function setTo($to) {
         if (!is_array($to)) {
-            $to = array($to, '');
+            $to = [$to, ''];
         }
         $this->_params['to'] = $to;
         return $this;
@@ -165,7 +165,7 @@ class Garp_Util_SimpleMail {
      * @return Array
      */
     public function getTo() {
-        return !empty($this->_params['to']) ? $this->_params['to'] : array();
+        return !empty($this->_params['to']) ? $this->_params['to'] : [];
     }
 
     /**
@@ -226,7 +226,7 @@ class Garp_Util_SimpleMail {
      * @param Array $requiredFields
      * @return Boolean description
      */
-    public function isValid(array $requiredFields = array()) {
+    public function isValid(array $requiredFields = []) {
         // check if all values required to send the mail are set
         if (empty($this->_params['body'])
             || empty($this->_params['from'])

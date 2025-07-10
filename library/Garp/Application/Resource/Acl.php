@@ -71,8 +71,8 @@ class Garp_Application_Resource_Acl extends Zend_Application_Resource_ResourceAb
                 Zend_Registry::get(self::DEFAULT_REGISTRY_KEY) : new Zend_Acl();
 
 
-            $roles = array();
-            $resources = array();
+            $roles = [];
+            $resources = [];
 
             if (isset($options['roles'])) {
                 $roles = $options['roles'];
@@ -118,7 +118,7 @@ class Garp_Application_Resource_Acl extends Zend_Application_Resource_ResourceAb
             // If the properties aren't set as an array, then we will consider
             // the value as the role ID.
             if (!is_array($properties)) {
-                $properties = array('id' => $properties);
+                $properties = ['id' => $properties];
             }
 
             $id = $properties['id'];
@@ -139,11 +139,11 @@ class Garp_Application_Resource_Acl extends Zend_Application_Resource_ResourceAb
             // If the properties aren't set as an array, then we will consider
             // the value as the role ID.
             if (!is_array($properties)) {
-                $properties = array('id' => $properties);
+                $properties = ['id' => $properties];
             }
 
             $id = $properties['id'];
-            $parents = array();
+            $parents = [];
 
             if (is_null($id) || empty($id)) {
                 throw new Zend_Application_Resource_Exception(
@@ -154,7 +154,7 @@ class Garp_Application_Resource_Acl extends Zend_Application_Resource_ResourceAb
             }
 
             if (isset($properties['parents']) && !empty($properties['parents'])) {
-                $parents = explode(',', $properties['parents']);
+                $parents = explode(',', (string) $properties['parents']);
             }
 
             if ($id == $roleId) {
@@ -189,7 +189,7 @@ class Garp_Application_Resource_Acl extends Zend_Application_Resource_ResourceAb
             // If the properties aren't set as an array, then we will consider
             // the value as the resource ID.
             if (!is_array($properties)) {
-                $properties = array('id' => $properties);
+                $properties = ['id' => $properties];
             }
 
             $resourceName = strtolower($resourceName);
@@ -219,14 +219,14 @@ class Garp_Application_Resource_Acl extends Zend_Application_Resource_ResourceAb
             // If the properties aren't set as an array, then we will consider
             // the value as the resource ID.
             if (!is_array($properties)) {
-                $properties = array('id' => $properties);
+                $properties = ['id' => $properties];
             }
 
             $id = $properties['id'];
             $parent = null;
             $resource = null;
-            $allowRules = array();
-            $denyRules = array();
+            $allowRules = [];
+            $denyRules = [];
 
             if ($resourceName === 'all') {
                 $id = 'all';
@@ -296,7 +296,7 @@ class Garp_Application_Resource_Acl extends Zend_Application_Resource_ResourceAb
             // If the user sets the privilege value to a string, we will consider
             // this as the list of roles.
             if (!is_array($ruleProperties)) {
-                $ruleProperties = array('roles' => $ruleProperties);
+                $ruleProperties = ['roles' => $ruleProperties];
             }
 
             if ($privilege === 'all') {
@@ -323,7 +323,7 @@ class Garp_Application_Resource_Acl extends Zend_Application_Resource_ResourceAb
                 );
             }
 
-            $roles = explode(',', $roles);
+            $roles = explode(',', (string) $roles);
 
             if ($roles[0] === 'all') {
                 $roles = null;

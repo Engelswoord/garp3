@@ -6,7 +6,7 @@
  * @package Garp_Config_Ini
  * @author  Harmen Janssen <harmen@grrr.nl>
  */
-class Garp_Config_Ini_String {
+class Garp_Config_Ini_String implements \Stringable {
     /**
      * @var string
      */
@@ -40,7 +40,7 @@ class Garp_Config_Ini_String {
     /**
      * @return string
      */
-    public function __toString() {
+    public function __toString(): string {
         return $this->_value;
     }
 }

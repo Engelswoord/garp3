@@ -52,7 +52,7 @@ function partial(string $filename, array $params = [], string $module = 'default
 function __($str) {
     if (Zend_Registry::isRegistered('Zend_Translate')) {
         $translate = Zend_Registry::get('Zend_Translate');
-        return call_user_func_array(array($translate, '_'), func_get_args());
+        return call_user_func_array([$translate, '_'], func_get_args());
     }
     return $str;
 }

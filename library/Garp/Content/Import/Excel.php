@@ -19,7 +19,7 @@ class Garp_Content_Import_Excel extends Garp_Content_Import_Abstract {
         $excelReader = $this->_getReader();
         $worksheet = $excelReader->getActiveSheet();
         $maxRows = 3;
-        $out = array();
+        $out = [];
 
         foreach ($worksheet->getRowIterator() as $i => $row) {
             // workaround cause those PHPExcel assholes start their arrays at index 1
@@ -28,7 +28,7 @@ class Garp_Content_Import_Excel extends Garp_Content_Import_Abstract {
                 break;
             }
 
-            $cellData = array();
+            $cellData = [];
             $cellIterator = $row->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(false);
             foreach ($cellIterator as $cell) {
@@ -50,7 +50,7 @@ class Garp_Content_Import_Excel extends Garp_Content_Import_Abstract {
     public function save(Garp_Model $model, array $mapping, array $options) {
         $excelReader = $this->_getReader();
         $worksheet = $excelReader->getActiveSheet();
-        $pks = array();
+        $pks = [];
         $iterator = $worksheet->getRowIterator();
         foreach ($iterator as $i => $row) {
             // workaround cause those PHPExcel assholes start their arrays at index 1
@@ -59,10 +59,10 @@ class Garp_Content_Import_Excel extends Garp_Content_Import_Abstract {
                 continue;
             }
 
-            $cellData = array();
+            $cellData = [];
             $cellIterator = $row->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(false);
-            foreach ($cellIterator as $j => $cell) {
+            foreach ($cellIterator as $cell) {
                 $cellData[] = $cell->getValue();
             }
             try {

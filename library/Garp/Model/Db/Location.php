@@ -43,8 +43,8 @@ class Garp_Model_Db_Location extends Model_Base_Location {
      * Normalize the input so that it matches the stored format.
      */
     public function normalizeZip($zip) {
-        if (strlen($zip) === 6) {
-            $zip = substr($zip, 0, 4) . ' ' . strtoupper(substr($zip, 4, 2));
+        if (strlen((string) $zip) === 6) {
+            $zip = substr((string) $zip, 0, 4) . ' ' . strtoupper(substr((string) $zip, 4, 2));
         }
 
         return $zip;

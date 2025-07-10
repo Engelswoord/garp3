@@ -60,7 +60,7 @@ class Garp_Service_Elasticsearch_Configuration {
      *          String  [$params['writeBaseUrl']]   The url to the ES instance, excluding index name and trailing slash. 
      *          String  [$params['index']]          The index name to use. Defaults to an ini configured value.
      */
-    public function __construct(array $params = array()) {
+    public function __construct(array $params = []) {
         $params = $this->_addDefaults($params);
         $this->_loadParams($params);
     }

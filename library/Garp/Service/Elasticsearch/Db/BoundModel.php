@@ -84,10 +84,10 @@ class Garp_Service_Elasticsearch_Db_BoundModel extends Garp_Service_Elasticsearc
         $namespace          = $this->_getModelNamespace();
         $relatedModelClass  = $this->_getModelClass($relationConfig);
 
-        $params             = array(
+        $params             = [
             'modelClass'    => $relatedModelClass,
             'rule'          => $relationConfig['name']
-        );
+        ];
 
         if ($relationConfig['type'] === 'hasMany') {
             $params['rule'] = $relationConfig['oppositeRule'];
@@ -107,10 +107,10 @@ class Garp_Service_Elasticsearch_Db_BoundModel extends Garp_Service_Elasticsearc
     }
 
     protected function _getBindingModelName(array $relationConfig) {
-        $modelNames = array(
+        $modelNames = [
             $relationConfig['oppositeRule'],
             $relationConfig['model']
-        );
+        ];
         sort($modelNames);
         $bindingModelName = implode('', $modelNames);
 
@@ -122,7 +122,7 @@ class Garp_Service_Elasticsearch_Db_BoundModel extends Garp_Service_Elasticsearc
         $relatedModel       = new $relatedModelClass();
 
         $relatedTable = $relationConfig['type'] === 'hasAndBelongsToMany'
-            ? array('m' => $relatedModel->getName())
+            ? ['m' => $relatedModel->getName()]
             : $relatedModel->getName()
         ;
 

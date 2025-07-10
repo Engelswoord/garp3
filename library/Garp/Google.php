@@ -27,9 +27,9 @@ class Garp_Google {
 
     public static function getCredentials() {
         $config = Zend_Registry::get('config');
-        return array(
-            'apiKey' => isset($config->google->apiKey) ? $config->google->apiKey : null,
+        return [
+            'apiKey' => $config->google->apiKey ?? null,
                 //'appName' => isset($config->google->appName) ? $config->google->appName : null,
-        );
+        ];
     }
 }

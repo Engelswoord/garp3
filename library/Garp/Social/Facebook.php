@@ -44,7 +44,7 @@ class Garp_Social_Facebook {
      * Get URL to login page
      * @return String
      */
-    public function getLoginUrl($params=array()) {
+    public function getLoginUrl($params=[]) {
         return $this->_client->getLoginUrl($params);
     }
 
@@ -107,10 +107,10 @@ class Garp_Social_Facebook {
             $this->_client->setAccessToken($config['accessToken']);
 
             // Find the friends' Facebook UIDs
-            $friends = $this->_client->api(array(
+            $friends = $this->_client->api([
                 'method' => 'fql.query',
                 'query'  => 'SELECT uid2 FROM friend WHERE uid1 = me()'
-            ));
+            ]);
 
             // Find local user records
             $userModel = new Model_User();
@@ -128,8 +128,8 @@ class Garp_Social_Facebook {
             }
             $friendQuery = $userModel->select()
                 ->setIntegrityCheck(false)
-                ->from($userTable, array('id'))
-                ->join($authFbTable, $authFbTable.'.user_id = '.$userTable.'.id', array())
+                ->from($userTable, ['id'])
+                ->join($authFbTable, $authFbTable.'.user_id = '.$userTable.'.id', [])
                 ->where('facebook_uid IN ('.$fbIds.')')
                 ->order($userTable.'.id')
             ;
@@ -150,7 +150,7 @@ class Garp_Social_Facebook {
             // Clear cache manually, since the table isn't updated thru conventional paths.
             Garp_Cache_Manager::purge($bindingModel);
             return !!$result;
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }

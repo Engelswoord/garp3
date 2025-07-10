@@ -58,7 +58,7 @@ class Garp_Db_Table_Rowset_Iterator {
      */
     protected function _beforeWalk() {
         if (!$this->_result instanceof Garp_Db_Table_Rowset) {
-            $this->_result = array($this->_result);
+            $this->_result = [$this->_result];
         }
     }       
 

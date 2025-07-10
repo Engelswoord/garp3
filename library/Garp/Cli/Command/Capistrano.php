@@ -15,7 +15,7 @@ class Garp_Cli_Command_Capistrano extends Garp_Cli_Command {
      * @param Array $args Various options. Must contain;
      * @return Boolean
      */
-    public function main(array $args = array()) {
+    public function main(array $args = []) {
         if ($this->_helpWasRequested($args)) {
             $this->_help();
             return;
@@ -52,7 +52,7 @@ class Garp_Cli_Command_Capistrano extends Garp_Cli_Command {
         }
 
         $capContents = file_get_contents($capfile);
-        return strpos($capContents, 'set :deploy_config_path') !== false
+        return str_contains($capContents, 'set :deploy_config_path')
             ? 3
             : 2
         ;
@@ -69,7 +69,7 @@ class Garp_Cli_Command_Capistrano extends Garp_Cli_Command {
 
     protected function _replaceSharedCachePathConfig() {
         $path = 'application/configs/';
-        $files = array('application.ini', 'cache.ini');
+        $files = ['application.ini', 'cache.ini'];
 
         foreach ($files as $file) {
             if (!file_exists($path . $file)) {
@@ -89,7 +89,7 @@ class Garp_Cli_Command_Capistrano extends Garp_Cli_Command {
 
     protected function _replaceSharedUploadPathConfig() {
         $path = 'application/configs/';
-        $files = array('application.ini', 'assets.ini');
+        $files = ['application.ini', 'assets.ini'];
 
         foreach ($files as $file) {
             if (!file_exists($path . $file)) {
@@ -133,7 +133,7 @@ class Garp_Cli_Command_Capistrano extends Garp_Cli_Command {
         $envStrings = preg_split("/\s*end\s*/", $envConfigs, -1, PREG_SPLIT_NO_EMPTY);
 
         foreach ($envStrings as $envString) {
-            if (substr($envString, 0, 1) === '#') {
+            if (str_starts_with($envString, '#')) {
                 continue;
             }
 
@@ -142,12 +142,12 @@ class Garp_Cli_Command_Capistrano extends Garp_Cli_Command {
                 continue;
             }
 
-            $config = array(
+            $config = [
                 'name' => $envName,
                 'server' => $this->_extractServer($envString)
-            );
+            ];
 
-            $params = array('deploy_to', 'user', 'garp_env', 'branch');
+            $params = ['deploy_to', 'user', 'garp_env', 'branch'];
             foreach ($params as $param) {
                 $config[$param] = $this->_extractRubySymbol($envString, $param);
             }
@@ -186,7 +186,7 @@ EOF;
     }
 
     protected function _extractAbstract($pattern, $haystack) {
-        $needle = preg_match($pattern, $haystack, $matches);
+        $needle = preg_match($pattern, (string) $haystack, $matches);
         if (array_key_exists(1, $matches)) {
             return $matches[1];
         }
@@ -221,7 +221,7 @@ EOF;
     protected function _helpWasRequested(array $args) {
         return
             array_key_exists(0, $args) &&
-            strcasecmp($args[0], 'help') === 0
+            strcasecmp((string) $args[0], 'help') === 0
         ;
     }
 }

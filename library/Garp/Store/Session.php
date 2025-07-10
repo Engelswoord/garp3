@@ -33,10 +33,7 @@ class Garp_Store_Session implements Garp_Store_Interface {
      * @return mixed
      */
     public function get($key) {
-        if (isset($this->_session->{$key})) {
-            return $this->_session->{$key};
-        }
-        return null;
+        return $this->_session->{$key} ?? null;
     }
 
     /**

@@ -13,15 +13,13 @@ class Garp_Content_Api_Rest_Schema {
     const EXCEPTION_MODEL_NOT_FOUND = 'Unknown model %s';
     const EXCEPTION_RELATION_NOT_FOUND = '%s is not related to %s';
 
-    protected $_apiRoute;
-
-    public function __construct($apiRoute) {
-        $this->_apiRoute = $apiRoute;
+    public function __construct(protected $_apiRoute)
+    {
     }
 
     public function getModelPaths() {
         $models = $this->_getVisibleModels();
-        return array_map(array($this, 'getModelConfig'), $models);
+        return array_map($this->getModelConfig(...), $models);
     }
 
     public function getModelDetails($modelName) {
@@ -43,12 +41,12 @@ class Garp_Content_Api_Rest_Schema {
     }
 
     public function getModelConfig($model) {
-        return array(
+        return [
             'label' => $model->label,
             'root' => (string)new Garp_Util_FullUrl(
-                array(array('datatype' => $model->id), $this->_apiRoute)
+                [['datatype' => $model->id], $this->_apiRoute]
             )
-        );
+        ];
     }
 
     public function getRelation($model, $relatedModel) {
@@ -89,31 +87,27 @@ class Garp_Content_Api_Rest_Schema {
 
     protected function _getFields($model) {
         return array_map(
-            function ($field) {
-                return get_object_vars($field);
-            },
+            fn($field) => get_object_vars($field),
             $model->fields->getFields() //('editable', true)
         );
     }
 
     protected function _getHasOneColumns($model) {
         $hasOneRelations = $model->relations->getRelations('type', 'hasOne');
-        $hasOneForeignKeyTemplate = array(
+        $hasOneForeignKeyTemplate = [
             'type' => 'relation',
-        );
+        ];
         $hasOneColumns = array_map(
-            function ($relation) use ($hasOneForeignKeyTemplate) {
-                return array_merge(
-                    $hasOneForeignKeyTemplate,
-                    array(
-                        'relation' => $relation->name,
-                        'name' => $relation->column,
-                        'label' => $relation->label,
-                        'required' => $relation->required,
-                        'model' => $relation->model
-                    )
-                );
-            },
+            fn($relation) => array_merge(
+                $hasOneForeignKeyTemplate,
+                [
+                    'relation' => $relation->name,
+                    'name' => $relation->column,
+                    'label' => $relation->label,
+                    'required' => $relation->required,
+                    'model' => $relation->model
+                ]
+            ),
             $hasOneRelations
         );
         return $hasOneColumns;
@@ -122,7 +116,7 @@ class Garp_Content_Api_Rest_Schema {
     protected function _getListFields($model) {
         return array_merge(
             array_values($model->fields->listFieldNames),
-            array('author_id')
+            ['author_id']
         );
     }
 }

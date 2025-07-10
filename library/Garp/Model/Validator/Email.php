@@ -23,7 +23,7 @@ class Garp_Model_Validator_Email extends Garp_Model_Validator_Abstract {
      *
      * @var Array
      */
-    protected $_fields = array();
+    protected $_fields = [];
 
 
     /**
@@ -49,11 +49,11 @@ class Garp_Model_Validator_Email extends Garp_Model_Validator_Abstract {
     public function validate(array $data, Garp_Model_Db $model, $onlyIfAvailable = true) {
         $theColumns = $this->_fields;
         $regexp = self::EMAIL_REGEXP;
-        $validate = function ($c) use ($data, $onlyIfAvailable, $regexp) {
+        $validate = function ($c) use ($data, $onlyIfAvailable, $regexp): void {
             if ($onlyIfAvailable && (!array_key_exists($c, $data) || empty($data[$c]))) {
                 return;
             }
-            if (empty($data[$c]) || !preg_match($regexp, $data[$c])) {
+            if (empty($data[$c]) || !preg_match($regexp, (string) $data[$c])) {
                 $value = !empty($data[$c]) ? $data[$c] : '';
                 $error = sprintf(__("'%value%' is not a valid email address in the basic format local-part@hostname"), $value);
                 throw new Garp_Model_Validator_Email_Exception($error);

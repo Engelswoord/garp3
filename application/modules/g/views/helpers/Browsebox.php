@@ -12,7 +12,7 @@ class G_View_Helper_Browsebox extends Zend_View_Helper_Abstract {
      *
      * @var array
      */
-    protected static $_store = array();
+    protected static $_store = [];
 
     /**
      * Render a browsebox object
@@ -21,18 +21,18 @@ class G_View_Helper_Browsebox extends Zend_View_Helper_Abstract {
      * @param array $params Extra parameters sent to the partial
      * @return string
      */
-    public function browsebox(?Garp_Browsebox $browsebox = null, $params = array()) {
+    public function browsebox(?Garp_Browsebox $browsebox = null, $params = []) {
         if (is_null($browsebox)) {
             return $this;
         }
 
         static::$_store[$browsebox->getId()] = $browsebox;
         $params = array_merge(
-            $params, array(
+            $params, [
                 'results' => $browsebox->getResults(),
                 'next'    => $browsebox->getNextUrl(),
                 'prev'    => $browsebox->getPrevUrl()
-            )
+            ]
         );
         return $this->view->partial(
             $browsebox->getViewPath(),

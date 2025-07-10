@@ -9,12 +9,12 @@ class Garp_Spawn_Behavior_Type_Sluggable extends Garp_Spawn_Behavior_Type_Abstra
     /**
      * @var Array $_defaultParams
      */
-    protected $_defaultParams = array(
+    protected $_defaultParams = [
         'baseField' => 'name',
         'slugField' => 'slug'
-    );
+    ];
 
-    protected $_slugFieldConfig = array(
+    protected $_slugFieldConfig = [
         'type' => 'text',
         'index' => true,
         'maxLength' => 255,
@@ -22,12 +22,12 @@ class Garp_Spawn_Behavior_Type_Sluggable extends Garp_Spawn_Behavior_Type_Abstra
         'unique' => true,
         'required' => false,
         'multiline' => false,
-    );
+    ];
 
 
 
     public function getFields() {
-        return array($this->_getSlugFieldName() => $this->_getSlugFieldConfig());
+        return [$this->_getSlugFieldName() => $this->_getSlugFieldConfig()];
     }
 
     public function getParams() {
@@ -74,8 +74,8 @@ class Garp_Spawn_Behavior_Type_Sluggable extends Garp_Spawn_Behavior_Type_Abstra
             if ($model instanceof Garp_Spawn_Model_I18n) {
                 // Add slug and lang as combined unique key to the model
                 // Only applicable to I18n models hence the icky instanceof check
-                $existingUnique = $model->unique ?: array();
-                $model->unique = array_merge($existingUnique, array(array('lang', 'slug')));
+                $existingUnique = $model->unique ?: [];
+                $model->unique = array_merge($existingUnique, [['lang', 'slug']]);
                 unset($slugFieldConfig['unique']);
             }
             $slugFieldConfig['multilingual'] = true;
@@ -111,7 +111,7 @@ class Garp_Spawn_Behavior_Type_Sluggable extends Garp_Spawn_Behavior_Type_Abstra
      * @return  Array   One or more model fields on which the slug is based
      */
     protected function _getModelBaseFields() {
-        $baseFields     = array();
+        $baseFields     = [];
         $model          = $this->getModel();
         $baseFieldNames = $this->_getBaseFieldNames();
 

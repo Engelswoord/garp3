@@ -18,6 +18,6 @@ class Garp_Controller_Helper_Auth extends Zend_Controller_Action_Helper_Abstract
      */
     public function __call($method, $args) {
         $auth = Garp_Auth::getInstance();
-        return call_user_func_array(array($auth, $method), $args);
+        return call_user_func_array([$auth, $method], $args);
     }
 }

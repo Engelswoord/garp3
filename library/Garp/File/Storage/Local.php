@@ -12,17 +12,14 @@ class Garp_File_Storage_Local implements Garp_File_Storage_Protocol {
 
     protected $_domain;
 
-    protected $_path;
-
     protected $_ssl;
 
     protected $_gzip;
 
     const PERMISSIONS = 0774;
 
-    public function __construct(array $config, $path) {
+    public function __construct(array $config, protected $_path) {
         $this->_docRoot = APPLICATION_PATH . "/../public";
-        $this->_path = $path;
         $this->_domain = f\prop('domain', $config);
         $this->_ssl = !!f\prop('ssl', $config);
         $this->_gzip = f\prop('gzip', $config);
@@ -75,13 +72,13 @@ class Garp_File_Storage_Local implements Garp_File_Storage_Protocol {
      * @return array
      */
     public function getList(): array {
-        $list = array();
+        $list = [];
         $dir = $this->_docRoot . $this->_path;
         if (is_dir($dir)) {
             if ($dh = opendir($dir)) {
                 while (($file = readdir($dh)) !== false) {
-                    if (substr($file, 0, 1) !== '.'
-                        && strpos($file, '.') !== false
+                    if (!str_starts_with($file, '.')
+                        && str_contains($file, '.')
                     ) {
                         $list[] = $file;
                     }
@@ -184,8 +181,8 @@ class Garp_File_Storage_Local implements Garp_File_Storage_Protocol {
             throw new Exception("Could not write to " . $this->_docRoot . $this->_path);
         }
 
-        if (strpos($filename, '/') !== false) {
-            $subdir = $this->_docRoot . $this->_path . '/' . dirname($filename);
+        if (str_contains((string) $filename, '/')) {
+            $subdir = $this->_docRoot . $this->_path . '/' . dirname((string) $filename);
             if (!file_exists($subdir)) {
                 if (!mkdir($subdir, self::PERMISSIONS, true)) {
                     throw new Exception("Could not create directory " . $subdir);

@@ -25,6 +25,6 @@ class G_View_Helper_Auth extends Zend_View_Helper_Abstract {
      */
     public function __call($method, $args) {
         $auth = Garp_Auth::getInstance();
-        return call_user_func_array(array($auth, $method), $args);
+        return call_user_func_array([$auth, $method], $args);
     }
 }

@@ -60,7 +60,7 @@ class Garp_Spawn_MySql_Table_Factory {
 
     protected function _produceTable($createStatement) {
         $model      = $this->getModel();
-        $tableClass = $this->_getTableClass($model);
+        $tableClass = $this->_getTableClass();
         return new $tableClass($createStatement, $model);
     }
 
@@ -88,7 +88,7 @@ class Garp_Spawn_MySql_Table_Factory {
 
     protected function _renderCreateFromLive() {
         $model      = $this->getModel();
-        $tableName  = $this->_getTableName($model);
+        $tableName  = $this->_getTableName();
         $adapter    = Zend_Db_Table::getDefaultAdapter();
         $liveTable  = $adapter->fetchAll("SHOW CREATE TABLE `{$tableName}`;");
         $statement  = $liveTable[0]['Create Table'] . ';';
@@ -103,13 +103,10 @@ class Garp_Spawn_MySql_Table_Factory {
             return $model->table;
         }
 
-        switch (get_class($model)) {
-        case 'Garp_Spawn_Model_Binding':
-            return '_' . strtolower($model->id);
-        break;
-        default:
-            return strtolower($model->id);
-        }
+        return match ($model::class) {
+            'Garp_Spawn_Model_Binding' => '_' . strtolower((string) $model->id),
+            default => strtolower((string) $model->id),
+        };
     }
 
     /**
@@ -118,7 +115,7 @@ class Garp_Spawn_MySql_Table_Factory {
     protected function _getTableClass() {
         $model = $this->getModel();
 
-        switch (get_class($model)) {
+        switch ($model::class) {
         case 'Garp_Spawn_Model_Binding':
             return 'Garp_Spawn_MySql_Table_Binding';
         break;
@@ -129,7 +126,7 @@ class Garp_Spawn_MySql_Table_Factory {
             return 'Garp_Spawn_MySql_Table_Base';
         break;
         default:
-            throw new Exception('I do not know which table type should be returned for ' . get_class($model));
+            throw new Exception('I do not know which table type should be returned for ' . $model::class);
         }
     }
 
@@ -146,21 +143,21 @@ class Garp_Spawn_MySql_Table_Factory {
      * @return string
      */
     protected function _renderCreateAbstract($tableName, array $fields, array $relations, $unique) {
-        $lines      = array();
+        $lines      = [];
 
         foreach ($fields as $field) {
             $lines[] = Garp_Spawn_MySql_Column::renderFieldSql($field);
         }
 
-        $primKeys = array();
-        $uniqueKeys = array();
+        $primKeys = [];
+        $uniqueKeys = [];
 
         if ($unique) {
             // This checks wether a single one-dimensional array is given: a collection of
             // columns combined into a unique key, or wether an array of arrays is given, meaning
             // multiple collections of columns combining into multiple unique keys per table.
             $isArrayOfArrays = count(array_filter($unique, 'is_array')) === count($unique);
-            $unique = !$isArrayOfArrays ? array($unique) : $unique;
+            $unique = !$isArrayOfArrays ? [$unique] : $unique;
             $uniqueKeys = array_merge($uniqueKeys, $unique);
         }
 

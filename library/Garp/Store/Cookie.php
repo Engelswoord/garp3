@@ -24,18 +24,11 @@ class Garp_Store_Cookie implements Garp_Store_Interface {
     const DEFAULT_COOKIE_PATH = '/';
 
     /**
-     * Cookie namespace
-     *
-     * @var string
-     */
-    protected $_namespace = '';
-
-    /**
      * Cookie data, associative array or scalar value.
      *
      * @var mixed
      */
-    protected $_data = array();
+    protected $_data = [];
 
     /**
      * Cookie duration
@@ -43,13 +36,6 @@ class Garp_Store_Cookie implements Garp_Store_Interface {
      * @var Int
      */
     protected $_cookieDuration;
-
-    /**
-     * Cookie path
-     *
-     * @var string
-     */
-    protected $_cookiePath;
 
     /**
      * Cookie domain.
@@ -80,23 +66,27 @@ class Garp_Store_Cookie implements Garp_Store_Interface {
     /**
      * Class constructor
      *
-     * @param string $namespace
+     * @param string $_namespace
      * @param string $cookieDuration
-     * @param string $cookiePath
+     * @param string $_cookiePath
      * @param string $cookieDomain
      * @return void
      */
-    public function __construct($namespace, $cookieDuration = false,
-        $cookiePath = self::DEFAULT_COOKIE_PATH, $cookieDomain = false
+    public function __construct(/**
+     * Cookie namespace
+     */
+    protected $_namespace, $cookieDuration = false,
+        /**
+         * Cookie path
+         */
+        protected $_cookiePath = self::DEFAULT_COOKIE_PATH, $cookieDomain = false
     ) {
-        $this->_namespace = $namespace;
         $this->_cookieDuration = $cookieDuration ?: self::DEFAULT_COOKIE_DURATION;
-        $this->_cookiePath = $cookiePath;
         $this->_cookieDomain = $cookieDomain ?: $this->_getCookieDomain();
 
         // fill internal array with existing cookie values
-        if (array_key_exists($namespace, $_COOKIE)) {
-            $this->_readInitialData($namespace);
+        if (array_key_exists($this->_namespace, $_COOKIE)) {
+            $this->_readInitialData($this->_namespace);
         }
     }
 
@@ -145,10 +135,8 @@ class Garp_Store_Cookie implements Garp_Store_Interface {
             $this->_data;
         setcookie(
             $this->_namespace,
-            $data,
-            time()+$this->_cookieDuration,
-            $this->_cookiePath,
-            $this->_cookieDomain
+            (string) $data,
+            ['expires' => time()+$this->_cookieDuration, 'path' => $this->_cookiePath, 'domain' => $this->_cookieDomain]
         );
 
         $this->_modified = false;
@@ -250,14 +238,12 @@ class Garp_Store_Cookie implements Garp_Store_Interface {
      */
     public function destroy($key = false) {
         if (!$key) {
-            $this->_data = array();
+            $this->_data = [];
             // unset the whole cookie by using a date in the past
             setcookie(
                 $this->_namespace,
                 false,
-                time()-$this->_cookieDuration,
-                $this->_cookiePath,
-                $this->_cookieDomain
+                ['expires' => time()-$this->_cookieDuration, 'path' => $this->_cookiePath, 'domain' => $this->_cookieDomain]
             );
             $this->_modified = false;
         } elseif (isset($this->_data[$key])) {
@@ -288,11 +274,11 @@ class Garp_Store_Cookie implements Garp_Store_Interface {
     }
 
     protected function _readInitialData($namespace) {
-        $this->_data = json_decode($_COOKIE[$namespace], true);
+        $this->_data = json_decode((string) $_COOKIE[$namespace], true);
         if (!$jsonError = json_last_error()) {
             return;
         }
-        $this->_data = array();
+        $this->_data = [];
         $config = Zend_Registry::get('config');
         if (!empty($config->logging->enabled) && $config->logging->enabled) {
             $jsonErrorStr = '';

@@ -27,7 +27,7 @@ class Garp_Cli_Command_Security extends Garp_Cli_Command {
         $authIni = preg_replace(
             '/auth\.adapters\.db\.salt = "(.*)"/',
             'auth.adapters.db.salt = "' . $this->_getRandomSalt() . '"',
-            $authIni
+            (string) $authIni
         );
 
         file_put_contents($authFile, $authIni);

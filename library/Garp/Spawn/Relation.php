@@ -30,8 +30,6 @@ class Garp_Spawn_Relation {
      * @var string
      */
     public $model;
-
-    public $name;
     public $type;
     public $label;
     public $limit;
@@ -132,7 +130,7 @@ class Garp_Spawn_Relation {
      *
      * @var Array
      */
-    protected $_types = array('hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany');
+    protected $_types = ['hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany'];
 
     /**
      * @var Garp_Spawn_Model_Binding
@@ -146,12 +144,11 @@ class Garp_Spawn_Relation {
      * @param array $params
      * @return void
      */
-    public function __construct(Garp_Spawn_Model_Abstract $localModel, $name, array $params) {
+    public function __construct(Garp_Spawn_Model_Abstract $localModel, public $name, array $params) {
         $this->_setLocalModel($localModel);
-        $this->name = $name;
 
-        $this->_validate($name, $params);
-        $this->_appendDefaults($name, $params);
+        $this->_validate($this->name, $params);
+        $this->_appendDefaults($this->name, $params);
 
         foreach ($params as $paramName => $paramValue) {
             $this->{$paramName} = $paramValue;
@@ -287,7 +284,7 @@ class Garp_Spawn_Relation {
      */
     public function getRules($subjectModel) {
         if ($this->type === 'hasMany') {
-            return array($this->oppositeRule);
+            return [$this->oppositeRule];
         }
         if ($this->type === 'hasAndBelongsToMany') {
             $bindingModel = $this->getBindingModel();
@@ -312,7 +309,7 @@ class Garp_Spawn_Relation {
             }
             return $rules;
         }
-        return array($this->name);
+        return [$this->name];
     }
 
     /**
@@ -370,16 +367,11 @@ class Garp_Spawn_Relation {
     }
 
     protected function _validateParam($paramName, $paramValue, $relName) {
-        switch ($paramName) {
-        case 'type':
-            $this->_validateType($paramValue, $relName);
-            break;
-        case 'name':
-            $this->_validateName($paramValue, $relName);
-            break;
-        default:
-            $this->_validateProp($paramName, $paramValue, $relName);
-        }
+        match ($paramName) {
+            'type' => $this->_validateType($paramValue, $relName),
+            'name' => $this->_validateName($paramValue, $relName),
+            default => $this->_validateProp($paramName, $paramValue, $relName),
+        };
     }
 
     protected function _validateType($paramValue, $relName) {
@@ -395,7 +387,7 @@ class Garp_Spawn_Relation {
         throw new Exception($error);
     }
 
-    protected function _validateName($paramValue, $relName) {
+    protected function _validateName($paramValue, $relName): never {
         $error = sprintf(self::ERROR_RELATION_NAME_CANNOT_BE_PROPERTY, $relName);
         throw new Exception($error);
     }
@@ -406,7 +398,7 @@ class Garp_Spawn_Relation {
         }
         $refl = new ReflectionObject($this);
         $reflProps = $refl->getProperties(ReflectionProperty::IS_PUBLIC);
-        $publicProps = array();
+        $publicProps = [];
         foreach ($reflProps as $reflProp) {
             if ($reflProp->name !== 'name') {
                 $publicProps[] = $reflProp->name;
@@ -499,7 +491,7 @@ class Garp_Spawn_Relation {
 
         //$column = Garp_Spawn_Relation_Set::getRelationColumn($this->name);
         $column = $this->column;
-        $fieldParams = array(
+        $fieldParams = [
             'model' => $this->model,
             'type' => 'numeric',
             'editable' => true,
@@ -508,7 +500,7 @@ class Garp_Spawn_Relation {
             'required' => $this->required,
             'relationAlias' => $this->name,
             'relationType' => $this->type
-        );
+        ];
         if ($this->multilingual && $this->_localModel->isMultilingual()) {
             // The relation is added to the i18n model by Garp_Spawn_Config_Model_I18n
             return;

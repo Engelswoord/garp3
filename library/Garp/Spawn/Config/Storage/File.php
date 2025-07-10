@@ -4,12 +4,10 @@
  */
 class Garp_Spawn_Config_Storage_File implements Garp_Spawn_Config_Storage_Interface {
     protected $_directory;
-    protected $_extension;
 
 
-    public function __construct($directory, $extension) {
+    public function __construct($directory, protected $_extension) {
         $this->_directory = $this->_addTrailingSlash($directory);
-        $this->_extension = $extension;
     }
 
 
@@ -28,8 +26,8 @@ class Garp_Spawn_Config_Storage_File implements Garp_Spawn_Config_Storage_Interf
 
 
     public function listObjectIds() {
-        $modelNames     = array();
-        $suffixLength   = strlen($this->_extension) + 1;
+        $modelNames     = [];
+        $suffixLength   = strlen((string) $this->_extension) + 1;
         $filePattern    = '*.' . $this->_extension;
         $filenames      = glob($this->_directory . $filePattern);
 
@@ -42,7 +40,7 @@ class Garp_Spawn_Config_Storage_File implements Garp_Spawn_Config_Storage_Interf
     
     
     protected function _addTrailingSlash($directory) {
-        return $directory . ($directory[strlen($directory) - 1] === '/' ? '' : '/');
+        return $directory . ($directory[strlen((string) $directory) - 1] === '/' ? '' : '/');
     }
     
     
@@ -57,8 +55,8 @@ class Garp_Spawn_Config_Storage_File implements Garp_Spawn_Config_Storage_Interf
         } elseif (!file_exists($path)) {
             throw new Exception("The configuration file does not exist yet. Create one at ".$path);
         } elseif (
-            ($suffixLength = strlen($this->_extension) + 1) &&
-            substr(basename($path), -$suffixLength, $suffixLength) !== ('.' . $this->_extension)
+            ($suffixLength = strlen((string) $this->_extension) + 1) &&
+            substr(basename((string) $path), -$suffixLength, $suffixLength) !== ('.' . $this->_extension)
         ) {
             throw new Exception("The configuration file does not have the proper extension. It should end in '.{$this->_extension}'.");
         }

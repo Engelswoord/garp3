@@ -9,7 +9,7 @@ class Garp_Cli_Command_Cluster extends Garp_Cli_Command {
 
     public function run() {
         $clusterServerModel = new Model_ClusterServer();
-        list($serverId, $lastCheckIn) = $clusterServerModel->checkIn();
+        [$serverId, $lastCheckIn] = $clusterServerModel->checkIn();
 
         $this->_runCacheClearJobs($serverId, $lastCheckIn);
         $this->_runScheduledJobs($serverId, $lastCheckIn);
@@ -111,10 +111,10 @@ class Garp_Cli_Command_Cluster extends Garp_Cli_Command {
         $class = $commandParts[0];
         $method = $commandParts[1];
         $argumentsIn = array_slice($commandParts, 2);
-        $argumentsOut = array();
+        $argumentsOut = [];
 
         foreach ($argumentsIn as $argument) {
-            if (strpos($argument, '=') === false) {
+            if (!str_contains($argument, '=')) {
                 $argumentsOut[] = $argument;
             } else {
                 $argumentParts = explode('=', $argument);
@@ -139,7 +139,7 @@ class Garp_Cli_Command_Cluster extends Garp_Cli_Command {
         $acceptMsg = 'Accepting job: ' . $className . '.' . $method;
         if ($argumentsOut) {
             $acceptMsg .= ' with arguments: ' .
-                str_replace(array("\n", "\t", "  "), '', print_r($argumentsOut, true));
+                str_replace(["\n", "\t", "  "], '', print_r($argumentsOut, true));
         }
         Garp_Cli::lineOut($acceptMsg);
 

@@ -37,14 +37,10 @@ class Garp_Spawn_Behavior_Factory {
     }
 
     protected static function _shouldSluggableBeSpawnedOnI18nModel($config, $inputs) {
-        $baseFields = !empty($config['baseField']) ? (array)$config['baseField'] : array('name');
-        $multilingualBaseFields = array_filter($baseFields, function($field) use ($inputs) {
-            return
-                is_string($field) &&
-                array_key_exists($field, $inputs) &&
-                $inputs[$field]['multilingual']
-            ;
-        });
+        $baseFields = !empty($config['baseField']) ? (array)$config['baseField'] : ['name'];
+        $multilingualBaseFields = array_filter($baseFields, fn($field) => is_string($field) &&
+        array_key_exists($field, $inputs) &&
+        $inputs[$field]['multilingual']);
         return count($multilingualBaseFields) > 0;
     }
 }

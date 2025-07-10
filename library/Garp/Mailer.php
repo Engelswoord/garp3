@@ -14,7 +14,7 @@ class Garp_Mailer {
     protected $_fromAddress;
     protected $_fromName;
     protected $_characterEncoding = 'utf-8';
-    protected $_attachments = array();
+    protected $_attachments = [];
     protected $_htmlView;
     protected $_htmlViewModule;
 
@@ -34,7 +34,7 @@ class Garp_Mailer {
      * @param array $attachments
      * @return bool
      */
-    public function send(array $params, array $viewParams = array(), $attachments = array()) {
+    public function send(array $params, array $viewParams = [], $attachments = []) {
         $this->_validateParams($params);
 
         $mail = new Zend_Mail($this->getCharacterEncoding());
@@ -46,9 +46,8 @@ class Garp_Mailer {
         $viewParams['subject'] = $params['subject'];
 
         if ($this->getHtmlTemplate()) {
-            $viewParams['message'] = isset($params['message']) ? $params['message'] : '';
-            $viewParams['htmlMessage'] = isset($params['htmlMessage'])
-                ? $params['htmlMessage'] : '';
+            $viewParams['message'] = $params['message'] ?? '';
+            $viewParams['htmlMessage'] = $params['htmlMessage'] ?? '';
             $mail->setBodyHtml($this->_renderView($viewParams));
         } elseif (isset($params['htmlMessage'])) {
             $mail->setBodyHtml($params['htmlMessage']);
@@ -67,8 +66,8 @@ class Garp_Mailer {
         }
 
         $this->addAttachments($attachments);
-        $mimeParts = array_map(array($this, '_attachmentToMimePart'), $this->_attachments);
-        array_walk($mimeParts, array($mail, 'addAttachment'));
+        $mimeParts = array_map([$this, '_attachmentToMimePart'], $this->_attachments);
+        array_walk($mimeParts, $mail->addAttachment(...));
 
         return $mail->send($this->getTransport());
     }
@@ -162,7 +161,7 @@ class Garp_Mailer {
     public function getDefaultAttachments() {
         $config = Zend_Registry::get('config');
         if (!isset($config->mailer->attachments)) {
-            return array();
+            return [];
         }
         return $config->mailer->attachments->toArray();
     }
@@ -174,12 +173,11 @@ class Garp_Mailer {
     }
 
     public function addAttachment($id, $attachment) {
-        $this->_attachments[] = array($id, $attachment);
+        $this->_attachments[] = [$id, $attachment];
     }
 
     public function getDefaultHtmlTemplate() {
-        return isset(Zend_Registry::get('config')->mailer->template) ?
-            Zend_Registry::get('config')->mailer->template : null;
+        return Zend_Registry::get('config')->mailer->template ?? null;
     }
 
     public function setHtmlTemplate($template) {
@@ -191,8 +189,7 @@ class Garp_Mailer {
     }
 
     public function getDefaultHtmlTemplateModule() {
-        return isset(Zend_Registry::get('config')->mailer->template_module) ?
-            Zend_Registry::get('config')->mailer->template_module : 'default';
+        return Zend_Registry::get('config')->mailer->template_module ?? 'default';
     }
 
     public function setHtmlTemplateModule($module) {
@@ -251,7 +248,7 @@ class Garp_Mailer {
     }
 
     protected function _attachmentToMimePart($args) {
-        list($id, $attachment) = $args;
+        [$id, $attachment] = $args;
         $obj = file_get_contents($attachment);
         // Check if the attachment is gzipped and act accordingly
         $unzipper = new Garp_File_Unzipper($obj);
@@ -268,7 +265,7 @@ class Garp_Mailer {
          */
         $at->disposition = Zend_Mime::DISPOSITION_INLINE;
         $at->encoding = Zend_Mime::ENCODING_BASE64;
-        $at->filename = basename($attachment);
+        $at->filename = basename((string) $attachment);
         return $at;
     }
 
@@ -291,11 +288,11 @@ class Garp_Mailer {
 
     protected function _configureAmazonSesTransport() {
         $sesConfig = $this->_getAmazonSesConfiguration();
-        return array(
+        return [
             'accessKey'  => $sesConfig->accessKey,
             'privateKey' => $sesConfig->secretKey,
             'region'     => $sesConfig->region
-        );
+        ];
     }
 
     protected function _getAmazonSesConfiguration() {

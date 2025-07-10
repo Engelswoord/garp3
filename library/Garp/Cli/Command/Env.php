@@ -9,13 +9,13 @@
  */
 class Garp_Cli_Command_Env extends Garp_Cli_Command {
 
-    public function setup(array $args = array()) {
+    public function setup(array $args = []) {
         // Perform app-specific tasks
         $this->_init();
 
         // This one's free: inserting required snippets
         $snippetCmd = new Garp_Cli_Command_Snippet();
-        $snippetCmd->create(array('from', 'file'));
+        $snippetCmd->create(['from', 'file']);
         return true;
     }
 
@@ -25,8 +25,8 @@ class Garp_Cli_Command_Env extends Garp_Cli_Command {
      * @param array $args Accept "false", "0", 0, and false as disablers.
      * @return bool
      */
-    public function setUnderConstruction(array $args = array()) {
-        $enabled = empty($args) ? true : !in_array(current($args), array(0, false, 'false', '0'));
+    public function setUnderConstruction(array $args = []) {
+        $enabled = empty($args) ? true : !in_array(current($args), [0, false, 'false', '0']);
         Garp_Cli::lineOut(
             Zend_Registry::get('config')->app->name .
             ' is' . ($enabled ? '' : ' no longer') . ' under construction'

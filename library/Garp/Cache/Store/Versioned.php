@@ -9,21 +9,18 @@
  */
 class Garp_Cache_Store_Versioned {
     /**
-     * The key in the cache that stores the current version
-     *
-     * @var string
-     */
-    protected $_versionKey;
-
-
-    /**
      * Class constructor
      *
-     * @param string $versionKey The key in the cache that stores the current version
+     * @param string $_versionKey The key in the cache that stores the current version
      * @return void
      */
-    public function __construct($versionKey) {
-        $this->_versionKey = $versionKey;
+    public function __construct(
+        /**
+         * The key in the cache that stores the current version
+         */
+        protected $_versionKey
+    )
+    {
     }
 
     /**
@@ -39,10 +36,10 @@ class Garp_Cache_Store_Versioned {
         $version = (int)$cache->load($this->_versionKey);
         // save the data to cache but include the version number
         return $cache->save(
-            array(
+            [
                 'data' => $data,
                 'version' => $version
-            ),
+            ],
             $key
         );
     }

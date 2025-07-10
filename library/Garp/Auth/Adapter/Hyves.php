@@ -22,7 +22,7 @@ class Garp_Auth_Adapter_Hyves extends Garp_Auth_Adapter_OpenId {
     public function authenticate(Zend_Controller_Request_Abstract $request,
         Zend_Controller_Response_Abstract $response) {
         $this->setSreg(new Zend_OpenId_Extension_Sreg(
-            array(
+            [
                 "nickname"  => true,
                 "email"     => true,
                 "fullname"  => true,
@@ -30,7 +30,7 @@ class Garp_Auth_Adapter_Hyves extends Garp_Auth_Adapter_OpenId {
                 "gender"    => true,
                 "country"   => true,
                 "language"  => true,
-            ),
+            ],
             null,
             1.1
         ));

@@ -17,7 +17,7 @@ class Garp_Cli_Command_Elasticsearch extends Garp_Cli_Command {
     protected $_service;
 
 
-    public function main(array $args = array()) {
+    public function main(array $args = []) {
         $this->setService($this->_initService());
         return parent::main($args);
     }
@@ -145,7 +145,7 @@ class Garp_Cli_Command_Elasticsearch extends Garp_Cli_Command {
     }
 
     protected function _fetchAllIds(Garp_Model_Db $model) {
-        $fields  = array('id');
+        $fields  = ['id'];
         $select  = $model->select()->from($model->getName(), $fields);
         $records = $model->fetchAll($select);
         return $records;

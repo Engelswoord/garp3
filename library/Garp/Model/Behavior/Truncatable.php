@@ -15,7 +15,7 @@ class Garp_Model_Behavior_Truncatable extends Garp_Model_Behavior_Abstract {
      * Column configuration
      * @var Array
      */
-    protected $_config = array();
+    protected $_config = [];
 
     /**
      * Setup behavior

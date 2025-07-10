@@ -13,7 +13,7 @@ class Garp_Cli_Command_Permissions extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function set(array $args = array()) {
+    public function set(array $args = []) {
         if (!file_exists('application/data/cache')
             || !file_exists('application/data/logs')
             || !file_exists('public/uploads')

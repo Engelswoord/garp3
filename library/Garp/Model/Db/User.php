@@ -74,10 +74,10 @@ class Garp_Model_Db_User extends Model_Base_User {
 
         $quotedUserId = $this->getAdapter()->quote($userId);
         return $this->update(
-            array(
+            [
             $expiresColumn => $activationExpiry,
             $tokenColumn => $activationCode
-            ), "id = $quotedUserId"
+            ], "id = $quotedUserId"
         );
     }
 
@@ -133,10 +133,10 @@ class Garp_Model_Db_User extends Model_Base_User {
         // Save the password that was stored in beforeInsert()
         if ($this->_password) {
             $authLocalModel = new Model_AuthLocal();
-            $newAuthLocalData = array(
+            $newAuthLocalData = [
                 'password' => $this->_password,
                 'user_id'  => $primaryKey
-            );
+            ];
             // Save the AuthLocal record
             $authLocalModel->insert($newAuthLocalData);
         }
@@ -162,7 +162,7 @@ class Garp_Model_Db_User extends Model_Base_User {
             // we use fetchRow instead of fetchAll.
             // If this ever changes, fix this code.
             $user = $this->fetchRow(
-                $this->select()->from($this->getName(), array('email'))->where($where)
+                $this->select()->from($this->getName(), ['email'])->where($where)
             );
             if ($user && $user->email != $data['email']) {
                 $this->_validateEmail = true;
@@ -183,7 +183,7 @@ class Garp_Model_Db_User extends Model_Base_User {
             $primaryKey = 'id';
             // Find all matches and create or update an AuthLocal record for them.
             $matchedRecords = $this->fetchAll(
-                $this->select()->from($this->getName(), array($primaryKey))->where($where)
+                $this->select()->from($this->getName(), [$primaryKey])->where($where)
             );
 
             foreach ($matchedRecords as $matchedRecord) {
@@ -196,10 +196,10 @@ class Garp_Model_Db_User extends Model_Base_User {
                 // If not, create a new one
                 if (!$authLocalRecord) {
                     $authLocalModel->insert(
-                        array(
+                        [
                         'user_id' => $thePrimaryKey,
                         'password' => $data[self::PASSWORD_COLUMN]
-                        )
+                        ]
                     );
                 } else {
                     $authLocalRecord->{self::PASSWORD_COLUMN} = $data[self::PASSWORD_COLUMN];
@@ -279,7 +279,7 @@ class Garp_Model_Db_User extends Model_Base_User {
         $users = $this->fetchAll(
             $this->select()->from(
                 $this->getName(),
-                array('id', 'email', $validationTokenColumn, $emailValidColumn)
+                ['id', 'email', $validationTokenColumn, $emailValidColumn]
             )
                 ->where('email = ?', $email)
         );
@@ -338,7 +338,7 @@ class Garp_Model_Db_User extends Model_Base_User {
         $validationCode  = '';
         $validationCode .= $validationToken;
         $validationCode .= md5($user->email);
-        $validationCode .= md5($authVars['salt']);
+        $validationCode .= md5((string) $authVars['salt']);
         $validationCode .= md5($user->id);
         $validationCode = md5($validationCode);
         return $validationCode;
@@ -365,11 +365,11 @@ class Garp_Model_Db_User extends Model_Base_User {
                 ->getResource('view');
 
             $emailMessage = $view->partial(
-                $authVars['email_partial'], 'default', array(
+                $authVars['email_partial'], 'default', [
                 'user' => $user,
                 'activationUrl' => $activationUrl,
                 'updateOrInsert' => $updateOrInsert
-                )
+                ]
             );
             $messageParam = 'htmlMessage';
         } else {
@@ -378,21 +378,21 @@ class Garp_Model_Db_User extends Model_Base_User {
             $snippetId .= ' email';
             $emailMessage = __($snippetId);
             $emailMessage = Garp_Util_String::interpolate(
-                $emailMessage, array(
+                $emailMessage, [
                 'USERNAME' => (string)new Garp_Util_FullName($user),
                 'ACTIVATION_URL' => (string)new Garp_Util_FullUrl($activationUrl)
-                )
+                ]
             );
             $messageParam = 'message';
         }
 
         $mailer = new Garp_Mailer();
         return $mailer->send(
-            array(
+            [
             'to' => $user->email,
             'subject' => __($authVars['email_subject']),
             $messageParam => $emailMessage
-            )
+            ]
         );
     }
 
@@ -443,9 +443,7 @@ class Garp_Model_Db_User extends Model_Base_User {
         }
         $userData = Zend_Registry::get('config')->auth->users;
         $prefilledRecordsForUser = array_filter(
-            $userData->toArray(), function ($item) use ($data) {
-                return isset($item['email']) && $item['email'] == $data['email'];
-            }
+            $userData->toArray(), fn($item) => isset($item['email']) && $item['email'] == $data['email']
         );
         if (!count($prefilledRecordsForUser)) {
             return $data;

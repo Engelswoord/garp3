@@ -18,7 +18,7 @@ class Garp_Model_Behavior_YouTubeable extends Garp_Model_Behavior_Abstract {
      *
      * @var array
      */
-    protected $_fields = array(
+    protected $_fields = [
         //  internal name   => database / form name
         'identifier'        => 'identifier',
         'name'              => 'name',
@@ -38,7 +38,7 @@ class Garp_Model_Behavior_YouTubeable extends Garp_Model_Behavior_Abstract {
         'author'            => 'video_author',
         'image_url'         => 'image',
         'thumbnail_url'     => 'thumbnail'
-    );
+    ];
 
     /**
      * Setup fields. If certain fields are not provided,
@@ -107,7 +107,7 @@ class Garp_Model_Behavior_YouTubeable extends Garp_Model_Behavior_Abstract {
         $images = $entry->getSnippet()->getThumbnails();
         $duration = $entry->getContentDetails()->getDuration();
 
-        $data = array(
+        $data = [
             'identifier'       => $entry->getId(),
             'name'             => $this->_getVideoName($entry, $input),
             'description'      => $this->_getVideoDescription($entry, $input),
@@ -116,8 +116,8 @@ class Garp_Model_Behavior_YouTubeable extends Garp_Model_Behavior_Abstract {
             'duration'         => $this->_getDurationInSeconds($duration),
             'image_url'        => $images['high']['url'],
             'thumbnail_url'    => $images['default']['url'],
-        );
-        $out = array();
+        ];
+        $out = [];
         foreach ($data as $ytKey => $value) {
             $garpKey = $this->_fields[$ytKey];
             $this->_populateOutput($out, $garpKey, $value);
@@ -134,7 +134,7 @@ class Garp_Model_Behavior_YouTubeable extends Garp_Model_Behavior_Abstract {
      * @return void
      */
     protected function _populateOutput(array &$output, $key, $value) {
-        if (strpos($key, '.') === false) {
+        if (!str_contains($key, '.')) {
             $output[$key] = $value;
             return;
         }
@@ -150,9 +150,9 @@ class Garp_Model_Behavior_YouTubeable extends Garp_Model_Behavior_Abstract {
         $yt = Garp_Google::getGoogleService('YouTube');
         $youTubeId = $this->_getId($watchUrl);
         $entries = $yt->videos->listVideos(
-            'id,snippet,contentDetails', array(
+            'id,snippet,contentDetails', [
             'id' => $youTubeId
-            )
+            ]
         );
         if (empty($entries['items'])) {
             throw new Garp_Model_Behavior_YouTubeable_Exception_VideoNotFound(
@@ -170,7 +170,7 @@ class Garp_Model_Behavior_YouTubeable extends Garp_Model_Behavior_Abstract {
      * @return string
      */
     protected function _getId($watchUrl) {
-        $query = array();
+        $query = [];
         if (!$watchUrl) {
             throw new Garp_Model_Behavior_YouTubeable_Exception_NoUrl(self::EXCEPTION_NO_URL);
         }

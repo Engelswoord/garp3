@@ -43,14 +43,14 @@ abstract class Garp_Auth_Adapter_Passwordless_TokenMailerAbstract implements Gar
 
     protected function _interpolateEmailBody($body) {
         return Garp_Util_String::interpolate(
-            $body, array(
+            $body, [
                 'LOGIN_URL' => $this->_getLoginUrl()
-            )
+            ]
         );
     }
 
     protected function _getLoginUrl() {
-        return new Garp_Util_FullUrl(array(array('method' => 'passwordless'), 'auth_submit')) .
+        return new Garp_Util_FullUrl([['method' => 'passwordless'], 'auth_submit']) .
             '?uid=' . $this->_userId . '&token=' . $this->_token;
     }
 }

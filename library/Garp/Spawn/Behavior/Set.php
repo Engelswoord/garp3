@@ -14,14 +14,14 @@ class Garp_Spawn_Behavior_Set implements Countable {
      *
      * @var Array
      */
-    protected $_behaviors = array();
+    protected $_behaviors = [];
 
     /**
      * @var Garp_Spawn_Model_Abstract
      */
     protected $_model;
 
-    protected $_defaultConditionalBehaviorNames = array(
+    protected $_defaultConditionalBehaviorNames = [
         'HtmlFilterable',
         'NotEmpty',
         'Email',
@@ -31,13 +31,13 @@ class Garp_Spawn_Behavior_Set implements Countable {
         'MinLength',
         'Set',
         'Nullable'
-    );
+    ];
 
-    protected $_validatorBehaviors = array(
+    protected $_validatorBehaviors = [
         'Email',
         'NotEmpty',
         'MinLength'
-    );
+    ];
 
 
     public function __construct(Garp_Spawn_Model_Abstract $model, array $config) {
@@ -140,7 +140,7 @@ class Garp_Spawn_Behavior_Set implements Countable {
                 continue;
             }
 
-            $this->_add('default', $behaviorName, $behaviorConfig, $behaviorType);
+            $this->_add('default', $behaviorName, $behaviorConfig);
         }
     }
 
@@ -165,14 +165,14 @@ class Garp_Spawn_Behavior_Set implements Countable {
             return;
         }
 
-        $weighableConfig = array();
+        $weighableConfig = [];
 
         foreach ($weighableRels as $relName => $rel) {
             $weightColumn = Garp_Spawn_Util::camelcased2underscored($relName) . '_weight';
-            $weighableConfig[$relName] = array(
+            $weighableConfig[$relName] = [
                 'foreignKeyColumn' => $rel->column,
                 'weightColumn'     => $weightColumn
-            );
+            ];
         }
 
         $this->_add('relation', 'Weighable', $weighableConfig);

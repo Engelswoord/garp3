@@ -34,9 +34,7 @@ class Garp_Form_Element_Radio extends Zend_Form_Element_Radio {
             $parentClass = $defaultHtmlTagRenderer->getOption('class');
             if (is_array($parentClass) && array_key_exists('callback', $parentClass)) {
                 $ulClass = [
-                    'callback' => function ($decorator) use ($parentClass, $ulClass) {
-                        return $ulClass . ' ' . $parentClass['callback']($decorator);
-                    }
+                    'callback' => fn($decorator) => $ulClass . ' ' . $parentClass['callback']($decorator)
                 ];
             } else {
                 $ulClass .= ' ' . $parentClass;

@@ -12,10 +12,10 @@ class Garp_Form_Element_Number extends Garp_Form_Element_Text {
         $this->addFilter('Digits');
         $this->addValidator('Digits');
 
-        $validatorOpts = array(
+        $validatorOpts = [
             'min' => $this->getAttrib('min'),
             'max' => $this->getAttrib('max'),
-        );
+        ];
         $validator = null;
         if (2 === count($validatorOpts)) {
             $validator = 'Between';

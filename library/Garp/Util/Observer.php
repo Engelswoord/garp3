@@ -26,5 +26,5 @@ interface Garp_Util_Observer {
      * @param array $params Collection of parameters (contextual to the event)
      * @return void
      */
-    public function receiveNotification($event, array $params = array());
+    public function receiveNotification($event, array $params = []);
 }

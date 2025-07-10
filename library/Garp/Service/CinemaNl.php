@@ -61,9 +61,9 @@ class Garp_Service_CinemaNl extends Zend_Service_Abstract {
         try {
             $response = $this->_getRequest("/movie/".$id);
         } catch(Exception $e) {
-            if (strpos($e->getMessage(), '406') !== false) {
+            if (str_contains($e->getMessage(), '406')) {
                 throw new Exception("The movie ID you provided ({$id}) was not accepted by Cinema.nl. It's likely that this movie doesn't exist.", 406);
-            } elseif (strpos($e->getMessage(), '500') !== false) {
+            } elseif (str_contains($e->getMessage(), '500')) {
                 throw new Exception("There was a 500 server error fetching details for movie {$id}.", 500);
             } else throw $e;
         }
@@ -71,7 +71,7 @@ class Garp_Service_CinemaNl extends Zend_Service_Abstract {
         if ($raw) {
             return $response;
         }
-        $output = array();
+        $output = [];
 
         if (
             property_exists($response, 'title')
@@ -119,7 +119,7 @@ class Garp_Service_CinemaNl extends Zend_Service_Abstract {
             $response->{$propName}
         ) {
             if (property_exists($response->{$propName}, $propChildName)) {
-                $output = array();
+                $output = [];
                 foreach ($response->{$propName}->{$propChildName} as $node) {
                     $output[] = (string)$node;
                 }
@@ -167,7 +167,7 @@ class Garp_Service_CinemaNl extends Zend_Service_Abstract {
             property_exists($response->{$propName}, $propChildName) &&
             count($response->{$propName}->{$propChildName})
         ) {
-            $people = array();
+            $people = [];
             foreach ($response->{$propName}->{$propChildName} as $person) {
                 if (
                     property_exists($person, 'name') &&
@@ -189,7 +189,7 @@ class Garp_Service_CinemaNl extends Zend_Service_Abstract {
          * 25 March 2013: disabled currentDescription field as per this ticket:
          * @see http://projects.grrr.nl/projects/we-want-cinema-website/tasks/1486
          */
-        $fields = array('description', 'shortPlainDescription', /*'currentDescription',*/ 'mediumPlainDescription');
+        $fields = ['description', 'shortPlainDescription', /*'currentDescription',*/ 'mediumPlainDescription'];
         /** This notice string is sometimes used by cinema.nl to indicate a description field is not yet available. */
         $descriptionEmptyString = "Voor deze film is helaas nog geen beschrijving beschikbaar";
 
@@ -197,7 +197,7 @@ class Garp_Service_CinemaNl extends Zend_Service_Abstract {
             if (
                 property_exists($response, $fieldName) &&
                 !empty($response->{$fieldName}) &&
-                stripos($response->{$fieldName}, $descriptionEmptyString) === false
+                stripos($response->{$fieldName}, (string) $descriptionEmptyString) === false
             ) {
                 return $response->{$fieldName};
             }

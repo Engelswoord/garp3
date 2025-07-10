@@ -3,19 +3,19 @@
  * @author David Spreekmeester | grrr.nl
  */
 class Garp_Spawn_Behavior_Type_Draftable extends Garp_Spawn_Behavior_Type_Abstract {
-    protected $_fields = array(
-        'published' => array(
+    protected $_fields = [
+        'published' => [
             'type' => 'datetime',
             'editable' => true,
             'required' => false
-        ),
-        'online_status' => array(
+        ],
+        'online_status' => [
             'type' => 'checkbox',
             'editable' => true,
             'default' => 1,
             'required' => false
-        )
-    );
+        ]
+    ];
 
     public function __construct(Garp_Spawn_Model_Abstract $model, $origin, $name, $params = null, $type = null) {
         if (!empty($params['default'])) {

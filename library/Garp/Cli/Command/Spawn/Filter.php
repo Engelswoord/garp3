@@ -23,12 +23,12 @@ class Garp_Cli_Command_Spawn_Filter {
     /**
      * @var array $_allowedFilters
      */
-    protected $_allowedFilters = array(
+    protected $_allowedFilters = [
         self::FILTER_MODULE_FILES,
         self::FILTER_MODULE_DB,
         self::FILTER_MODULE_JS,
         self::FILTER_MODULE_PHP
-    );
+    ];
 
     /**
      * @var array $_args
@@ -101,7 +101,7 @@ class Garp_Cli_Command_Spawn_Filter {
         }
 
         $filter = $args[$only];
-        return strtolower($filter);
+        return strtolower((string) $filter);
     }
 
     /**
@@ -114,7 +114,7 @@ class Garp_Cli_Command_Spawn_Filter {
         $only           = self::FILTER_MODULE_COMMAND;
         $allowedFilters = $this->getAllowedFilters();
         $filter = array_key_exists($only, $args)
-            ? strtolower($args[$only])
+            ? strtolower((string) $args[$only])
             : null
         ;
 

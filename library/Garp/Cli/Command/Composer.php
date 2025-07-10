@@ -65,7 +65,7 @@ class Garp_Cli_Command_Composer extends Garp_Cli_Command {
         );
 
         // Put BASE_PATH definition in index.php
-        if (strpos($indexPhp, 'BASE_PATH') === false) {
+        if (!str_contains($indexPhp, 'BASE_PATH')) {
             $indexLines = explode("\n", $indexPhp);
             $indexOfInitPhpInclude = $this->_findIndexOfInitPhpInclude($indexLines);
             array_splice($indexLines, $indexOfInitPhpInclude, 0, self::BASEPATH_DEFINITON);
@@ -76,7 +76,7 @@ class Garp_Cli_Command_Composer extends Garp_Cli_Command {
     }
 
     protected function _updateLocaleFiles() {
-        foreach (array('nl', 'en') as $locale) {
+        foreach (['nl', 'en'] as $locale) {
             $file = "application/data/i18n/$locale.php";
             $contents = file_get_contents($file);
             $line = sprintf(self::INCLUDE_I18N_FILE, $locale);
@@ -88,7 +88,7 @@ class Garp_Cli_Command_Composer extends Garp_Cli_Command {
 
     protected function _findIndexOfInitPhpInclude(array $lines) {
         foreach ($lines as $i => $line) {
-            if (strpos($line, self::NEW_INIT_PHP_REFERENCE) !== false) {
+            if (str_contains((string) $line, self::NEW_INIT_PHP_REFERENCE)) {
                 return $i;
             }
         }

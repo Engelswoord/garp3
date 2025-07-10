@@ -15,20 +15,20 @@ class Garp_Cli_Command_S3 extends Garp_Cli_Command_Aws {
      * @param array $args
      * @return bool
      */
-    public function makeBucket(array $args = array()) {
-        $bucket = isset($args[0]) ? $args[0] : null;
+    public function makeBucket(array $args = []) {
+        $bucket = $args[0] ?? null;
         if (is_null($bucket)) {
             $config = Zend_Registry::get('config');
-            $bucket = isset($config->cdn->s3->bucket) ? $config->cdn->s3->bucket : null;
+            $bucket = $config->cdn->s3->bucket ?? null;
         }
         if (is_null($bucket)) {
             Garp_Cli::errorOut('No bucket configured');
             return false;
         }
         return $this->s3(
-            'mb', array(
+            'mb', [
             's3://' . $bucket
-            )
+            ]
         );
     }
 
@@ -38,11 +38,11 @@ class Garp_Cli_Command_S3 extends Garp_Cli_Command_Aws {
      * @param array $args
      * @return bool
      */
-    public function mb(array $args = array()) {
+    public function mb(array $args = []) {
         return $this->makeBucket($args);
     }
 
-    public function ls(array $args = array()) {
+    public function ls(array $args = []) {
         if (empty(Zend_Registry::get('config')->cdn->s3->bucket)) {
             Garp_Cli::errorOut('No bucket configured');
             return false;
@@ -51,23 +51,23 @@ class Garp_Cli_Command_S3 extends Garp_Cli_Command_Aws {
         if (isset($args[0])) {
             $path .= DIRECTORY_SEPARATOR . $args[0];
         }
-        $args = array($path);
+        $args = [$path];
         return $this->s3('ls', $args);
     }
 
-    public function cp(array $args = array()) {
+    public function cp(array $args = []) {
         return $this->s3('cp', $args);
     }
 
-    public function mv(array $args = array()) {
+    public function mv(array $args = []) {
         return $this->s3('mv', $args);
     }
 
-    public function sync(array $args = array()) {
+    public function sync(array $args = []) {
         return $this->s3('sync', $args);
     }
 
-    public function rm(array $args = array()) {
+    public function rm(array $args = []) {
         if (empty(Zend_Registry::get('config')->cdn->s3->bucket)) {
             Garp_Cli::errorOut('No bucket configured');
             return false;
@@ -89,7 +89,7 @@ class Garp_Cli_Command_S3 extends Garp_Cli_Command_Aws {
             Garp_Cli::lineOut('Changed your mind, huh? Not deleting.');
             return true;
         }
-        $args = array($path);
+        $args = [$path];
         return $this->s3('rm', $args);
     }
 
@@ -100,48 +100,48 @@ class Garp_Cli_Command_S3 extends Garp_Cli_Command_Aws {
      * @todo Make CORS options configurable? Do you ever want full-fletched control over these?
      */
     public function setCors() {
-        $corsConfig = array(
-            'CORSRules' => array(array(
-                'AllowedHeaders' => array('*'),
-                'AllowedMethods' => array('GET'),
-                'AllowedOrigins' => array('*'),
-            ))
-        );
-        $args = array(
+        $corsConfig = [
+            'CORSRules' => [[
+                'AllowedHeaders' => ['*'],
+                'AllowedMethods' => ['GET'],
+                'AllowedOrigins' => ['*'],
+            ]]
+        ];
+        $args = [
             'bucket' => Zend_Registry::get('config')->cdn->s3->bucket,
             'cors-configuration' => "'" . json_encode($corsConfig) . "'"
-        );
+        ];
         return $this->s3api('put-bucket-cors', $args);
     }
 
     public function getCors() {
-        $args = array(
+        $args = [
             'bucket' => Zend_Registry::get('config')->cdn->s3->bucket,
-        );
+        ];
         return $this->s3api('get-bucket-cors', $args);
     }
 
     public function setWebsiteConfiguration() {
-        $websiteConfig = array(
+        $websiteConfig = [
             'RoutingRules' => $this->_getWebsiteRoutingRules(),
-            'IndexDocument' => array(
+            'IndexDocument' => [
                 'Suffix' => 'index.html' // @todo Is this right? It probably never exists...
-            ),
-            'ErrorDocument' => array(
+            ],
+            'ErrorDocument' => [
                 'Key' => 'error.html'
-            )
-        );
-        $args = array(
+            ]
+        ];
+        $args = [
             'bucket' => Zend_Registry::get('config')->cdn->s3->bucket,
             'website-configuration' => "'" . json_encode($websiteConfig) . "'"
-        );
+        ];
         return $this->s3api('put-bucket-website', $args);
     }
 
     public function getWebsiteConfiguration() {
-        $args = array(
+        $args = [
             'bucket' => Zend_Registry::get('config')->cdn->s3->bucket,
-        );
+        ];
         return $this->s3api('get-bucket-website', $args);
     }
 
@@ -163,8 +163,8 @@ class Garp_Cli_Command_S3 extends Garp_Cli_Command_Aws {
 
     protected function _getWebsiteRoutingRules() {
         $config = Zend_Registry::get('config');
-        $templates = array();
-        $out = array();
+        $templates = [];
+        $out = [];
         $scaledPath = ltrim($config->cdn->path->upload->image . '/scaled/', '/');
 
         if (!empty($config->image->template)) {
@@ -173,15 +173,15 @@ class Garp_Cli_Command_S3 extends Garp_Cli_Command_Aws {
         foreach ($templates as $tplName => $tplConfig) {
             $fallback = empty($tplConfig->fallback) ?
                 'fallback_' . $tplName . '.jpg' : $tplConfig->fallback;
-            $out[] = array(
-                'Condition' => array(
+            $out[] = [
+                'Condition' => [
                     'HttpErrorCodeReturnedEquals' => '404',
                     'KeyPrefixEquals' => $scaledPath . $tplName
-                ),
-                'Redirect' => array(
+                ],
+                'Redirect' => [
                     'ReplaceKeyWith' => 'media/images/404fallbacks/' . $fallback
-                )
-            );
+                ]
+            ];
         }
 
         return $out;

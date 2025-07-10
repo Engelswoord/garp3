@@ -13,7 +13,7 @@ class Garp_Controller_Helper_Upload extends Zend_Controller_Action_Helper_Abstra
      *
      * @var array
      */
-    protected $_fileHandlers = array();
+    protected $_fileHandlers = [];
 
     /**
      * Shortcut to self::uploadFromFiles().
@@ -48,9 +48,9 @@ class Garp_Controller_Helper_Upload extends Zend_Controller_Action_Helper_Abstra
         $allowBlank = false, $overwrite = false
     ) {
         $filesToUpload = $singleFormKey ?
-            array($singleFormKey => $_FILES[$singleFormKey]) :
+            [$singleFormKey => $_FILES[$singleFormKey]] :
             $_FILES;
-        $newFilenames = array();
+        $newFilenames = [];
         foreach ($filesToUpload as $formKey => $fileParams) {
             $isArray = is_array($fileParams['tmp_name']);
             if (!$isArray) {
@@ -121,9 +121,9 @@ class Garp_Controller_Helper_Upload extends Zend_Controller_Action_Helper_Abstra
      */
     public function uploadRaw($uploadType, $filename, $bytes) {
         $uploadType = $uploadType ?: Garp_File::TYPE_IMAGES;
-        return array(
+        return [
             $filename => $this->_store($uploadType, $filename, $bytes)
-        );
+        ];
     }
 
     /**

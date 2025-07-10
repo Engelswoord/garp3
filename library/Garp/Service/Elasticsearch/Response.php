@@ -45,7 +45,7 @@ class Garp_Service_Elasticsearch_Response {
      */
     public function getError() {
         $bodyJson   = $this->getBody();
-        $body       = json_decode($bodyJson, true);
+        $body       = json_decode((string) $bodyJson, true);
         
         if (array_key_exists('error', $body)) {
             return $body['error'];

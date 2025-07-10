@@ -34,12 +34,12 @@ class Garp_Cli_Command_Ssh extends Garp_Cli_Command {
 
         // To provide a bit of backward-compatibility, convert to array
         if (!is_array($params['server'])) {
-            $params['server'] = array(
-                array(
+            $params['server'] = [
+                [
                     'server' => $params['server'],
                     'user' => $params['user']
-                )
-            );
+                ]
+            ];
         }
 
         if (count($params['server']) === 1) {
@@ -69,8 +69,8 @@ class Garp_Cli_Command_Ssh extends Garp_Cli_Command {
 
     protected function _executeSshCommand($server, $user) {
         passthru(
-            'ssh ' . escapeshellarg($user) .
-            '@' . escapeshellarg($server)
+            'ssh ' . escapeshellarg((string) $user) .
+            '@' . escapeshellarg((string) $server)
         );
     }
 

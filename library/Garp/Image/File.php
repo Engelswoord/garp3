@@ -9,11 +9,11 @@ class Garp_Image_File extends Garp_File {
     /**
      * @var Array $extensions Numeric array of image types, where the keys are PHP native constants used in getImageSize(), and their values are file extensions.
      */
-    protected $_extensions = array(
+    protected $_extensions = [
         IMAGETYPE_GIF => 'gif',
         IMAGETYPE_JPEG => 'jpg',
         IMAGETYPE_PNG => 'png'
-    );
+    ];
 
 
     public function __construct($uploadOrStatic = null) {
@@ -22,7 +22,7 @@ class Garp_Image_File extends Garp_File {
 
     public function store($filename, $data, $overwrite = false, $formatFilename = true) {
         $returnedParams = $this->_beforeStore($filename, $data, $overwrite, $formatFilename);
-        list($filename, $data, $overwrite, $formatFilename) = $returnedParams;
+        [$filename, $data, $overwrite, $formatFilename] = $returnedParams;
 
         $result = parent::store($filename, $data, $overwrite, $formatFilename);
         
@@ -31,9 +31,9 @@ class Garp_Image_File extends Garp_File {
 
     public function getImageType($filename) {
         $extension = $this->_getExtension($filename);
-        $type = strcasecmp($extension, 'jpeg') === 0 ?
+        $type = strcasecmp((string) $extension, 'jpeg') === 0 ?
             IMAGETYPE_JPEG :
-            array_search(strtolower($extension), $this->_extensions)
+            array_search(strtolower((string) $extension), $this->_extensions)
         ;
 
         if ($type !== false)
@@ -51,7 +51,7 @@ class Garp_Image_File extends Garp_File {
     public function show($path, $timestamp = null, $mime = null) {
         $headers = function_exists('apache_request_headers') ?
             apache_request_headers() :
-            array();
+            [];
 
         if (is_null($timestamp))
             $timestamp = $this->_readTimestampFromFile($path);
@@ -102,7 +102,7 @@ class Garp_Image_File extends Garp_File {
             }
         }
         
-        return array($filename, $data, $overwrite, $formatFilename);
+        return [$filename, $data, $overwrite, $formatFilename];
     }
 
     /**
@@ -121,7 +121,7 @@ class Garp_Image_File extends Garp_File {
         $oldExtension = $this->_getExtension($filename);
         $newExtension = $oldExtension === 'jpeg' ? 'jpg' : $oldExtension;
         return
-            substr($filename, 0, strlen($filename) - strlen($oldExtension))
+            substr((string) $filename, 0, strlen((string) $filename) - strlen((string) $oldExtension))
             .$newExtension;
     }
 
@@ -132,12 +132,12 @@ class Garp_Image_File extends Garp_File {
      * @return  Boolean             True if this path is a full url
      */
     private function _isUrl($path) {
-        return strpos($path, '://') !== false;
+        return str_contains($path, '://');
     }
 
 
     private function _checkUrlFormat($url) {
-        if (strpos($url, '://') === false)
+        if (!str_contains((string) $url, '://'))
             throw new Exception('This file is not a valid url.');
     }
 }

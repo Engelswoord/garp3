@@ -15,9 +15,9 @@ class Garp_Adobe_InDesign_Spread {
      * @var array The pages within this spread. Values are Garp_Adobe_InDesign_Page objects.
      *            These are ordered by x-coordinate, where the most left page comes first.
      */
-    public $pages = array();
+    public $pages = [];
 
-    public $textFrames = array();
+    public $textFrames = [];
 
     /**
      * @var array An array of Story IDs, where the key is the Page index (number, not Page ID)
@@ -27,9 +27,7 @@ class Garp_Adobe_InDesign_Spread {
      *                          3 => array('3ri2')
      *                      )
      */
-    public $stories = array();
-
-    protected $_id;
+    public $stories = [];
 
     protected $_path;
 
@@ -43,12 +41,8 @@ class Garp_Adobe_InDesign_Spread {
      */
     protected $_spreadNodes;
 
-    protected $_workingDir;
-
-    public function __construct($spreadId, $workingDir) {
-        $this->_id          = $spreadId;
-        $this->_workingDir  = $workingDir;
-        $this->_path        = $this->_buildPath($spreadId);
+    public function __construct(protected $_id, protected $_workingDir) {
+        $this->_path        = $this->_buildPath($this->_id);
         $spreadContent      = file_get_contents($this->_path);
         $this->_xml         = new SimpleXMLElement($spreadContent);
         $this->_spreadNodes = $this->_xml->Spread->children();
@@ -59,22 +53,19 @@ class Garp_Adobe_InDesign_Spread {
     }
 
     public static function getSpreadIdFromPath($path) {
-        $spreadId = preg_replace('/.+Spread_(\w+)\.xml/', '$1', $path);
+        $spreadId = preg_replace('/.+Spread_(\w+)\.xml/', '$1', (string) $path);
         return $spreadId;
     }
 
 
     public function setTextFrameAttribute($storyId, $attribute, $newValue) {
-        switch ($attribute) {
-        case 'FillColor':
-            $newValue = 'Color/' . $newValue;
-            break;
-        default:
-            throw new Exception(
+        $newValue = match ($attribute) {
+            'FillColor' => 'Color/' . $newValue,
+            default => throw new Exception(
                 'Setting other Spread TextFrame attributes than ' .
                 'FillColor is not supported at the time.'
-            );
-        }
+            ),
+        };
 
         $node = $this->_xml->xpath("//TextFrame[@ParentStory='{$storyId}']");
         if ($node) {
@@ -98,9 +89,9 @@ class Garp_Adobe_InDesign_Spread {
      * @return array
      */
     public function getStoriesWithTaggedTextFrames() {
-        $filteredStories = array();
+        $filteredStories = [];
         foreach ($this->stories as $pageIndex => $storyNodes) {
-            $pageStories = array();
+            $pageStories = [];
 
             foreach ($storyNodes as $storyIndex => $storyId) {
                 if ($this->_storyHasTaggedTextFrame($storyId)) {
@@ -118,7 +109,7 @@ class Garp_Adobe_InDesign_Spread {
 
 
     public function usesStory($storyId) {
-        foreach ($this->stories as $pageIndex => $stories) {
+        foreach ($this->stories as $stories) {
             if (in_array($storyId, $stories)) {
                 return true;
             }
@@ -149,28 +140,23 @@ class Garp_Adobe_InDesign_Spread {
      * @return array
      */
     protected function _buildStories() {
-        $storiesByPageNumber    = array();
-        $storiesByTag           = array();
+        $storiesByPageNumber    = [];
+        $storiesByTag           = [];
         $pagesCount             = count($this->pages);
 
         // Build an array with all textframe positions, divided into the accompanying story XML tags
         foreach ($this->textFrames as $textFrame) {
             $story = new Garp_Adobe_InDesign_Story($textFrame->storyId, $this->_workingDir);
             if ($tag = $story->getTag()) {
-                $storiesByTag[$tag][] = array(
+                $storiesByTag[$tag][] = [
                     'storyId' => $textFrame->storyId,
                     'x' => $textFrame->x
-                );
+                ];
             }
         }
 
         //  sort the stories by horizontal position
-        $sortFunction = function ($storyA, $storyB) {
-            if ($storyA['x'] == $storyB['x']) {
-                return 0;
-            }
-            return $storyA['x'] > $storyB['x'] ? 1 : -1;
-        };
+        $sortFunction = (fn($storyA, $storyB) => $storyA['x'] <=> $storyB['x']);
 
         foreach ($storiesByTag as &$stories) {
             usort($stories, $sortFunction);
@@ -192,7 +178,7 @@ class Garp_Adobe_InDesign_Spread {
     }
 
     protected function _buildTextFrames() {
-        $textFrames = array();
+        $textFrames = [];
 
         foreach ($this->_spreadNodes as $tag => $nodeConfig) {
             switch ($tag) {
@@ -217,7 +203,7 @@ class Garp_Adobe_InDesign_Spread {
 
 
     protected function _buildPages() {
-        $pages = array();
+        $pages = [];
 
         foreach ($this->_spreadNodes as $tag => $spreadNode) {
             if ($tag === 'Page') {
@@ -227,12 +213,7 @@ class Garp_Adobe_InDesign_Spread {
 
         //  sort by x-coordinate
         usort(
-            $pages, function ($a, $b) {
-                if ($a->x === $b->x) {
-                    return 0;
-                }
-                return $a->x < $b->x ? -1 : 1;
-            }
+            $pages, fn($a, $b) => $a->x <=> $b->x
         );
 
         return $pages;

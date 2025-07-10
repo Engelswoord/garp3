@@ -67,20 +67,20 @@ class Garp_Content_Export_Excel extends Garp_Content_Export_Abstract {
             $this->_addRow($phpexcel, $row, ++$i);
         }
         // set alternate style for header cells
-        $styleArray = array(
-            'font' => array(
+        $styleArray = [
+            'font' => [
                 'bold' => true,
-            ),
-            'alignment' => array(
+            ],
+            'alignment' => [
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
-            ),
-            'fill' => array(
+            ],
+            'fill' => [
                 'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                'color' => array(
+                'color' => [
                     'rgb' => 'CCCCCC',
-                )
-            ),
-        );
+                ]
+            ],
+        ];
 
         // add alternate styles to header cells
         for ($i = 0, $colCount = count(array_keys($rowset[0])), $char = 'A';
@@ -102,11 +102,11 @@ class Garp_Content_Export_Excel extends Garp_Content_Export_Abstract {
      */
     protected function _addRow(PHPExcel $phpexcel, array $row, $rowIndex) {
         $col = 0;
-        foreach ($row as $key => $value) {
+        foreach ($row as $value) {
             $colIndex = $col++;
             if (is_array($value)) {
                 $rowset = $value;
-                $value = array();
+                $value = [];
                 foreach ($rowset as $row) {
                     if (is_array($row)) {
                         $values = array_values($row);

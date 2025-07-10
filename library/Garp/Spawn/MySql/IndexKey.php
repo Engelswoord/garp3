@@ -15,7 +15,7 @@ class Garp_Spawn_MySql_IndexKey extends Garp_Spawn_MySql_Key {
      * Returns true if this is a 'KEY' (index) statement. This does not include primary or foreign keys.
      */
     public static function isIndexKeyStatement($line, Array $foreignKeys) {
-        if (substr(trim($line), 0, 3) === 'KEY') {
+        if (str_starts_with(trim($line), 'KEY')) {
             $key = self::_parse($line);
 
             foreach ($foreignKeys as $fk) {
@@ -37,14 +37,14 @@ class Garp_Spawn_MySql_IndexKey extends Garp_Spawn_MySql_Key {
 
 
     public static function add($tableName, Garp_Spawn_MySql_IndexKey $key) {
-        $tableName  = strtolower($tableName);
+        $tableName  = strtolower((string) $tableName);
         $adapter    = Zend_Db_Table::getDefaultAdapter();
         $success    = false;
 
         try {
             $success = $adapter->query("ALTER TABLE `{$tableName}` ADD KEY `{$key->name}` (`{$key->column}`);");
         } catch(Exception $e) {
-            if (strpos($e->getMessage(), 'Duplicate') === false) {
+            if (!str_contains($e->getMessage(), 'Duplicate')) {
                 throw $e;
             } else $success = true;
         }
@@ -54,15 +54,15 @@ class Garp_Spawn_MySql_IndexKey extends Garp_Spawn_MySql_Key {
 
 
     public static function delete($tableName, Garp_Spawn_MySql_IndexKey $key) {
-        $tableName  = strtolower($tableName);
+        $tableName  = strtolower((string) $tableName);
         $adapter    = Zend_Db_Table::getDefaultAdapter();
         return $adapter->query("ALTER TABLE `{$tableName}` DROP KEY `{$key->name}`;");
     }
     
     
     protected static function _parse($line) {
-        $matches = array();
-        preg_match('/\s*KEY\s+`(?P<name>\w+)`\s*\(`(?P<column>\w+)`\),?/i', trim($line), $matches);
+        $matches = [];
+        preg_match('/\s*KEY\s+`(?P<name>\w+)`\s*\(`(?P<column>\w+)`\),?/i', trim((string) $line), $matches);
         return $matches;
     }
 }

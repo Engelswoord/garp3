@@ -21,7 +21,7 @@ class Garp_Cli_Command_Aws extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function main(array $args = array()) {
+    public function main(array $args = []) {
         Garp_Cli::errorOut('This command is no longer compatible with the AWS Cli tool and should be refactored.');
         return false;
         if (!$this->_usesAmazon()) {
@@ -123,9 +123,9 @@ class Garp_Cli_Command_Aws extends Garp_Cli_Command {
      * @return bool
      */
     protected function _profileExists() {
-        $homeDir = trim(`echo \$HOME`);
+        $homeDir = trim((string) `echo \$HOME`);
         $config = file_get_contents($homeDir . DIRECTORY_SEPARATOR . self::AWS_CONFIG_LOCATION);
-        return strpos($config, "[profile {$this->_profile}]") !== false;
+        return str_contains($config, "[profile {$this->_profile}]");
     }
 
     /**
@@ -142,7 +142,7 @@ class Garp_Cli_Command_Aws extends Garp_Cli_Command {
         $confStr .= "output = json\n";
         $confStr .= "region = eu-west-1\n\n";
 
-        $homeDir = trim(`echo \$HOME`);
+        $homeDir = trim((string) `echo \$HOME`);
         file_put_contents(
             $homeDir . DIRECTORY_SEPARATOR . self::AWS_CONFIG_LOCATION,
             $confStr, FILE_APPEND

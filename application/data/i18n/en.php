@@ -5,7 +5,7 @@
  * @package Garp
  * @author  Harmen Janssen <harmen@grrr.nl>
  */
-$translationTable = array(
+$translationTable = [
     // @codingStandardsIgnoreStart
     'register page title' => 'Register',
     'register error' => 'Something went wrong while registering. Try again later.',
@@ -46,4 +46,4 @@ $translationTable = array(
         View here directly: %s\n\n",
     'gumball notification email subject' => '[%s] A new version is deployed'
     // @codingStandardsIgnoreEnd
-);
+];

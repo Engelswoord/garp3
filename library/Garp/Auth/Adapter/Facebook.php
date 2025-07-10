@@ -42,10 +42,10 @@ class Garp_Auth_Adapter_Facebook extends Garp_Auth_Adapter_Abstract {
             }
             $cookie->writeCookie();
             $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector');
-            $scope = isset($authVars->scope) ? $authVars->scope : null;
-            $redirector->gotoUrl($facebook->getLoginUrl(array(
+            $scope = $authVars->scope ?? null;
+            $redirector->gotoUrl($facebook->getLoginUrl([
                 'scope' => $scope
-            )));
+            ]));
             // @codingStandardsIgnoreStart
             exit;
             // @codingStandardsIgnoreEnd
@@ -66,10 +66,10 @@ class Garp_Auth_Adapter_Facebook extends Garp_Auth_Adapter_Abstract {
                 if (empty($authVars->friends->bindingModel)) {
                     $bindingModel = $authVars->friends->bindingModel;
                 }
-                $facebook->mapFriends(array(
+                $facebook->mapFriends([
                     'bindingModel' => $bindingModel,
                     'user_id' => $userData['id']
-                ));
+                ]);
             }
             return $userData;
         //@phpstan-ignore class.notFound
@@ -77,8 +77,8 @@ class Garp_Auth_Adapter_Facebook extends Garp_Auth_Adapter_Abstract {
             $this->_addError($e->getMessage());
             return false;
         } catch (Exception $e) {
-            if (strpos($e->getMessage(), 'Duplicate entry') !== false
-                && strpos($e->getMessage(), 'email_unique') !== false
+            if (str_contains($e->getMessage(), 'Duplicate entry')
+                && str_contains($e->getMessage(), 'email_unique')
             ) {
                 $this->_addError(__('this email address already exists'));
                 return false;
@@ -102,32 +102,32 @@ class Garp_Auth_Adapter_Facebook extends Garp_Auth_Adapter_Abstract {
         $sessionColumns = Zend_Db_Select::SQL_WILDCARD;
         if (!empty($ini->auth->login->sessionColumns)) {
             $sessionColumns = $ini->auth->login->sessionColumns;
-            $sessionColumns = explode(',', $sessionColumns);
+            $sessionColumns = explode(',', (string) $sessionColumns);
         }
         $userModel = new Model_User();
         $userConditions = $userModel->select()->from($userModel->getName(), $sessionColumns);
         //@phpstan-ignore class.notFound
         $model = new Model_AuthFacebook();
-        $model->bindModel('Model_User', array(
+        $model->bindModel('Model_User', [
             'conditions' => $userConditions,
             'rule' => 'User'
-        ));
+        ]);
         $userData = $model->fetchRow(
             $model->select()
                 ->where('facebook_uid = ?', $uid)
         );
         if (!$userData || !$userData->Model_User) {
             $userData = $model->createNew(
-                array(
+                [
                     'facebook_uid' => $uid,
                     'access_token' => $facebookData['access_token'],
-                ),
+                ],
                 $this->_mapProperties($facebookData)
             );
         } else {
-            $model->getObserver('Authenticatable')->updateLoginStats($userData->user_id, array(
+            $model->getObserver('Authenticatable')->updateLoginStats($userData->user_id, [
                 'access_token' => $facebookData['access_token'],
-            ));
+            ]);
             $userData = $userData->Model_User;
         }
         return $userData;
@@ -141,11 +141,11 @@ class Garp_Auth_Adapter_Facebook extends Garp_Auth_Adapter_Abstract {
      */
     protected function _getFacebookClient() {
         $authVars = $this->_getAuthVars();
-        $facebook = Garp_Social_Facebook::getInstance(array(
+        $facebook = Garp_Social_Facebook::getInstance([
             'appId' => $authVars->appId,
             'secret' => $authVars->secret,
             'cookie' => false,
-        ));
+        ]);
         return $facebook;
     }
 }

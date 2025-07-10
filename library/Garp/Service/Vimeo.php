@@ -24,12 +24,12 @@ class Garp_Service_Vimeo extends Zend_Service_Abstract {
      * @return Array
      */
     public function user($username, $request) {
-        $options = array(
+        $options = [
             'info', 'videos', 'likes', 'appears_in',
             'all_videos', 'subscriptions', 'albums',
             'channels', 'groups', 'contacts_videos',
             'contacts_like'
-        );
+        ];
         if (!in_array($request, $options)) {
             throw new Garp_Service_Vimeo_Exception(
                 'Invalid request. vailable options are ' . implode(', ', $options)
@@ -63,9 +63,9 @@ class Garp_Service_Vimeo extends Zend_Service_Abstract {
      * @return Array
      */
     public function activity($username, $request) {
-        $options = array(
+        $options = [
             'user_did', 'happened_to_user', 'contacts_did', 'happened_to_contacts', 'everyone_did'
-        );
+        ];
         if (!in_array($request, $options)) {
             throw new Garp_Service_Vimeo_Exception(
                 'Invalid request. Available options are ' . implode(', ', $options)
@@ -83,9 +83,9 @@ class Garp_Service_Vimeo extends Zend_Service_Abstract {
      * @return Array
      */
     public function group($groupname, $request) {
-        $options = array(
+        $options = [
             'videos', 'users', 'info'
-        );
+        ];
         if (!in_array($request, $options)) {
             throw new Garp_Service_Vimeo_Exception(
                 'Invalid request. Available options are ' . implode(', ', $options)
@@ -103,9 +103,9 @@ class Garp_Service_Vimeo extends Zend_Service_Abstract {
      * @return Array
      */
     public function channel($channel, $request) {
-        $options = array(
+        $options = [
             'videos', 'info'
-        );
+        ];
         if (!in_array($request, $options)) {
             throw new Garp_Service_Vimeo_Exception(
                 'Invalid request. Available options are ' . implode(', ', $options)
@@ -123,9 +123,9 @@ class Garp_Service_Vimeo extends Zend_Service_Abstract {
      * @return Array
      */
     public function album($albumId, $request) {
-        $options = array(
+        $options = [
             'videos', 'info'
-        );
+        ];
         if (!in_array($request, $options)) {
             throw new Garp_Service_Vimeo_Exception(
                 'Invalid request. Available options are ' . implode(', ', $options)

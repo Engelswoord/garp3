@@ -50,12 +50,12 @@ class Garp_Service_Slack_Config {
      *                              override the app-wide configuration.
      */
     public function getParams(array $overrides = null) {
-        $params = array(
+        $params = [
             'token' => $this->_token,
             'channel' => $this->_channel,
             'icon_emoji' => $this->_icon_emoji,
             'username' => $this->_username
-        );
+        ];
 
         if ($overrides) {
             $params = array_merge($params, $overrides);

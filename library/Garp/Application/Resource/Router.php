@@ -85,7 +85,7 @@ class Garp_Application_Resource_Router extends Zend_Application_Resource_Router 
         } else {
             $genericRoutes = array_key_exists('generic', $routes) ?
                 $this->_loadRoutesConfig($routes['generic']) :
-                array()
+                []
             ;
         }
 
@@ -100,7 +100,7 @@ class Garp_Application_Resource_Router extends Zend_Application_Resource_Router 
          * @see: http://www.sobstel.org/blog/php-call-to-undefined-method-on-tr-tr-locale/
          * @see: https://bugs.php.net/bug.php?id=18556
          */
-        if (in_array($territory, array('tr_TR', 'ku', 'az_AZ'))) {
+        if (in_array($territory, ['tr_TR', 'ku', 'az_AZ'])) {
             setlocale(LC_CTYPE, 'en_US' . $utf8_extension);
         }
 
@@ -152,7 +152,7 @@ class Garp_Application_Resource_Router extends Zend_Application_Resource_Router 
             return Garp_I18n::getDefaultLocale();
         }
         $requestUri = $_SERVER['REQUEST_URI'];
-        $bits = explode('/', $requestUri);
+        $bits = explode('/', (string) $requestUri);
         // remove empty values
         $bits = array_filter($bits, 'strlen');
         // reindex the array

@@ -7,7 +7,7 @@
  * @package Garp
  * @author  Harmen Janssen <harmen@grrr.nl>
  */
-$translationTable = array(
+$translationTable = [
     // @codingStandardsIgnoreStart
     "Please leave the following field blank" => "Laat het volgende veld alstublieft leeg",
     'Only %1$s and %2$s files with a maximum of %3$s MB are allowed' => 'Alleen %1$s en %2$s bestanden van maximaal %3$s MB zijn toegestaan',
@@ -372,4 +372,4 @@ $translationTable = array(
         "Bekijk hier: %s\n\n",
     'gumball notification email subject' => '[%s] Een nieuwe versie staat live'
     // @codingStandardsIgnoreEnd
-);
+];

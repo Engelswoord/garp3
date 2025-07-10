@@ -44,7 +44,7 @@ class Garp_Auth {
      *
      * @var Array
      */
-    protected $_defaultConfigValues = array(
+    protected $_defaultConfigValues = [
         'loginModule' => 'default',
         'loginView' => 'login',
         'layoutView' => 'layout',
@@ -52,7 +52,7 @@ class Garp_Auth {
         'loginSuccessMessage' => 'You are successfully logged in',
         'logoutSuccessMessage' => 'You are now logged out',
         'salt' => 'you should really fill this in application.ini'
-    );
+    ];
 
     /**
      * Private constructor. Here be Singletons.
@@ -149,7 +149,7 @@ class Garp_Auth {
         $token = '';
         $token .= !empty($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
         $token .= md5($input);
-        $token .= md5($salt);
+        $token .= md5((string) $salt);
 
         /**
          * Embed an outline of the User table columns in the token. That way, whenever the
@@ -280,7 +280,7 @@ class Garp_Auth {
 
             // collect parents
             if ($verbose) {
-                $roles = array_fill_keys($roles, array());
+                $roles = array_fill_keys($roles, []);
                 foreach (array_keys($roles) as $role) {
                     $roles[$role]['parents'] = $this->getRoleParents($role);
                     $roles[$role]['children'] = $this->getRoleChildren($role);
@@ -288,7 +288,7 @@ class Garp_Auth {
             }
             return $roles;
         }
-        return array();
+        return [];
     }
 
     /**
@@ -299,7 +299,7 @@ class Garp_Auth {
      * @return Array
      */
     public function getRoleParents($role, $onlyParents = true) {
-        $parents = array();
+        $parents = [];
         if (Zend_Registry::isRegistered('Zend_Acl')) {
             $acl = Zend_Registry::get('Zend_Acl');
             $roles = $acl->getRoles();
@@ -320,7 +320,7 @@ class Garp_Auth {
      * @return Array
      */
     public function getRoleChildren($role) {
-        $children = array();
+        $children = [];
         if (Zend_Registry::isRegistered('Zend_Acl')) {
             $acl = Zend_Registry::get('Zend_Acl');
             $roles = $acl->getRoles();
@@ -344,23 +344,23 @@ class Garp_Auth {
         $sessionColumns = Zend_Db_Select::SQL_WILDCARD;
         if (!empty($ini->auth->login->sessionColumns)) {
             $sessionColumns = $ini->auth->login->sessionColumns;
-            $sessionColumns = explode(',', $sessionColumns);
+            $sessionColumns = explode(',', (string) $sessionColumns);
         }
         return $sessionColumns;
     }
 
     public function generateActivationCodeExpiry() {
         $authVars = $this->getConfigValues();
-        return date('Y-m-d', strtotime($authVars['forgotpassword']['activation_code_expires_in']));
+        return date('Y-m-d', strtotime((string) $authVars['forgotpassword']['activation_code_expires_in']));
     }
 
     public function generateActivationCodeForUser($token, $email, $userId) {
         $authVars = $this->getConfigValues();
         $activationCode = '';
         $activationCode .= $token;
-        $activationCode .= md5($email);
-        $activationCode .= md5($authVars['salt']);
-        $activationCode .= md5($userId);
+        $activationCode .= md5((string) $email);
+        $activationCode .= md5((string) $authVars['salt']);
+        $activationCode .= md5((string) $userId);
         $activationCode = md5($activationCode);
         return $activationCode;
     }
@@ -391,10 +391,10 @@ class Garp_Auth {
     protected function _renderForgotPasswordPartial($partial, $user, $activationUrl) {
         $viewObj = Zend_Controller_Front::getInstance()->getParam('bootstrap')
             ->getResource('view');
-        $viewObj->assign(array(
+        $viewObj->assign([
             'user' => $user,
             'activationUrl' => $activationUrl
-        ));
+        ]);
         return $viewObj->render($partial);
     }
 
@@ -408,10 +408,10 @@ class Garp_Auth {
         $snippetModel = $this->_getSnippetModel();
         $emailSnippet = $snippetModel->fetchByIdentifier($snippet_identifier);
         $emailMessage = $emailSnippet->{$snippet_column};
-        return Garp_Util_String::interpolate($emailMessage, array(
+        return Garp_Util_String::interpolate($emailMessage, [
             'USERNAME' => (string)new Garp_Util_FullName($user),
             'ACTIVATION_URL' => (string)new Garp_Util_FullUrl($activationUrl)
-        ));
+        ]);
     }
 
     /**

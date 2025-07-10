@@ -21,7 +21,7 @@ class Garp_Test_PHPUnit_Helper {
      *
      * @var array
      */
-    protected $_dynamicallyInsertedMockData = array();
+    protected $_dynamicallyInsertedMockData = [];
 
     /**
      * The methods setUp and tearDown are called by Garp_Test_PHPUnit_TestCase and
@@ -72,13 +72,13 @@ class Garp_Test_PHPUnit_Helper {
      * @param array         $defaultData Overwrite some fake data with constants of your own.
      * @return int The primary key of the newly inserted data
      */
-    public function insertMockData(Garp_Model_Db $model, array $defaultData = array()) {
+    public function insertMockData(Garp_Model_Db $model, array $defaultData = []) {
         $data = $model->getDataFactory()->make($defaultData);
         $modelSuffix = $model->getNameWithoutNamespace();
         if (!array_key_exists($modelSuffix, $this->_dynamicallyInsertedMockData)) {
-            $this->_dynamicallyInsertedMockData[$modelSuffix] = array(
+            $this->_dynamicallyInsertedMockData[$modelSuffix] = [
                 'i18n' => $model->isMultilingual()
-            );
+            ];
         }
         return $model->insert($data);
     }

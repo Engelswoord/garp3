@@ -66,11 +66,11 @@ class Garp_I18n_ModelFactory {
             if ($refModel->getObserver('Translatable')) {
                 try {
                     $refModel = $this->getModel($reference['refTableClass']);
-                } catch (Garp_I18n_ModelFactory_Exception_ModelAlreadyLocalized $e) {
+                } catch (Garp_I18n_ModelFactory_Exception_ModelAlreadyLocalized) {
                     continue;
                 }
             }
-            $refTableClass = get_class($refModel);
+            $refTableClass = $refModel::class;
             $bindingModel->addReference(
                 $rule,
                 $reference['columns'],
@@ -106,9 +106,9 @@ class Garp_I18n_ModelFactory {
      */
     protected function _normalizeModel(&$model) {
         if ($model instanceof Garp_Model_Db) {
-            $model = get_class($model);
+            $model = $model::class;
         }
-        $model = strpos($model, 'Model_') !== false ? $model : 'Model_' . $model;
+        $model = str_contains((string) $model, 'Model_') ? $model : 'Model_' . $model;
     }
 
     protected function _modelIsLocalized($model) {
@@ -117,8 +117,8 @@ class Garp_I18n_ModelFactory {
             return false;
         }
         foreach ($languages as $lang) {
-            $langSuffix = ucfirst($lang);
-            if (preg_match("/[a-z0-9]+$langSuffix$/", $model)) {
+            $langSuffix = ucfirst((string) $lang);
+            if (preg_match("/[a-z0-9]+$langSuffix$/", (string) $model)) {
                 return true;
             }
         }

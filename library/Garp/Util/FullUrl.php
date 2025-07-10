@@ -6,7 +6,7 @@
  * @package Garp_Util
  * @author  Harmen Janssen <harmen@grrr.nl>
  */
-class Garp_Util_FullUrl implements JsonSerializable {
+class Garp_Util_FullUrl implements JsonSerializable, \Stringable {
     const INVALID_ROUTE = 'Given route is invalid. Please provide an array with valid keys 0 and 1.';
     const CANNOT_RESOLVE_HTTP_HOST = 'Unable to resolve host. Please configure app.domain.';
 
@@ -18,33 +18,23 @@ class Garp_Util_FullUrl implements JsonSerializable {
     protected $_url;
 
     /**
-     * Wether to omit protocol
-     *
-     * @var bool
-     */
-    protected $_omitProtocol;
-
-    /**
-     * Wether to omit baseUrl
-     *
-     * @var bool
-     */
-    protected $_omitBaseUrl;
-
-    /**
      * Class constructor
      *
      * @param string|array $route String containing the path or Array containing route properties
      *                            (@see Zend_View_Helper_Url for the format)
-     * @param bool $omitProtocol Whether the protocol should be omitted,
+     * @param bool $_omitProtocol Whether the protocol should be omitted,
      *                           resulting in //www.example.com urls.
-     * @param bool $omitBaseUrl Wether the baseUrl should be omitted,
+     * @param bool $_omitBaseUrl Wether the baseUrl should be omitted,
      *                          for strings that already contain that.
      * @return void
      */
-    public function __construct($route, $omitProtocol = false, $omitBaseUrl = false) {
-        $this->_omitProtocol = $omitProtocol;
-        $this->_omitBaseUrl = $omitBaseUrl;
+    public function __construct($route, /**
+     * Wether to omit protocol
+     */
+    protected $_omitProtocol = false, /**
+     * Wether to omit baseUrl
+     */
+    protected $_omitBaseUrl = false) {
         $this->_url = $this->_createFullUrl($route);
     }
 

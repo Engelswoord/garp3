@@ -32,7 +32,7 @@ class Garp_Cli_Command_PostcodeNl extends Garp_Cli_Command {
      * @param array $args
      * @return Void
      */
-    public function main(array $args = array()) {
+    public function main(array $args = []) {
         if (!$args) {
             $this->_displayHelp();
             return;
@@ -84,7 +84,7 @@ class Garp_Cli_Command_PostcodeNl extends Garp_Cli_Command {
         $this->_progress->init($this->_totalZips);
         $this->_progress->display("initializing import");
 
-        array_walk($zipSet, array($this, '_storeZip'), $overwrite);
+        array_walk($zipSet, [$this, '_storeZip'], $overwrite);
     }
 
     protected function _formatBigNumber($number) {
@@ -121,12 +121,12 @@ class Garp_Cli_Command_PostcodeNl extends Garp_Cli_Command {
     }
 
     protected function _zipToRow(Garp_Service_PostcodeNl_Zipcode $zip) {
-        return array(
+        return [
             'zip' => $zip->zipcode,
             'latitude' => $zip->latitude,
             'longitude' => $zip->longitude,
             'source' => self::SOURCE_LABEL
-        );
+        ];
     }
 
     protected function _obligateFileParam() {

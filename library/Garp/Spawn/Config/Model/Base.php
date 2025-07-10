@@ -6,10 +6,10 @@
  * @author  David Spreekmeester <david@grrr.nl>
  */
 class Garp_Spawn_Config_Model_Base extends Garp_Spawn_Config_Model_Abstract {
-    protected $_defaultBehaviors = array(
+    protected $_defaultBehaviors = [
         'Timestampable' => null,
         'Authorable' => null
-    );
+    ];
 
 
     public function __construct(
@@ -34,18 +34,18 @@ class Garp_Spawn_Config_Model_Base extends Garp_Spawn_Config_Model_Abstract {
      * @return void
      */
     protected function _addIdField() {
-        $params = array(
+        $params = [
             'type' => 'numeric',
             'editable' => false,
             'visible' => false,
             //  next to being primary, an extra index key is also needed,
             //  to enable the flexibility to modify primary keys.
             'index' => true
-        );
+        ];
 
         $params['primary'] = !$this->_primaryKeyFieldIsPresent();
 
-        $this['inputs'] = array('id' => $params) + $this['inputs'];
+        $this['inputs'] = ['id' => $params] + $this['inputs'];
     }
 
 
@@ -56,7 +56,7 @@ class Garp_Spawn_Config_Model_Base extends Garp_Spawn_Config_Model_Abstract {
             }
         }
 
-        foreach ($this['relations'] as $relName => $props) {
+        foreach ($this['relations'] as $props) {
             if (array_key_exists('primary', $props) && $props['primary']) {
                 return true;
             }
@@ -74,9 +74,7 @@ class Garp_Spawn_Config_Model_Base extends Garp_Spawn_Config_Model_Abstract {
 
 
     public function isMultilingual() {
-        return count(array_filter($this['inputs'], function ($input) {
-            return array_key_exists('multilingual', $input) ?
-                $input['multilingual'] : false;
-        })) > 0;
+        return count(array_filter($this['inputs'], fn($input) => array_key_exists('multilingual', $input) ?
+            $input['multilingual'] : false)) > 0;
     }
 }

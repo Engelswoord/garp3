@@ -11,13 +11,13 @@ class Garp_Validate_Url extends Zend_Validate_Abstract {
     const INVALID_INPUT = 'invalidInput';
     const INVALID_URL = 'invalidUrl';
 
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::INVALID_INPUT => "'%value%' is not a string",
         self::INVALID_URL   => "'%value%' is not a valid URL",
-    );
+    ];
 
     public function isValid($value) {
-        $value = trim($value);
+        $value = trim((string) $value);
         $this->_setValue($value);
 
         // Taken from @see http://nl.php.net/manual/en/function.preg-match.php#93824

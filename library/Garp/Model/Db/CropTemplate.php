@@ -28,20 +28,20 @@ class Garp_Model_Db_CropTemplate extends Garp_Model_IniFile {
      */
     public function fetchAll() {
         $templates = parent::fetchAll();
-        $out = array();
+        $out = [];
         $id  = 1;
         foreach ($templates as $key => $value) {
             if (!array_key_exists('richtextable', $value) || !$value['richtextable']) {
                 continue;
             }
-            $out[] = array(
+            $out[] = [
                 'id'    => $id++,
                 'name'  => $key,
                 'w'     => !empty($value['w']) ? $value['w'] : null,
                 'h'     => !empty($value['h']) ? $value['h'] : null,
                 'crop'  => !empty($value['crop']) ? $value['crop'] : null,
                 'grow'  => !empty($value['grow']) ? $value['grow'] : null
-            );
+            ];
         }
         return $out;
     }

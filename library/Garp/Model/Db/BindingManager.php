@@ -21,13 +21,13 @@ class Garp_Model_Db_BindingManager {
      * Stored bindings
      * @var Array
      */
-    protected static $_bindings = array();
+    protected static $_bindings = [];
 
     /**
      * Stored recursion levels.
      * @var Array
      */
-    protected static $_recursion = array();
+    protected static $_recursion = [];
 
     /**
      * Store a binding between models.
@@ -50,7 +50,7 @@ class Garp_Model_Db_BindingManager {
         if ($alias) {
             unset(static::$_bindings[$subjectModel][$alias]);
         } else {
-            static::$_bindings[$subjectModel] = array();
+            static::$_bindings[$subjectModel] = [];
         }
         self::resetRecursion($subjectModel);
     }
@@ -60,8 +60,8 @@ class Garp_Model_Db_BindingManager {
      * @return Void
      */
     public static function destroyAllBindings() {
-        static::$_bindings = array();
-        static::$_recursion = array();
+        static::$_bindings = [];
+        static::$_recursion = [];
     }
 
     /**
@@ -73,7 +73,7 @@ class Garp_Model_Db_BindingManager {
         if (is_null($subjectModel)) {
             return static::$_bindings;
         }
-        return !empty(static::$_bindings[$subjectModel]) ? static::$_bindings[$subjectModel] : array();
+        return !empty(static::$_bindings[$subjectModel]) ? static::$_bindings[$subjectModel] : [];
     }
 
     /**
@@ -121,11 +121,11 @@ class Garp_Model_Db_BindingManager {
             unset(static::$_recursion[$key]);
             return;
         }
-        $_store = array();
+        $_store = [];
         foreach (static::$_recursion as $key => $value) {
             $keyBits = explode('.', $key);
             // Strip off the integer from the end in the case of homophyllic relationships.
-            array_walk($keyBits, function(&$kb) {
+            array_walk($keyBits, function(&$kb): void {
                 $kb = preg_replace('/\d$/', '', $kb);
             });
 
@@ -176,7 +176,7 @@ class Garp_Model_Db_BindingManager {
             $subjectModel .= '1';
             $alias .= '2';
         }
-        $models = array($subjectModel, $alias);
+        $models = [$subjectModel, $alias];
         sort($models);
         $key = implode('.', $models);
         return $key;
@@ -194,7 +194,7 @@ class Garp_Model_Db_BindingManager {
         if (!is_string($rootModel)) {
             throw new Exception(__METHOD__.' expects parameter 1 to be string.');
         }
-        $tree = array();
+        $tree = [];
         $bindingModels = static::getBindings($rootModel);
         foreach ($bindingModels as $boundModel => $bindingOptions) {
             $tree[$boundModel] = (array)$bindingOptions;

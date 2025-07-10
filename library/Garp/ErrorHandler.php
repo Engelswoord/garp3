@@ -18,7 +18,7 @@ class Garp_ErrorHandler {
      * @param Exception $e
      * @return void
      */
-    public static function handlePrematureException(Exception $e) {
+    public static function handlePrematureException(\Throwable $e) {
         $error = new Zend_Controller_Plugin_ErrorHandler();
         $error->type = Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER;
         $error->exception = $e;
@@ -61,7 +61,7 @@ class Garp_ErrorHandler {
     public static function logErrorToSlack(ArrayObject $errors) {
         try {
             $slack = new Garp_Service_Slack();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
 
@@ -71,8 +71,8 @@ class Garp_ErrorHandler {
         $trace = self::_filterBasePath(
             str_replace('->', '::', $errors->exception->getTraceAsString())
         );
-        $params['attachments'] = array(
-            array(
+        $params['attachments'] = [
+            [
                 'title' => self::_getExceptionClass($errors),
                 'text' => $slack->wrapCodeMarkup(
                     $errors->exception->getMessage()
@@ -82,17 +82,17 @@ class Garp_ErrorHandler {
                     . $errors->exception->getLine()
                 ),
                 'color' => '#bb5555',
-                'mrkdwn_in' => array('text'),
+                'mrkdwn_in' => ['text'],
                 'short' => true
-            ),
-            array(
+            ],
+            [
                 'title' => 'StackTrace',
                 'text' => $slack->wrapCodeMarkup($trace),
                 'color' => '#6666ee',
-                'mrkdwn_in' => array('text'),
+                'mrkdwn_in' => ['text'],
                 'short' => true
-            )
-        );
+            ]
+        ];
 
         $slack->postMessage($shortErrorMessage, $params);
 
@@ -124,11 +124,11 @@ class Garp_ErrorHandler {
 
         $mailer = new Garp_Mailer();
         return $mailer->send(
-            array(
+            [
             'to' => $to,
             'subject' => $subjectPrefix . 'An application error occurred',
             'message' => $errorMessage
-            )
+            ]
         );
     }
 
@@ -180,24 +180,23 @@ class Garp_ErrorHandler {
     }
 
     protected static function _getExceptionClass(ArrayObject $errors) {
-        return get_class($errors->exception);
+        return $errors->exception::class;
     }
 
     protected static function _getApplicationName() {
         $deployConfig = new Garp_Deploy_Config();
         try {
             $appName = $deployConfig->getParam('production', 'application');
-        } catch (Exception $e) {
-            return isset(Zend_Registry::get('config')->app->name) ?
-                Zend_Registry::get('config')->app->name : 'anonymous application';
+        } catch (Exception) {
+            return Zend_Registry::get('config')->app->name ?? 'anonymous application';
         }
 
         return $appName;
     }
 
     protected static function _startsWithVowel($string) {
-        $vowels = array('a', 'e', 'i', 'o', 'u');
-        return in_array(strtolower($string[0]), $vowels);
+        $vowels = ['a', 'e', 'i', 'o', 'u'];
+        return in_array(strtolower((string) $string[0]), $vowels);
     }
 
     protected static function _composeFullErrorMessage($errors) {

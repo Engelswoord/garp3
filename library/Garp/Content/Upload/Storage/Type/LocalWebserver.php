@@ -44,7 +44,7 @@ class Garp_Content_Upload_Storage_Type_LocalWebserver extends Garp_Content_Uploa
 
         $md5output = exec("cat {$absPath} | md5sum");
         if ($md5output) {
-            $md5output = str_replace(array(' ', '-'), '', $md5output);
+            $md5output = str_replace([' ', '-'], '', $md5output);
             return $md5output;
         }
 
@@ -104,7 +104,7 @@ class Garp_Content_Upload_Storage_Type_LocalWebserver extends Garp_Content_Uploa
             $this->_throwDirAccessError($absDir);
         }
 
-        $dirList = array_filter($dirList, array($this, '_isAllowedPath'));
+        $dirList = array_filter($dirList, [$this, '_isAllowedPath']);
 
         return $dirList;
     }

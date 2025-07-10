@@ -38,7 +38,7 @@ class Garp_Spawn_MySql_UniqueKey extends Garp_Spawn_MySql_Key {
             $key->column
         ;
         
-        $tableName  = strtolower($tableName);
+        $tableName  = strtolower((string) $tableName);
         $adapter    = Zend_Db_Table::getDefaultAdapter();
         $query      = "ALTER TABLE `{$tableName}` ADD UNIQUE `{$key->name}` (`{$column}`);";
 
@@ -47,7 +47,7 @@ class Garp_Spawn_MySql_UniqueKey extends Garp_Spawn_MySql_Key {
 
 
     public static function delete($tableName, Garp_Spawn_MySql_UniqueKey $key) {
-        $tableName  = strtolower($tableName);
+        $tableName  = strtolower((string) $tableName);
         $adapter    = Zend_Db_Table::getDefaultAdapter();
         $adapter->query("SET FOREIGN_KEY_CHECKS = 0;");
         $success = $adapter->query("ALTER TABLE `{$tableName}` DROP INDEX `{$key->name}`;");
@@ -57,13 +57,13 @@ class Garp_Spawn_MySql_UniqueKey extends Garp_Spawn_MySql_Key {
 
 
     public static function isUniqueKeyStatement($line) {
-        return stripos($line, 'UNIQUE KEY') !== false;
+        return stripos((string) $line, 'UNIQUE KEY') !== false;
     }
 
 
     protected function _parse($line) {
-        $matches = array();
-        preg_match('/UNIQUE KEY\s+`(?P<name>\w+)`\s+\(`?(?P<column>[\w,` ]+)`?\)/i', trim($line), $matches);
+        $matches = [];
+        preg_match('/UNIQUE KEY\s+`(?P<name>\w+)`\s+\(`?(?P<column>[\w,` ]+)`?\)/i', trim((string) $line), $matches);
         if (
             !array_key_exists('column', $matches) ||
             !array_key_exists('name', $matches)
@@ -72,7 +72,7 @@ class Garp_Spawn_MySql_UniqueKey extends Garp_Spawn_MySql_Key {
         }
         
         $matches['column'] = str_replace('`', '', $matches['column']);
-        if (strpos($matches['column'], ',') !== false) {
+        if (str_contains($matches['column'], ',')) {
             $matches['column'] = explode(',', $matches['column']);
         }
 

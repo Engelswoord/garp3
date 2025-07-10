@@ -6,7 +6,7 @@
  * @author  David Spreekmeester <david@grrr.nl>
  */
 class Garp_Cli_Command_Content extends Garp_Cli_Command {
-    protected $_environments = array('development', 'integration', 'staging', 'production');
+    protected $_environments = ['development', 'integration', 'staging', 'production'];
 
     /**
      * @param string $_sourceEnv The id of the source environment
@@ -164,7 +164,7 @@ class Garp_Cli_Command_Content extends Garp_Cli_Command {
     protected function _parameterIsSetTo(array $args, $parameter, $value) {
         return (
             array_key_exists($parameter, $args) &&
-            strcasecmp($args[$parameter], $value) === 0
+            strcasecmp((string) $args[$parameter], $value) === 0
         );
     }
 

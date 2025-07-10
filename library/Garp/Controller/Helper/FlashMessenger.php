@@ -38,7 +38,7 @@ class Garp_Controller_Helper_FlashMessenger extends Zend_Controller_Action_Helpe
      */
     public function addMessage($message) {
         if (!is_array(self::$_store->messages)) {
-            self::$_store->messages = array();
+            self::$_store->messages = [];
         }
         $messages = self::$_store->messages;
         // Duplicates are wack
@@ -64,7 +64,7 @@ class Garp_Controller_Helper_FlashMessenger extends Zend_Controller_Action_Helpe
             }
             return $messages;
         }
-        return array();
+        return [];
     }
 
     /**

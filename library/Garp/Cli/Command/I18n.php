@@ -20,13 +20,13 @@ class Garp_Cli_Command_I18n extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function populateLocalizedRecords(array $args = array()) {
+    public function populateLocalizedRecords(array $args = []) {
         Zend_Registry::get('CacheFrontend')->setOption('caching', false);
         $mem = new Garp_Util_Memory();
         $mem->useHighMemory();
 
-        $models = !empty($args) ? array($args[0]) : $this->_getInternationalizedModels();
-        array_walk($models, array($this, '_populateRecordsForModel'));
+        $models = !empty($args) ? [$args[0]] : $this->_getInternationalizedModels();
+        array_walk($models, [$this, '_populateRecordsForModel']);
 
         Zend_Registry::get('CacheFrontend')->setOption('caching', true);
         Garp_Cache_Manager::purge();
@@ -53,9 +53,7 @@ class Garp_Cli_Command_I18n extends Garp_Cli_Command {
             unset($record[$foreignKeyColumns[0]]);
 
             $updateData = array_map(
-                function ($value) {
-                    return array(Garp_I18n::getDefaultLocale() => $value);
-                }, $record->toArray()
+                fn($value) => [Garp_I18n::getDefaultLocale() => $value], $record->toArray()
             );
             unset($updateData['slug']);
 
@@ -90,20 +88,16 @@ class Garp_Cli_Command_I18n extends Garp_Cli_Command {
         if (count($foreignKeyColumns) > 1) {
             throw new Exception("Can't deal with multiple foreign keys right now!");
         }
-        $whereData = array_combine(array('id'), array_values($whereData));
+        $whereData = array_combine(['id'], array_values($whereData));
         return $model->arrayToWhereClause($whereData);
     }
 
     protected function _fetchRecordsInDefaultLanguage(Garp_Model_Db $model) {
         $i18nColumns = array_filter(
-            $model->getConfiguration('fields'), function ($col) {
-                return $col['multilingual'];
-            }
+            $model->getConfiguration('fields'), fn($col) => $col['multilingual']
         );
         $i18nColumns = array_map(
-            function ($col) {
-                return $col['name'];
-            }, $i18nColumns
+            fn($col) => $col['name'], $i18nColumns
         );
         $i18nModel = $model->getObserver('Translatable')->getI18nModel($model);
         $foreignKeyColumns = $this->_getForeignKeyColumns($i18nModel, $model);
@@ -115,7 +109,7 @@ class Garp_Cli_Command_I18n extends Garp_Cli_Command {
     }
 
     protected function _getForeignKeyColumns(Garp_Model_Db $i18nModel, Garp_Model_Db $model) {
-        $reference = $i18nModel->getReference(get_class($model));
+        $reference = $i18nModel->getReference($model::class);
         $foreignKeyColumns = $reference['columns'];
         return $foreignKeyColumns;
     }
@@ -123,19 +117,13 @@ class Garp_Cli_Command_I18n extends Garp_Cli_Command {
     protected function _getInternationalizedModels() {
         $modelSet = (array)Garp_Spawn_Model_Set::getInstance();
         $modelsWithI18nFields = array_filter(
-            $modelSet, function ($model) {
-                return array_reduce(
-                    $model->fields->toArray(), function ($hasMultilingualField, $field) {
-                        return $hasMultilingualField || $field->multilingual;
-                    }, false
-                );
-            }
+            $modelSet, fn($model) => array_reduce(
+                $model->fields->toArray(), fn($hasMultilingualField, $field) => $hasMultilingualField || $field->multilingual, false
+            )
         );
         return array_values(
             array_map(
-                function ($model) {
-                    return $model->id;
-                }, $modelsWithI18nFields
+                fn($model) => $model->id, $modelsWithI18nFields
             )
         );
     }
@@ -144,9 +132,7 @@ class Garp_Cli_Command_I18n extends Garp_Cli_Command {
         $modelName = "Model_{$modelName}";
         $model = new $modelName;
         $unwantedObservers = array_filter(
-            array_keys($model->getObservers()), function ($observer) {
-                return !in_array($observer, array('Translatable'));
-            }
+            array_keys($model->getObservers()), fn($observer) => !in_array($observer, ['Translatable'])
         );
         foreach ($unwantedObservers as $observer) {
             $model->unregisterObserver($observer);

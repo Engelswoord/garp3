@@ -33,7 +33,7 @@ abstract class Garp_Spawn_Php_Model_Abstract implements Garp_Spawn_Php_Model_Pro
 
         if (!file_put_contents($path, $content)) {
             $model = $this->getModel();
-            throw new Exception("Could not generate {$model->id}" . get_class());
+            throw new Exception("Could not generate {$model->id}" . self::class);
         }
         return true;
     }

@@ -13,7 +13,7 @@ class Garp_Filter_MysqlDate implements Zend_Filter_Interface {
         if (!$value) {
             return '';
         }
-        list($day, $month, $year) = sscanf($value, '%d-%d-%d');
+        [$day, $month, $year] = sscanf($value, '%d-%d-%d');
         $date = "{$year}-{$month}-{$day}";
         return $date;
     }

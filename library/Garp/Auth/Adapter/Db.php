@@ -46,16 +46,16 @@ class Garp_Auth_Adapter_Db extends Garp_Auth_Adapter_Abstract {
         $sessionColumns = null;
         if (!empty($ini->auth->login->sessionColumns)) {
             $sessionColumns = $ini->auth->login->sessionColumns;
-            $sessionColumns = explode(',', $sessionColumns);
+            $sessionColumns = explode(',', (string) $sessionColumns);
         }
 
         $model = new Model_AuthLocal();
         try {
             $result = $model->tryLogin($identityValue, $credentialValue, $authVars, $sessionColumns);
             return $result->toArray();
-        } catch (Garp_Auth_Adapter_Db_UserNotFoundException $e) {
+        } catch (Garp_Auth_Adapter_Db_UserNotFoundException) {
             $this->_addError('The email address is not found');
-        } catch (Garp_Auth_Adapter_Db_InvalidPasswordException $e) {
+        } catch (Garp_Auth_Adapter_Db_InvalidPasswordException) {
             $this->_addError('The password is invalid');
         }
         return false;

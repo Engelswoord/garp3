@@ -19,7 +19,7 @@ class Garp_Cli_Command_Slack extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function send(array $args = array()) {
+    public function send(array $args = []) {
         if (!$args || !array_key_exists(0, $args) || empty($args[0])) {
             Garp_Cli::errorOut(self::ERROR_EMPTY_SEND);
             return false;
@@ -37,7 +37,7 @@ class Garp_Cli_Command_Slack extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function sendDeployNotification(array $args = array()) {
+    public function sendDeployNotification(array $args = []) {
         $branch = f\prop('branch', $args) ?? 'unknown';
         $user = ucfirst(f\prop('user', $args) ?? 'unknown');
         $gitVersion = f\prop('git-version', $args) ?? 'unknown';
@@ -54,7 +54,7 @@ class Garp_Cli_Command_Slack extends Garp_Cli_Command {
         $slackConfig = new Garp_Service_Slack_Config($slackParams);
         $slack = new Garp_Service_Slack($slackConfig);
 
-        if ($gitVersion && strpos($gitVersion, 'fatal') === false) {
+        if ($gitVersion && !str_contains((string) $gitVersion, 'fatal')) {
             $version = $gitVersion;
         }
 

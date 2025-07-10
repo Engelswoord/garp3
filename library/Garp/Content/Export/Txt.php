@@ -61,7 +61,7 @@ class Garp_Content_Export_Txt extends Garp_Content_Export_Abstract {
      * @return string
      */
     protected function _formatRelatedRowset($rowset) {
-        $out = array();
+        $out = [];
         foreach ($rowset as $row) {
             if (is_array($row)) {
                 $values = array_values($row);

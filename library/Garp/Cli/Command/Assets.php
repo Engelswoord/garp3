@@ -13,7 +13,7 @@ class Garp_Cli_Command_Assets extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function minifyJs(array $args = array()) {
+    public function minifyJs(array $args = []) {
         $ini = Zend_Registry::get('config');
         if (empty($ini->assets->js)) {
             Garp_Cli::errorOut(
@@ -27,7 +27,7 @@ class Garp_Cli_Command_Assets extends Garp_Cli_Command {
             return false;
         }
 
-        $jsRoot = ltrim($ini->assets->js->basePath ?: 'js', '/');
+        $jsRoot = ltrim((string) $ini->assets->js->basePath ?: 'js', '/');
         $assets = $ini->assets->js->toArray();
         unset($assets['basePath']);
 

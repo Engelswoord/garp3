@@ -241,10 +241,10 @@ abstract class Garp_Content_Db_Server_Abstract implements Garp_Content_Db_Server
     protected function _lowerCaseTableAndViewNames(&$dump) {
         $configDir      = APPLICATION_PATH."/modules/default/Model/config/";
         $extension      = 'json';
-        $patterns       = array();
-        $replacements   = array();
+        $patterns       = [];
+        $replacements   = [];
 
-        $hardcodedTables = array('AuthFacebook', 'AuthLocal', 'Video');
+        $hardcodedTables = ['AuthFacebook', 'AuthLocal', 'Video'];
         foreach ($hardcodedTables as $hardcodedTable) {
             $patterns[]         = "`{$hardcodedTable}`";
             $replacements[]     = "`" . strtolower($hardcodedTable) ."`";
@@ -262,7 +262,7 @@ abstract class Garp_Content_Db_Server_Abstract implements Garp_Content_Db_Server
 
 
         foreach ($modelSet as $model) {
-            $lcModel            = strtolower($model->id);
+            $lcModel            = strtolower((string) $model->id);
             $patterns[]         = "`{$model->id}`";
             $replacements[]     = "`{$lcModel}`";
 
@@ -276,7 +276,7 @@ abstract class Garp_Content_Db_Server_Abstract implements Garp_Content_Db_Server
                     $patterns[]     = "`{$bindingName}`";
                     $replacements[] = "`{$lcRelation}`";
                 } else {
-                    $lcRelation     = strtolower($relation->name);
+                    $lcRelation     = strtolower((string) $relation->name);
                     $patterns[]     = "`{$relation->name}`";
                     $replacements[] = "`{$lcRelation}`";
                 }

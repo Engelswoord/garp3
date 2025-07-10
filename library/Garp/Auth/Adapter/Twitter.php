@@ -33,12 +33,12 @@ class Garp_Auth_Adapter_Twitter extends Garp_Auth_Adapter_Abstract {
         if (!$authVars->consumerKey || !$authVars->consumerSecret) {
             throw new Garp_Auth_Exception('Required key "consumerKey" or "consumerSecret" not set in application.ini.');
         }
-        $config = array(
+        $config = [
             'siteUrl' => 'https://api.twitter.com/oauth',
             'consumerKey' => $authVars->consumerKey,
             'consumerSecret' => $authVars->consumerSecret,
             'callbackUrl' => $callbackUrl
-        );
+        ];
         try {
             $consumer = new Zend_Oauth_Consumer($config);
             if ($request->isPost()) {
@@ -71,8 +71,8 @@ class Garp_Auth_Adapter_Twitter extends Garp_Auth_Adapter_Abstract {
             $this->_addError('App was not authorized. Please try again.');
             return false;
         } catch (Exception $e) {
-            if (strpos($e->getMessage(), 'Duplicate entry') !== false
-                && strpos($e->getMessage(), 'email_unique') !== false
+            if (str_contains($e->getMessage(), 'Duplicate entry')
+                && str_contains($e->getMessage(), 'email_unique')
             ) {
                 $this->_addError(__('this email address already exists'));
                 return false;
@@ -107,10 +107,10 @@ class Garp_Auth_Adapter_Twitter extends Garp_Auth_Adapter_Abstract {
 
         //@phpstan-ignore class.notFound
         $model = new Model_AuthTwitter();
-        $model->bindModel('Model_User', array(
+        $model->bindModel('Model_User', [
             'conditions' => $userConditions,
             'rule' => 'User'
-        ));
+        ]);
         $userData = $model->fetchRow(
             $model->select()
                 ->where('twitter_uid = ?', $twitterUserId)
@@ -125,13 +125,13 @@ class Garp_Auth_Adapter_Twitter extends Garp_Auth_Adapter_Abstract {
     }
 
     protected function _getTwitterService(Zend_Oauth_Token_Access $accesstoken, $consumerKey, $consumerSecret) {
-        return new Zend_Service_Twitter(array(
+        return new Zend_Service_Twitter([
             'accessToken' => $accesstoken,
-            'oauthOptions' => array(
+            'oauthOptions' => [
                 'username' => $accesstoken->getParam('screen_name'),
                 'consumerKey' => $consumerKey,
                 'consumerSecret' => $consumerSecret
-            )
-        ));
+            ]
+        ]);
     }
 }

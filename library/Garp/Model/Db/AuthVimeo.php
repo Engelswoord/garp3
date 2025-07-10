@@ -14,7 +14,7 @@ class Garp_Model_Db_AuthVimeo extends Model_Base_Vimeo {
 
     public function init() {
         parent::init();
-        $this->registerObserver(new Garp_Model_Behavior_Authenticatable(array($this)));
+        $this->registerObserver(new Garp_Model_Behavior_Authenticatable([$this]));
     }
 
     /**
@@ -30,12 +30,12 @@ class Garp_Model_Db_AuthVimeo extends Model_Base_Vimeo {
         $userModel  = new Model_User();
         $userId     = $userModel->insert($props);
         $userData   = $userModel->find($userId)->current();
-        $this->insert(array(
+        $this->insert([
             'vimeo_id'            => $vimeoId,
             'access_token'        => $accessToken->getToken(),
             'access_token_secret' => $accessToken->getTokenSecret(),
             'user_id'             => $userId
-        ));
+        ]);
 
         $this->getObserver('Authenticatable')->updateLoginStats($userId);
         return $userData;

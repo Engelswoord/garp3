@@ -26,10 +26,10 @@ class Garp_Service_Google_Maps {
      * @return Garp_Service_Google_Maps_Response The elaborate location data from Google.
      */
     public function fetchLocation($address, $country = null) {
-        $params = array(
+        $params = [
             'address' => urlencode($address),
             'sensor' => 'false'
-        );
+        ];
 
         if ($country) {
             $params['components'] = 'country:' . $country;

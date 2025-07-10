@@ -8,10 +8,7 @@
  * @author  David Spreekmeester <david@grrr.nl>
  */
 class Garp_Adobe_InDesign_SpreadSet extends ArrayObject {
-    protected $_workingDir;
-
-    public function __construct($workingDir) {
-        $this->_workingDir = $workingDir;
+    public function __construct(protected $_workingDir) {
         $this->_loadSpreads();
     }
 
@@ -25,7 +22,7 @@ class Garp_Adobe_InDesign_SpreadSet extends ArrayObject {
      *                  )
      */
     public function getTaggedStoryIds() {
-        $cumulativeStoriesPerPage = array();
+        $cumulativeStoriesPerPage = [];
 
         foreach ($this as $spread) {
             $taggedStories = $spread->getStoriesWithTaggedTextFrames();

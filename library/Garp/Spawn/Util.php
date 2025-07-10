@@ -15,7 +15,7 @@ class Garp_Spawn_Util {
     }
 
     static public function stringEndsIn($needle, $haystack) {
-        return substr($haystack, -(strlen($needle))) === $needle;
+        return str_ends_with((string) $haystack, (string) $needle);
     }
 
     /**
@@ -27,7 +27,7 @@ class Garp_Spawn_Util {
      * @return string Array statement containing the elements in the provided list.
      */
     static public function array2phpStatement(Array $list, $castObjectsToArrays = true) {
-        $nodes = array();
+        $nodes = [];
 
         foreach ($list as $key => $value) {
             if (is_object($value) && $castObjectsToArrays) {
@@ -91,9 +91,7 @@ class Garp_Spawn_Util {
      * @return string
      */
     static public function underscored2camelcased($str) {
-        $func = function ($c) {
-            return strtoupper($c[1]);
-        };
+        $func = (fn($c) => strtoupper((string) $c[1]));
         return preg_replace_callback('/_([a-z])/', $func, $str);
     }
 
@@ -133,11 +131,11 @@ class Garp_Spawn_Util {
     static public function addStringColoring($msg) {
         $prevEnc = mb_internal_encoding();
         mb_internal_encoding("UTF-8");
-        $firstChar = mb_substr($msg, 0, 1);
+        $firstChar = mb_substr((string) $msg, 0, 1);
         if ($firstChar === '√') {
-            $msg = "\033[2;32m{$firstChar}\033[0m" . mb_substr($msg, 1);
+            $msg = "\033[2;32m{$firstChar}\033[0m" . mb_substr((string) $msg, 1);
         } elseif ($firstChar === '!') {
-            $msg = "\033[2;31m●\033[0m" . mb_substr($msg, 1);
+            $msg = "\033[2;31m●\033[0m" . mb_substr((string) $msg, 1);
         }
         mb_internal_encoding($prevEnc);
         return $msg;

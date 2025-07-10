@@ -36,5 +36,5 @@ interface Garp_Util_Observable {
      * @param array $args The arguments you wish to pass to the observers
      * @return Garp_Util_Observable $this
      */
-    public function notifyObservers($event, array $args = array());
+    public function notifyObservers($event, array $args = []);
 }

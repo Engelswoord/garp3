@@ -22,7 +22,7 @@ class Garp_Cli_Command_Gumball extends Garp_Cli_Command {
     const ERROR_SOURCE_ENV_NOT_CONFIGURED
         = 'Error: the database source environment was not configured. Cannot migrate data.';
 
-    public function make($args = array()) {
+    public function make($args = []) {
         $mem = new Garp_Util_Memory();
         $mem->useHighMemory();
 
@@ -40,10 +40,10 @@ class Garp_Cli_Command_Gumball extends Garp_Cli_Command {
         }
 
         $gumball = new Garp_Gumball(
-            $version, array(
+            $version, [
                 'useDatabase' => $useDb,
                 'databaseSourceEnvironment' => $fromEnv
-            )
+            ]
         );
 
         if ($gumball->exists()
@@ -62,23 +62,23 @@ class Garp_Cli_Command_Gumball extends Garp_Cli_Command {
 
         try {
             $gumball->make();
-        } catch (Garp_Gumball_Exception_CannotWriteTargetDirectory $e) {
+        } catch (Garp_Gumball_Exception_CannotWriteTargetDirectory) {
             Garp_Cli::errorOut(self::ABORT_CANT_MKDIR_TARGET_DIRECTORY);
             return false;
-        } catch (Garp_Gumball_Exception_CannotCopySourceFiles $e) {
+        } catch (Garp_Gumball_Exception_CannotCopySourceFiles) {
             Garp_Cli::errorOut(self::ABORT_CANT_COPY_SOURCEFILES);
             return false;
-        } catch (Garp_Gumball_Exception_CannotCreateZip $e) {
+        } catch (Garp_Gumball_Exception_CannotCreateZip) {
             Garp_Cli::errorOut(self::ABORT_CANT_WRITE_ZIP);
             return false;
-        } catch (Garp_Gumball_Exception_DatadumpFailed $e) {
+        } catch (Garp_Gumball_Exception_DatadumpFailed) {
             Garp_Cli::errorOut(self::ABORT_DATADUMP_FAILED);
             return false;
         }
         return true;
     }
 
-    public function restore($args = array()) {
+    public function restore($args = []) {
         $mem = new Garp_Util_Memory();
         $mem->useHighMemory();
 
@@ -90,7 +90,7 @@ class Garp_Cli_Command_Gumball extends Garp_Cli_Command {
             $this->_broadcastGumballInstallation($version);
             Garp_Cli::lineOut('Done!', Garp_Cli::GREEN);
             //@phpstan-ignore class.notFound
-        } catch (Garp_Gumball_Exception_SourceEnvNotConfigured $e) {
+        } catch (Garp_Gumball_Exception_SourceEnvNotConfigured) {
             Garp_Cli::errorOut(self::ERROR_SOURCE_ENV_NOT_CONFIGURED);
             return false;
         } catch (Exception $e) {
@@ -113,7 +113,7 @@ class Garp_Cli_Command_Gumball extends Garp_Cli_Command {
 
         $mailer = new Garp_Mailer();
         $mailer->send(
-            array(
+            [
                 'to' => $config->gumball->notificationEmail,
                 'subject' => sprintf($this->_getRestoreEmailSubject(), $config->app->name),
                 'message' => sprintf(
@@ -123,7 +123,7 @@ class Garp_Cli_Command_Gumball extends Garp_Cli_Command {
                     $version,
                     $config->app->domain
                 )
-            )
+            ]
         );
     }
 
@@ -132,31 +132,31 @@ class Garp_Cli_Command_Gumball extends Garp_Cli_Command {
 
         $slack->postMessage(
             '',
-            array(
-                'attachments' => array(
-                    array(
+            [
+                'attachments' => [
+                    [
                         'pretext' => 'A new gumball was deployed',
                         'color' => '#7CD197',
-                        'fields' => array(
-                            array(
+                        'fields' => [
+                            [
                                 'title' => 'Project',
                                 'value' => Zend_Registry::get('config')->app->name,
                                 'short' => false
-                            ),
-                            array(
+                            ],
+                            [
                                 'title' => 'Environment',
                                 'value' => APPLICATION_ENV,
                                 'short' => false
-                            ),
-                            array(
+                            ],
+                            [
                                 'title' => 'Version',
                                 'value' => (string)$version,
                                 'short' => false
-                            )
-                        )
-                    )
-                )
-            )
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         );
     }
 

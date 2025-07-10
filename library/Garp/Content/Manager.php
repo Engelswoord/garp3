@@ -68,7 +68,7 @@ class Garp_Content_Manager {
     public function fetch(?array $options = null) {
         try {
             $this->_checkAcl('fetch');
-        } catch (Garp_Auth_Exception $e) {
+        } catch (Garp_Auth_Exception) {
             $this->_checkAcl('fetch_own');
         }
 
@@ -77,12 +77,12 @@ class Garp_Content_Manager {
                 ? $options
                 : new Garp_Util_Configuration($options);
             $options
-                ->setDefault('sort', array())
+                ->setDefault('sort', [])
                 ->setDefault('start', null)
                 ->setDefault('limit', null)
                 ->setDefault('fields', null)
                 ->setDefault('query', false)
-                ->setDefault('group', array())
+                ->setDefault('group', [])
                 ->setDefault('rule', null)
                 ->setDefault('bindingModel', null)
                 ->setDefault('bidirectional', false)
@@ -100,7 +100,7 @@ class Garp_Content_Manager {
 
             // FILTER WHERES AND JOINS
             // ============================================================
-            $related = array();
+            $related = [];
             if ($options['query'] && !empty($options['query'])) {
                 /**
                  * Check for other model names in the conditions.
@@ -109,7 +109,7 @@ class Garp_Content_Manager {
                  * The format is <related-model-name>.<primary-key> => <value>.
                  */
                 foreach ($options['query'] as $column => $value) {
-                    if (strpos($column, '.') !== false) {
+                    if (str_contains($column, '.')) {
                         $related[$column] = $value;
                         unset($options['query'][$column]);
                     }
@@ -160,7 +160,7 @@ class Garp_Content_Manager {
                 $lang = Garp_I18n::getDefaultLocale();
                 $select->join(
                     $i18nModel->getName(),
-                    $i18nModel->refmapToOnClause(get_class($this->_model)) . " AND lang = '$lang'",
+                    $i18nModel->refmapToOnClause($this->_model::class) . " AND lang = '$lang'",
                     array_map(
                         f\prop('name'),
                         array_filter(
@@ -190,11 +190,11 @@ class Garp_Content_Manager {
             // to collect column info.
             // This should be more accurate than reading that info from the table.
             $mockTable = new Zend_Db_Table(
-                array(
+                [
                 Zend_Db_Table_Abstract::NAME => $tableName,
                 Zend_Db_Table_Abstract::PRIMARY => $this->_model->info(
                     Zend_Db_Table_Abstract::PRIMARY
-                ))
+                )]
             );
             $nativeColumns = $mockTable->info(Zend_Db_Table_Abstract::COLS);
 
@@ -204,7 +204,7 @@ class Garp_Content_Manager {
                         $nativeColTest = preg_replace('/(ASC|DESC)$/', '', $s);
                         $nativeColTest = trim($nativeColTest);
 
-                        if (in_array($nativeColTest, $nativeColumns) && strpos($s, '.') === false) {
+                        if (in_array($nativeColTest, $nativeColumns) && !str_contains($s, '.')) {
                             $s = $tableName . '.' . $s;
                         }
                         return $s;
@@ -217,7 +217,7 @@ class Garp_Content_Manager {
             // Do not limit when a COUNT(*) is performed, this skews results.
             $isCountQuery = count($fields) == 1
                 && !empty($fields[0])
-                && strtolower($fields[0]) == 'count(*)';
+                && strtolower((string) $fields[0]) == 'count(*)';
             if (!$isCountQuery) {
                 $select->limit($options['limit'], $options['start']);
             }
@@ -228,8 +228,8 @@ class Garp_Content_Manager {
 
         foreach ($results as $result) {
             foreach ($result as $column => $value) {
-                if (strpos($column, '.') !== false) {
-                    $keyParts = explode('.', $column, 2);
+                if (str_contains((string) $column, '.')) {
+                    $keyParts = explode('.', (string) $column, 2);
                     $newKey = $keyParts[1];
                     $relModelKey = Garp_Util_String::strReplaceOnce(
                         $this->_model->getNameWithoutNamespace(), '', $keyParts[0]
@@ -262,7 +262,7 @@ class Garp_Content_Manager {
             try {
                 $result = $this->fetch($options);
                 return !empty($result[0]['COUNT(*)']) ? $result[0]['COUNT(*)'] : 0;
-            } catch (Zend_Db_Statement_Exception $e) {
+            } catch (Zend_Db_Statement_Exception) {
                 /**
                  * @todo When fetching results
                  * filtered using a HABTM relationship, extra
@@ -301,10 +301,10 @@ class Garp_Content_Manager {
         // check if primary key is available
         $prim = $this->_model->info(Zend_Db_Table::PRIMARY);
         if (!is_array($prim)) {
-            $prim = array($prim);
+            $prim = [$prim];
         }
 
-        $where = array();
+        $where = [];
         foreach ($prim as $key) {
             if (!array_key_exists($key, $data)) {
                 throw new Garp_Content_Exception('Primary key ' . $key . ' not available in data');
@@ -319,7 +319,7 @@ class Garp_Content_Manager {
              * First, see if the user is allowed to update everything
              */
             $this->_checkAcl('update');
-        } catch (Garp_Auth_Exception $e) {
+        } catch (Garp_Auth_Exception) {
             /**
              * If that fails, check if the user is allowed to update her own material
              * AND if the current item is hers.
@@ -351,7 +351,7 @@ class Garp_Content_Manager {
              */
             $this->_checkAcl('destroy');
             $this->_model->delete($where);
-        } catch (Garp_Auth_Exception $e) {
+        } catch (Garp_Auth_Exception) {
             /**
              * If that fails, check if the user is allowed to update her own material
              * AND if the current item is hers.
@@ -392,10 +392,10 @@ class Garp_Content_Manager {
         $model         = Garp_Content_Api::modelAliasToClass($model);
         $primaryKey    = (array)$primaryKey;
         $foreignKeys   = (array)$foreignKeys;
-        $rule          = isset($rule) ? $rule : null;
-        $rule2         = isset($rule2) ? $rule2 : null;
+        $rule ??= null;
+        $rule2 ??= null;
         $bindingModel  = isset($bindingModel) ? 'Model_' . $bindingModel : null;
-        $bidirectional = isset($bidirectional) ? $bidirectional : null;
+        $bidirectional ??= null;
 
         if (isset($bindingModel)) {
             $bindingModel = new $bindingModel();
@@ -404,7 +404,7 @@ class Garp_Content_Manager {
 
         if (array_key_exists('unrelateExisting', $options) && $options['unrelateExisting']) {
             Garp_Content_Relation_Manager::unrelate(
-                array(
+                [
                     'modelA'        => $this->_model,
                     'modelB'        => $model,
                     'keyA'          => $primaryKey,
@@ -412,13 +412,13 @@ class Garp_Content_Manager {
                     'ruleB'         => $rule2,
                     'bindingModel'  => $bindingModel,
                     'bidirectional' => $bidirectional,
-                )
+                ]
             );
         }
 
         $success = $attempts = 0;
 
-        foreach ($foreignKeys as $i => $relationData) {
+        foreach ($foreignKeys as $relationData) {
             if (!array_key_exists('key', $relationData)) {
                 throw new Garp_Content_Exception('Foreign key is a required key.');
             }
@@ -426,10 +426,10 @@ class Garp_Content_Manager {
             $foreignKey  = $relationData['key'];
             $extraFields = array_key_exists('relationMetadata', $relationData)
                 ? $relationData['relationMetadata']
-                : array();
+                : [];
 
             if (Garp_Content_Relation_Manager::relate(
-                array(
+                [
                 'modelA'        => $this->_model,
                 'modelB'        => $model,
                 'keyA'          => $primaryKey,
@@ -439,7 +439,7 @@ class Garp_Content_Manager {
                 'ruleB'         => $rule2,
                 'bindingModel'  => $bindingModel,
                 'bidirectional' => $bidirectional,
-                )
+                ]
             )
             ) {
                 $success++;
@@ -467,13 +467,13 @@ class Garp_Content_Manager {
         $model         = Garp_Content_Api::modelAliasToClass($model);
         $primaryKey    = (array)$primaryKey;
         $foreignKeys   = (array)$foreignKeys;
-        $rule          = isset($rule) ? $rule : null;
-        $rule2         = isset($rule2) ? $rule2 : null;
+        $rule ??= null;
+        $rule2 ??= null;
         $bindingModel  = isset($bindingModel) ? 'Model_' . $bindingModel : null;
-        $bidirectional = isset($bidirectional) ? $bidirectional : null;
+        $bidirectional ??= null;
 
         Garp_Content_Relation_Manager::unrelate(
-            array(
+            [
                 'modelA'        => $this->_model,
                 'modelB'        => $model,
                 'keyA'          => $primaryKey,
@@ -482,7 +482,7 @@ class Garp_Content_Manager {
                 'ruleB'         => $rule2,
                 'bindingModel'  => $bindingModel,
                 'bidirectional' => $bidirectional,
-            )
+            ]
         );
     }
 
@@ -515,17 +515,17 @@ class Garp_Content_Manager {
      * @return string WHERE clause
      */
     protected function _createWhereClause(array $query, $separator = 'AND', $useJointView = true) {
-        $where = array();
+        $where = [];
         $adapter = $this->_model->getAdapter();
         $nativeColumns = $this->_model->info(Zend_Db_Table_Abstract::COLS);
         if ($useJointView) {
             $tableName = $this->_getTableName($this->_model);
             $mockTable = new Zend_Db_Table(
-                array(
+                [
                 Zend_Db_Table_Abstract::NAME => $tableName,
                 Zend_Db_Table_Abstract::PRIMARY => $this->_model->info(
                     Zend_Db_Table_Abstract::PRIMARY
-                ))
+                )]
             );
             $nativeColumns = $mockTable->info(Zend_Db_Table_Abstract::COLS);
         } else {
@@ -536,9 +536,7 @@ class Garp_Content_Manager {
         // because when columnName is configured in camelcase in the model config
         // it causes problems when checking if refColumn is a native column
         $nativeColumns = array_map(
-            function ($column) {
-                return strtolower($column);
-            }, $nativeColumns
+            fn($column) => strtolower((string) $column), $nativeColumns
         );
 
         foreach ($query as $column => $value) {
@@ -550,7 +548,7 @@ class Garp_Content_Manager {
                     $value
                 );
             } elseif (is_null($value)) {
-                if (substr($column, -2) == '<>') {
+                if (str_ends_with($column, '<>')) {
                     $column = preg_replace('/<>$/', '', $column);
                     $where[] = $column . ' IS NOT NULL';
                 } else {
@@ -570,7 +568,7 @@ class Garp_Content_Manager {
                     $column = $adapter->quoteIdentifier($parts[0]) . ' ' . $parts[1];
                 }
 
-                if (strpos($refColumn, '.') === false && in_array($refColumn, $nativeColumns)) {
+                if (!str_contains($refColumn, '.') && in_array($refColumn, $nativeColumns)) {
                     $column = $adapter->quoteIdentifier($tableName) . '.' . $column;
                 }
                 $where[] = $adapter->quoteInto($column . ' ?', $value);
@@ -602,10 +600,10 @@ class Garp_Content_Manager {
              * Determine wether a negation clause (e.g. !=) is requested
              * and normalize the filterColumn.
              */
-            $negation = strpos($filterColumn, '<>') !== false;
+            $negation = str_contains($filterColumn, '<>');
             $filterColumn = str_replace(' <>', '', $filterColumn);
 
-            if ($filterModelName === get_class($this->_model)) {
+            if ($filterModelName === $this->_model::class) {
                 /*  This is a homophile relation and the current condition touches the
                     homophile model.
                     The following condition prevents a 'relatable' list to include the
@@ -619,35 +617,35 @@ class Garp_Content_Manager {
 
             try {
                 // the other model is a child
-                $reference = $filterModel->getReference(get_class($this->_model), $rule);
+                $reference = $filterModel->getReference($this->_model::class, $rule);
                 $this->_addHasManyClause(
-                    array(
+                    [
                     'select'        => $select,
                     'filterModel'   => $filterModel,
                     'reference'     => $reference,
                     'filterColumn'  => $filterColumn,
                     'filterValue'   => $filterValue,
                     'negation'      => $negation
-                    )
+                    ]
                 );
             } catch (Zend_Db_Table_Exception $e) {
                 try {
                     // the other model is the parent
-                    $reference = $this->_model->getReference(get_class($filterModel), $rule);
+                    $reference = $this->_model->getReference($filterModel::class, $rule);
                     $this->_addBelongsToClause(
-                        array(
+                        [
                         'select'        => $select,
                         'reference'     => $reference,
                         'filterColumn'  => $filterColumn,
                         'filterValue'   => $filterValue,
                         'negation'      => $negation
-                        )
+                        ]
                     );
                 } catch (Zend_Db_Table_Exception $e) {
                     try {
                         // the models are equal; a binding model is needed
                         $this->_addHasAndBelongsToManyClause(
-                            array(
+                            [
                             'select'        => $select,
                             'filterModel'   => $filterModel,
                             'filterColumn'  => $filterColumn,
@@ -655,7 +653,7 @@ class Garp_Content_Manager {
                             'negation'      => $negation,
                             'bindingModel'  => $bindingModel,
                             'bidirectional' => $bidirectional
-                            )
+                            ]
                         );
                     } catch (Zend_Db_Table_Exception $e) {
                         throw $e;
@@ -691,7 +689,7 @@ class Garp_Content_Manager {
         $thisTableName = $this->_getTableName($this->_model);
         // in the case of homophile relationships...
         if ($filterModelName == $thisTableName) {
-            $filterModelName = $filterModelName . '_2';
+            $filterModelName .= '_2';
         }
 
         foreach ($reference['refColumns'] as $i => $column) {
@@ -708,8 +706,8 @@ class Garp_Content_Manager {
         }
         if (!isset($joinColumn)) {
             throw new Garp_Content_Exception(
-                'The relationship between ' . get_class($this->_model) . ' and ' .
-                get_class($filterModel) . ' cannot be determined from the ' .
+                'The relationship between ' . $this->_model::class . ' and ' .
+                $filterModel::class . ' cannot be determined from the ' .
                 'reference map.'
             );
         }
@@ -721,9 +719,9 @@ class Garp_Content_Manager {
         );
 
         $select->joinLeft(
-            array($filterModelName => $filterModelName),
+            [$filterModelName => $filterModelName],
             $bindingCondition,
-            array()
+            []
         );
         /**
          * Cause MySQL developers are fucking cunts, ([NULL] != 35) === FALSE.
@@ -800,10 +798,10 @@ class Garp_Content_Manager {
      */
     protected function _addHasAndBelongsToManyClause(array $options) {
         if (!isset($options['bindingModel'])) {
-            $modelNames = array(
+            $modelNames = [
                 $this->_model->getNameWithoutNamespace(),
                 $options['filterModel']->getNameWithoutNamespace()
-            );
+            ];
             sort($modelNames);
             $bindingModelName = 'Model_' . implode('', $modelNames);
         } else {
@@ -813,7 +811,7 @@ class Garp_Content_Manager {
         $thisTableName = $this->_getTableName($this->_model);
         $bindingModelTable = $bindingModel->getName();
 
-        $reference = $bindingModel->getReference(get_class($this->_model));
+        $reference = $bindingModel->getReference($this->_model::class);
         foreach ($reference['refColumns'] as $i => $column) {
             if ($column === $options['filterColumn']) {
                 $bindingModelForeignKeyField = $reference['columns'][$i];
@@ -823,7 +821,7 @@ class Garp_Content_Manager {
         }
 
         $reference = $bindingModel->getReference(
-            get_class($options['filterModel']),
+            $options['filterModel']::class,
             $this->_findSecondRuleKeyForHomophiles($options['filterModel'], $bindingModel)
         );
         foreach ($reference['refColumns'] as $i => $column) {
@@ -850,14 +848,14 @@ class Garp_Content_Manager {
 
         // Add columns of bindingTable to the query (namespaced using dot)
         $tmpBindingColumns = $bindingModel->info(Zend_Db_Table::COLS);
-        $bindingColumns = array();
-        $weighableColumns = array();
+        $bindingColumns = [];
+        $weighableColumns = [];
         if ($weighable = $bindingModel->getObserver('Weighable')) {
             $weighableColumns = $weighable->getWeightColumns();
         }
         foreach ($tmpBindingColumns as $bc) {
             // Exclude foreign key fields
-            if (in_array($bc, array($bindingModelForeignKeyField, $filterField))) {
+            if (in_array($bc, [$bindingModelForeignKeyField, $filterField])) {
                 continue;
             }
             // Exclude columns generated by a Weighable behavior
@@ -888,7 +886,7 @@ class Garp_Content_Manager {
         }
 
         // Allow behaviors to modify the SELECT object
-        $bindingModel->notifyObservers('beforeFetch', array($bindingModel, $options['select']));
+        $bindingModel->notifyObservers('beforeFetch', [$bindingModel, $options['select']]);
     }
 
     /**
@@ -899,10 +897,10 @@ class Garp_Content_Manager {
      * @return array
      */
     protected function _filterForeignKeyColumns($fields, $referenceMap) {
-        $out = array();
-        $foreignKeys = array();
+        $out = [];
+        $foreignKeys = [];
         // create an array of foreign keys...
-        foreach ($referenceMap as $relName => $relConfig) {
+        foreach ($referenceMap as $relConfig) {
             $foreignKeys = array_merge($foreignKeys, (array)$relConfig['columns']);
         }
         // ...and return the values that are not in that array.
@@ -916,7 +914,7 @@ class Garp_Content_Manager {
      * @return bool
      */
     protected function _isHomophile(Garp_Model_Db $filterModel) {
-        return get_class($this->_model) === get_class($filterModel);
+        return $this->_model::class === $filterModel::class;
     }
 
     /**
@@ -937,7 +935,7 @@ class Garp_Content_Manager {
 
             $foundRelevantRule = false;
             foreach ($bindingReferenceMap as $ruleKey => $rule) {
-                if ($rule['refTableClass'] === get_class($this->_model)) {
+                if ($rule['refTableClass'] === $this->_model::class) {
                     if ($foundRelevantRule) {
                         $homophileSecondRuleKey = $ruleKey;
                     }
@@ -957,7 +955,7 @@ class Garp_Content_Manager {
      * @throws Garp_Content_Exception If the method is not supported
      */
     protected function _checkAcl($method) {
-        if (!Garp_Auth::getInstance()->isAllowed(get_class($this->_model), $method)) {
+        if (!Garp_Auth::getInstance()->isAllowed($this->_model::class, $method)) {
             throw new Garp_Auth_Exception('You are not allowed to execute the requested action.');
         }
     }
@@ -997,7 +995,7 @@ class Garp_Content_Manager {
      * @return bool
      */
     protected function _modelNameIsPrefixed($modelName) {
-        return strpos($modelName, 'Model_') === 0 || strpos($modelName, 'Garp_Model_Db_') === 0;
+        return str_starts_with($modelName, 'Model_') || str_starts_with($modelName, 'Garp_Model_Db_');
     }
 
     /**

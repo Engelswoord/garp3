@@ -6,7 +6,7 @@
  * @package Garp_Cli
  * @author  Harmen Janssen <harmen@grrr.nl>
  */
-class Garp_Cli_Crontab_Cronjob {
+class Garp_Cli_Crontab_Cronjob implements \Stringable {
     /**
      * Minute
      *
@@ -62,13 +62,13 @@ class Garp_Cli_Crontab_Cronjob {
      * @param array $options
      * @return void
      */
-    public function __construct(array $options = array()) {
+    public function __construct(array $options = []) {
         if (empty($options['command'])) {
             throw new Garp_Cli_Crontab_Exception('command is a required option.');
         }
-        $validOptions = array(
+        $validOptions = [
             'minute', 'hour', 'dayOfMonth', 'month', 'dayOfWeek', 'user', 'command'
-        );
+        ];
         foreach ($validOptions as $key) {
             if (!empty($options[$key])) {
                 $prop = '_' . $key;
@@ -92,7 +92,7 @@ class Garp_Cli_Crontab_Cronjob {
      *
      * @return string
      */
-    public function __toString() {
+    public function __toString(): string {
         // implement me...
         return '';
     }

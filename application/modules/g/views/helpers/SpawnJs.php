@@ -11,7 +11,7 @@ class G_View_Helper_SpawnJs extends Zend_View_Helper_Abstract {
     const UNKNOWN_TYPE_EXCEPTION
         = "The '%s' field type can't be translated to an ExtJS field type as of yet.";
 
-    protected $_excludedFormFields = array('published', 'online_status');
+    protected $_excludedFormFields = ['published', 'online_status'];
 
     protected $_model;
 
@@ -103,7 +103,7 @@ class G_View_Helper_SpawnJs extends Zend_View_Helper_Abstract {
         if ($acl->has($modelResourceName)) {
             $auth = Garp_Auth::getInstance();
             $roles = $auth->getRoles();
-            $rolesThatDontHaveThisPrivilege = array();
+            $rolesThatDontHaveThisPrivilege = [];
 
             foreach ($roles as $role) {
                 if (!$acl->isAllowed($role, $modelResourceName, $privilege)) {
@@ -128,10 +128,10 @@ class G_View_Helper_SpawnJs extends Zend_View_Helper_Abstract {
 
 
     public function getSortParams($orderField) {
-        $out = array();
+        $out = [];
 
-        if (strpos($orderField, "(") === false) {
-            $sortings = explode(",", $orderField);
+        if (!str_contains((string) $orderField, "(")) {
+            $sortings = explode(",", (string) $orderField);
             $fieldAndDir = explode(" ", $sortings[0]);
             $out['field'] = $fieldAndDir[0];
             $out['direction'] = !empty($fieldAndDir[1]) ?
@@ -199,13 +199,11 @@ class G_View_Helper_SpawnJs extends Zend_View_Helper_Abstract {
         return implode(
             "\n",
             array_map(
-                function ($locale) use ($rel, $self) {
-                    return $self->renderImagePreviewListenerJs(
-                        $self->getImagePreviewId($rel->column, $locale),
-                        $rel->column,
-                        $locale
-                    );
-                },
+                fn($locale) => $self->renderImagePreviewListenerJs(
+                    $self->getImagePreviewId($rel->column, $locale),
+                    $rel->column,
+                    $locale
+                ),
                 Garp_I18n::getLocales()
             )
         );

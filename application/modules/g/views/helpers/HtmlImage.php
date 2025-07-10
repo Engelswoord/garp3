@@ -15,7 +15,7 @@ class G_View_Helper_HtmlImage extends Zend_View_Helper_HtmlElement {
      * @param array $attributes More HTML attributes
      * @return string
      */
-    public function htmlImage($src, array $attributes = array()) {
+    public function htmlImage($src, array $attributes = []) {
         $attributes['src'] = $src;
         $html = '<img' . $this->_htmlAttribs($attributes) . '>';
         return $html;

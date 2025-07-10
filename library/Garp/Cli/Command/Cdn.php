@@ -68,10 +68,10 @@ class Garp_Cli_Command_Cdn extends Garp_Cli_Command {
         $distributor->distribute(
             $cdnConfig,
             $assetList,
-            function () {
+            function (): void {
                 echo '.';
             },
-            function ($asset) {
+            function ($asset): void {
                 Garp_Cli::errorOut("\nCould not upload {$asset}.");
             }
         );
@@ -131,7 +131,7 @@ class Garp_Cli_Command_Cdn extends Garp_Cli_Command {
             Zend_Registry::get('config')->toArray();
         $cdnConfig = f\prop('cdn', $source);
         $s3Config = f\prop('s3', $cdnConfig);
-        return array(
+        return [
             'apikey'          => f\prop('apikey', $s3Config),
             'secret'          => f\prop('secret', $s3Config),
             'bucket'          => f\prop('bucket', $s3Config),
@@ -139,7 +139,7 @@ class Garp_Cli_Command_Cdn extends Garp_Cli_Command {
             'readonly'        => f\prop('readonly', $cdnConfig),
             'gzip'            => f\prop('gzip', $cdnConfig),
             'gzip_exceptions' => f\prop('gzip_exceptions', $cdnConfig)
-        );
+        ];
     }
 
     /**
@@ -161,7 +161,7 @@ class Garp_Cli_Command_Cdn extends Garp_Cli_Command {
             // Reset ENV vars.
             $this->_updateEnvVars($currentEnv);
             return $config->toArray();
-        } catch (Zend_Json_Exception $e) {
+        } catch (Zend_Json_Exception) {
             throw new Exception(
                 'Data passed thru STDIN needs to be in JSON-format'
             );
@@ -184,7 +184,7 @@ class Garp_Cli_Command_Cdn extends Garp_Cli_Command {
                 putenv("{$key}={$var}");
                 return $o;
             },
-            array(),
+            [],
             $vars
         );
     }

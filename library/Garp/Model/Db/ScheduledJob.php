@@ -20,8 +20,8 @@ class Garp_Model_Db_ScheduledJob extends Model_Base_ScheduledJob {
         try {
             $pkData = parent::insert($data);
         } catch (Zend_Db_Statement_Exception $e) {
-            if (strpos($e->getMessage(), 'Duplicate entry') === false ||
-                strpos($e->getMessage(), 'checksum_unique') === false) {
+            if (!str_contains($e->getMessage(), 'Duplicate entry') ||
+                !str_contains($e->getMessage(), 'checksum_unique')) {
                 throw $e;
             }
             // @todo Return original primary key?

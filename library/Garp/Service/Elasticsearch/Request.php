@@ -198,11 +198,11 @@ class Garp_Service_Elasticsearch_Request {
     }
 
     protected function _validateMethod($method) {
-        $validMethods = array(
+        $validMethods = [
             self::GET,
             self::PUT,
             self::DELETE
-        );
+        ];
         
         if (!in_array($method, $validMethods)) {
             throw new Exception(self::ERROR_INVALID_METHOD);

@@ -24,6 +24,6 @@ class G_View_Helper_String extends Zend_View_Helper_Abstract {
      * @return mixed
      */
     public function __call($method, $args) {
-        return call_user_func_array(array('Garp_Util_String', $method), $args);
+        return call_user_func_array(['Garp_Util_String', $method], $args);
     }
 }

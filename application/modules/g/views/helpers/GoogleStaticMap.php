@@ -10,19 +10,19 @@
  */
 class G_View_Helper_GoogleStaticMap extends Zend_View_Helper_Abstract {
 
-    protected $_defaults = array(
-        'location' => array(        // center location
+    protected $_defaults = [
+        'location' => [        // center location
             'lat' => '52.090142',
             'lng' => '5.109665'
-        ),
+        ],
         'mapType' => 'roadmap',     // roadmap / satellite / terain / hybrid
         'zoomLevel' => 11,          // 0 - 21 (earth - building)
         'width' => 320,
         'height' => 240,
         'altText' => 'Google Map',  // alt Text to display
         'sensor' => false,          // whether or not to get browser's location (prob. geoIP based)
-        'markers' => array()        // array(array('lat' => '52.090142', 'lng' => '5.109665'))
-    );
+        'markers' => []        // array(array('lat' => '52.090142', 'lng' => '5.109665'))
+    ];
 
     /**
      * Init
@@ -60,7 +60,7 @@ class G_View_Helper_GoogleStaticMap extends Zend_View_Helper_Abstract {
      * @param array $options
      * @return string
      */
-    public function render($options = array()) {
+    public function render($options = []) {
         $options = array_merge($this->_defaults, $options);
         $markers = $this->getMarkersAsString($options);
         $img = '';

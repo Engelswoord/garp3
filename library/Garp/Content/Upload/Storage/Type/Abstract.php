@@ -17,7 +17,7 @@ abstract class Garp_Content_Upload_Storage_Type_Abstract implements Garp_Content
     const ERROR_CANT_OPEN_DIRECTORY = "Unable to open the configuration directory: %s";
     const BANNED_PATH = '/scaled/';
 
-    protected $_uploadTypes = array('document', 'image');
+    protected $_uploadTypes = ['document', 'image'];
 
     protected $_environment;
 
@@ -77,7 +77,7 @@ abstract class Garp_Content_Upload_Storage_Type_Abstract implements Garp_Content
      *                  and the relative directory path of this type as value.
      */
     protected function _getConfiguredPaths() {
-        $paths = array();
+        $paths = [];
         $ini = $this->_getIni();
 
         foreach ($this->_uploadTypes as $uploadType) {
@@ -100,6 +100,6 @@ abstract class Garp_Content_Upload_Storage_Type_Abstract implements Garp_Content
      * Either way, this should not be necessary in the first place.
      */
     protected function _isAllowedPath($path) {
-        return strpos($path, self::BANNED_PATH) === false;
+        return !str_contains((string) $path, self::BANNED_PATH);
     }
 }

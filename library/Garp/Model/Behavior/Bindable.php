@@ -54,7 +54,7 @@ class Garp_Model_Behavior_Bindable extends Garp_Model_Behavior_Core {
         }
         // check if it's a rowset or a single row
         if (!$data instanceof Garp_Db_Table_Rowset) {
-            $data = array($data);
+            $data = [$data];
         }
         foreach ($bindings as $binding => $bindOptions) {
             /**
@@ -77,12 +77,12 @@ class Garp_Model_Behavior_Bindable extends Garp_Model_Behavior_Core {
              * ```
              */
             $cleanup = false;
-            if (Garp_Model_Db_BindingManager::getRecursion(get_class($model), $binding) == 0) {
+            if (Garp_Model_Db_BindingManager::getRecursion($model::class, $binding) == 0) {
                 $cleanup = true;
             }
 
-            if (Garp_Model_Db_BindingManager::isAllowedFetch(get_class($model), $binding)) {
-                Garp_Model_Db_BindingManager::registerFetch(get_class($model), $binding);
+            if (Garp_Model_Db_BindingManager::isAllowedFetch($model::class, $binding)) {
+                Garp_Model_Db_BindingManager::registerFetch($model::class, $binding);
 
                 foreach ($data as $datum) {
                     // There's no relation possible if the primary key is not
@@ -91,7 +91,7 @@ class Garp_Model_Behavior_Bindable extends Garp_Model_Behavior_Core {
                     foreach ($prim as $key) {
                         try {
                             $datum->$key;
-                        } catch (Exception $e) {
+                        } catch (Exception) {
                             break 2;
                         }
                     }
@@ -101,7 +101,7 @@ class Garp_Model_Behavior_Bindable extends Garp_Model_Behavior_Core {
             }
 
             if ($cleanup) {
-                Garp_Model_Db_BindingManager::resetRecursion(get_class($model), $binding);
+                Garp_Model_Db_BindingManager::resetRecursion($model::class, $binding);
             }
         }
 
@@ -142,7 +142,7 @@ class Garp_Model_Behavior_Bindable extends Garp_Model_Behavior_Core {
          */
         $originalCacheQueriesFlag = $otherModel->getCacheQueries();
         $otherModel->setCacheQueries(false);
-        $modelName = get_class($otherModel);
+        $modelName = $otherModel::class;
         $relatedRowset = null;
 
         // many to many
@@ -179,7 +179,7 @@ class Garp_Model_Behavior_Bindable extends Garp_Model_Behavior_Core {
                     try {
                         // one to many - one to one
                         // The following line triggers an exception if no reference is available
-                        $otherModel->getReference(get_class($model), $options['rule']);
+                        $otherModel->getReference($model::class, $options['rule']);
                         $relatedRowset = $row->findDependentRowset(
                             $otherModel,
                             $options['rule'],
@@ -200,28 +200,22 @@ class Garp_Model_Behavior_Bindable extends Garp_Model_Behavior_Core {
                     }
                 }
             } else {
-                switch ($options['mode']) {
-                case 'parent':
-                    $relatedRowset = $row->findParentRow(
+                $relatedRowset = match ($options['mode']) {
+                    'parent' => $row->findParentRow(
                         $otherModel,
                         $options['rule'],
                         $conditions
-                    );
-                    break;
-                case 'dependent':
-                    $relatedRowset = $row->findDependentRowset(
+                    ),
+                    'dependent' => $row->findDependentRowset(
                         $otherModel,
                         $options['rule'],
                         $conditions
-                    );
-                    break;
-                default:
-                    throw new Garp_Model_Exception(
+                    ),
+                    default => throw new Garp_Model_Exception(
                         'Invalid value for "mode" given. Must be either "parent" or ' .
                             '"dependent", but "' . $options['mode'] . '" was given.'
-                    );
-                    break;
-                }
+                    ),
+                };
             }
         }
         // Reset the cacheQueries value. It's a static property,

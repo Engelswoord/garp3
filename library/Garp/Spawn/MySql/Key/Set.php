@@ -5,13 +5,13 @@ class Garp_Spawn_MySql_Key_Set {
     public $primaryKey;
 
     /** @var Array $foreignKeys Numeric array of Garp_Spawn_MySql_ForeignKey objects */
-    public $foreignKeys = array();
+    public $foreignKeys = [];
 
     /** @var Array $uniqueKeys Numeric array of Garp_Spawn_MySql_UniqueKey objects */
-    public $uniqueKeys = array();
+    public $uniqueKeys = [];
 
     /** @var Array $indices Numeric array of  Garp_Spawn_MySql_Key objects */
-    public $indices = array();
+    public $indices = [];
 
     /**
      * @var String $_tableName

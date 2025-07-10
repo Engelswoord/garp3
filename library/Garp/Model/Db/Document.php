@@ -12,7 +12,7 @@
 class Garp_Model_Db_Document extends Model_Base_Document {
     public function init() {
         $this->registerObserver(new Garp_Model_Behavior_Timestampable())
-             ->registerObserver(new Garp_Model_Validator_NotEmpty(array('filename')))
+             ->registerObserver(new Garp_Model_Validator_NotEmpty(['filename']))
              ;
         parent::init();
     }

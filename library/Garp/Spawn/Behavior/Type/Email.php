@@ -10,7 +10,7 @@ class Garp_Spawn_Behavior_Type_Email extends Garp_Spawn_Behavior_Type_Abstract {
             return false;
         }
 
-        $emailFieldNames = array();
+        $emailFieldNames = [];
         foreach ($emailFields as $emailField) {
             $emailFieldNames[] = $emailField->name;
         }
@@ -29,7 +29,7 @@ class Garp_Spawn_Behavior_Type_Email extends Garp_Spawn_Behavior_Type_Abstract {
             return;
         }
 
-        $emailFieldNames = array();
+        $emailFieldNames = [];
         foreach ($emailFields as $field) {
             $emailFieldNames[] = $field->name;
         }

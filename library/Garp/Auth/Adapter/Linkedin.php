@@ -50,18 +50,18 @@ class Garp_Auth_Adapter_Linkedin extends Garp_Auth_Adapter_Abstract {
             $cookie->writeCookie();
 
 
-            $authorizeUrl = $this->_getLinkedInInstance()->getLoginUrl(array(
+            $authorizeUrl = $this->_getLinkedInInstance()->getLoginUrl([
                 //@phpstan-ignore class.notFound
                 LinkedIn::SCOPE_BASIC_PROFILE,
                 //@phpstan-ignore class.notFound
                 LinkedIn::SCOPE_EMAIL_ADDRESS
-            ));
+            ]);
             Zend_Controller_Action_HelperBroker::getStaticHelper('redirector')
                 ->gotoUrl($authorizeUrl);
             return false;
         } catch (Exception $e) {
-            if (strpos($e->getMessage(), 'Duplicate entry') !== false
-                && strpos($e->getMessage(), 'email_unique') !== false
+            if (str_contains($e->getMessage(), 'Duplicate entry')
+                && str_contains($e->getMessage(), 'email_unique')
             ) {
                 $this->_addError(__('this email address already exists'));
                 return false;
@@ -83,10 +83,10 @@ class Garp_Auth_Adapter_Linkedin extends Garp_Auth_Adapter_Abstract {
 
         //@phpstan-ignore class.notFound
         $model = new Model_AuthLinkedin();
-        $model->bindModel('Model_User', array(
+        $model->bindModel('Model_User', [
             'conditions' => $userConditions,
             'rule' => 'User'
-        ));
+        ]);
         $userData = $model->fetchRow(
             $model->select()
                 ->where('linkedin_uid = ?', $profileData['id'])
@@ -104,7 +104,7 @@ class Garp_Auth_Adapter_Linkedin extends Garp_Auth_Adapter_Abstract {
 
     protected function _getLinkedInInstance() {
         $authVars = $this->_getAuthVars();
-        $callbackUrl = new Garp_Util_FullUrl(array(array('method' => 'linkedin'), 'auth_submit'));
+        $callbackUrl = new Garp_Util_FullUrl([['method' => 'linkedin'], 'auth_submit']);
         // Sanity checks
         if (!$authVars->consumerKey || !$authVars->consumerSecret) {
             throw new Garp_Auth_Exception(
@@ -113,11 +113,11 @@ class Garp_Auth_Adapter_Linkedin extends Garp_Auth_Adapter_Abstract {
         }
         if (!$this->_linkedIn) {
             //@phpstan-ignore class.notFound
-            $this->_linkedIn = new LinkedIn(array(
+            $this->_linkedIn = new LinkedIn([
                 'api_key' => $authVars->consumerKey,
                 'api_secret' => $authVars->consumerSecret,
                 'callback_url' => (string)$callbackUrl
-            ));
+            ]);
         }
         return $this->_linkedIn;
     }

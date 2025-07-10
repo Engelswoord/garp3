@@ -41,11 +41,9 @@ class Garp_Content_Export_Csv extends Garp_Content_Export_Abstract {
 
     protected function _flatten(array $row): array {
         return f\map(
-            function ($value) {
-                return is_array($value)
-                    ? implode(', ', $this->_flatten($value))
-                    : $value;
-            },
+            fn($value) => is_array($value)
+                ? implode(', ', $this->_flatten($value))
+                : $value,
             $row
         );
     }

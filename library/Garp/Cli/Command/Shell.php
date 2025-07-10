@@ -36,7 +36,7 @@ class Garp_Cli_Command_Shell extends Garp_Cli_Command {
      * @param array $args
      * @return void
      */
-    public function main(array $args = array()) {
+    public function main(array $args = []) {
         Garp_Cli::lineOut('Welcome to the Garp interactive shell.', Garp_Cli::YELLOW);
         Garp_Cli::lineOut('Use Ctrl-C to quit.');
 
@@ -101,12 +101,12 @@ class Garp_Cli_Command_Shell extends Garp_Cli_Command {
             // If no semicolon is found at the end, assume
             // multi-line input. The user is therefore not finished,
             // so we just continue here and wait for that semicolon.
-            if (substr($line, -1) !== ';') {
+            if (!str_ends_with($line, ';')) {
                 continue;
             }
 
             // Execute input, and grab its output
-            ob_start(array($this, 'output'));
+            ob_start($this->output(...));
             eval($this->_input);
             ob_end_flush();
 
@@ -146,13 +146,13 @@ class Garp_Cli_Command_Shell extends Garp_Cli_Command {
 
     protected function _setErrorHandler() {
         set_error_handler(
-            function ($errno, $errstr, $errfile, $errline) {
-                $errTypes = array(
+            function ($errno, $errstr, $errfile, $errline): void {
+                $errTypes = [
                 E_USER_ERROR => 'Error',
                 E_USER_WARNING => 'Warning',
                 E_USER_NOTICE => 'Notice'
-                );
-                $errType = isset($errTypes[$errno]) ? $errTypes[$errno] : 'Unknown error';
+                ];
+                $errType = $errTypes[$errno] ?? 'Unknown error';
                 Garp_Cli::errorOut("{$errType}: {$errstr}");
                 Garp_Cli::lineOut(" from {$errfile}:{$errline}", Garp_Cli::BLUE);
             }

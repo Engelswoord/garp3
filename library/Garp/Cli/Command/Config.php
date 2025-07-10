@@ -10,7 +10,7 @@ class Garp_Cli_Command_Config extends Garp_Cli_Command {
 
     public function get($args) {
         $key = $args[0];
-        $env = isset($args[1]) ? $args[1] : APPLICATION_ENV;
+        $env = $args[1] ?? APPLICATION_ENV;
 
         $application = Zend_Registry::get('application');
         $configFile = $application->getConfigFile();
@@ -18,7 +18,7 @@ class Garp_Cli_Command_Config extends Garp_Cli_Command {
         $application = new Garp_Application($env, $configFile);
         $conf = $application->getOptions();
 
-        $bits = explode('.', $key);
+        $bits = explode('.', (string) $key);
         while (isset($bits[0]) && isset($conf[$bits[0]])) {
             $conf = $conf[$bits[0]];
             array_shift($bits);

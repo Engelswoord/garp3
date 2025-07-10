@@ -11,24 +11,19 @@ class Garp_Store_Array implements Garp_Store_Interface {
     /**
      * @var array
      */
-    protected $_data = array();
-
-    /**
-     * Namespace used to store data.
-     *
-     * @var string
-     */
-    protected $_namespace;
+    protected $_data = [];
 
     /**
      * Class constructor
      *
-     * @param string $namespace Global namespace
+     * @param string $_namespace Global namespace
      * @return void
      */
-    public function __construct($namespace) {
-        $this->_namespace = $namespace;
-        $this->_data[$this->_namespace] = array();
+    public function __construct(/**
+     * Namespace used to store data.
+     */
+    protected $_namespace) {
+        $this->_data[$this->_namespace] = [];
     }
 
     /**
@@ -107,7 +102,7 @@ class Garp_Store_Array implements Garp_Store_Interface {
         if ($key) {
             unset($this->_data[$this->_namespace][$key]);
         } else {
-            $this->_data[$this->_namespace] = array();
+            $this->_data[$this->_namespace] = [];
         }
         return $this;
     }

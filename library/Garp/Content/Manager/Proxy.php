@@ -19,7 +19,7 @@ class Garp_Content_Manager_Proxy {
      * @param Array $args Arguments
      * @return Mixed Whatever the Garp_Content_Manager returns, optionally converted to array.
      */
-    public function pass($model, $method, $args = array()) {
+    public function pass($model, $method, $args = []) {
         $manager = new Garp_Content_Manager(
             Garp_Content_Api::modelAliasToClass($model)
         );
@@ -27,7 +27,7 @@ class Garp_Content_Manager_Proxy {
         if (!method_exists($manager, $method)) {
             throw new Garp_Content_Exception('Unknown method requested.');
         }
-        $params = !empty($args) ? $args[0] : array();
+        $params = !empty($args) ? $args[0] : [];
         $result = $this->_produceResult($manager, $method, $params);
 
         if ($result instanceof Zend_Db_Table_Rowset_Abstract || $result instanceof Zend_Db_Table_Row_Abstract) {
@@ -38,7 +38,7 @@ class Garp_Content_Manager_Proxy {
 
     protected function _produceResult(Garp_Content_Manager $manager, $method, $params) {
         try {
-            $result = call_user_func_array(array($manager, $method), array($params));
+            $result = call_user_func_array([$manager, $method], [$params]);
         } catch (Zend_Db_Statement_Exception $e) {
             $this->_handleDatabaseException($e);
         }
@@ -53,12 +53,12 @@ class Garp_Content_Manager_Proxy {
      * @throws Zend_Db_Statement_Exception
      */
     protected function _handleDatabaseException(Zend_Db_Statement_Exception $e) {
-        if (strpos($e->getMessage(), 'Duplicate entry') === false) {
+        if (!str_contains($e->getMessage(), 'Duplicate entry')) {
             throw $e;
         }
         // Note the double spaces in the template string are required since quotes would be
         // added greedily to the parsed values.
-        list($value, $index) = sscanf($e->getMessage(),
+        [$value, $index] = sscanf($e->getMessage(),
             'SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry  %s  for key  %s '
         );
 

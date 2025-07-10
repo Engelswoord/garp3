@@ -53,7 +53,7 @@ class Garp_Assets_Minifier {
      */
     public function minifyJs($sourceFileList, $targetFile) {
         $sourceFileList = (array)$sourceFileList;
-        $sourceFileList = array_map(array($this, '_createFullPath'), $sourceFileList);
+        $sourceFileList = array_map([$this, '_createFullPath'], $sourceFileList);
         $sourceFileList = implode(' ', $sourceFileList);
         $targetFile = $this->_createFullPath($targetFile);
 

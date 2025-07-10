@@ -28,19 +28,13 @@ abstract class Garp_Adobe_InDesign_SpreadNode {
      */
     protected $_spreadConfig;
 
-    /**
-     * @var SimpleXMLElement The configuration of the <Page> or <TextFrame> node within the Spread.
-     */
-    protected $_nodeConfig;
-
 
     /**
      * @param SimpleXMLElement $spreadConfig The <Spread> node of an InDesign Spread configuration.
-     * @param string $nodeConfig The <Page> or <TextFrame> node within the Spread configuration.
+     * @param string $_nodeConfig The <Page> or <TextFrame> node within the Spread configuration.
      */
-    public function __construct(SimpleXMLElement $spreadConfig, $nodeConfig) {
+    public function __construct(SimpleXMLElement $spreadConfig, protected $_nodeConfig) {
         $this->_spreadConfig = $spreadConfig;
-        $this->_nodeConfig   = $nodeConfig;
 
         $this->id = $this->_getId();
 
@@ -63,10 +57,10 @@ abstract class Garp_Adobe_InDesign_SpreadNode {
     protected function _getCoordinates() {
         $itemTransformString = (string)$this->_nodeConfig->attributes()->ItemTransform;
         $itemTransformArray = explode(' ', $itemTransformString);
-        $coordinates = array(
+        $coordinates = [
             'x' => $itemTransformArray[count($itemTransformArray) - 2],
             'y' => $itemTransformArray[count($itemTransformArray) - 1]
-        );
+        ];
 
         return $coordinates;
     }

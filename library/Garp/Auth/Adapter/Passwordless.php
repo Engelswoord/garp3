@@ -118,9 +118,9 @@ class Garp_Auth_Adapter_Passwordless extends Garp_Auth_Adapter_Abstract {
         }
 
         $authPwlessModel->getObserver('Authenticatable')->updateLoginStats(
-            $row->Model_User->id, array(
+            $row->Model_User->id, [
                 'claimed' => 1
-            )
+            ]
         );
 
         return $row->Model_User;
@@ -139,20 +139,20 @@ class Garp_Auth_Adapter_Passwordless extends Garp_Auth_Adapter_Abstract {
         $select = $authPwlessModel->select()->where('user_id = ?', $userId);
         if ($authRecord = $authPwlessModel->fetchRow($select)) {
             $authPwlessModel->update(
-                array(
+                [
                     'token' => $token,
                     'token_expiration_date' => $this->_getExpirationDate(),
                     'claimed' => 0
-                ), 'id = ' . $authRecord->id
+                ], 'id = ' . $authRecord->id
             );
             return $token;
         }
         $authPwlessModel->insert(
-            array(
+            [
                 'user_id' => $userId,
                 'token' => $token,
                 'token_expiration_date' => $this->_getExpirationDate()
-            )
+            ]
         );
         return $token;
     }
@@ -246,7 +246,7 @@ class Garp_Auth_Adapter_Passwordless extends Garp_Auth_Adapter_Abstract {
         if (isset($authVars->requesttoken_redirect_route)) {
             $route = $authVars->requesttoken_redirect_route;
         }
-        return new Garp_Util_FullUrl(array(array(), $route));
+        return new Garp_Util_FullUrl([[], $route]);
     }
 
     protected function _getCurrentUserData() {
@@ -272,10 +272,10 @@ class Garp_Auth_Adapter_Passwordless extends Garp_Auth_Adapter_Abstract {
             Garp_Auth::getInstance()->getSessionColumns()
         );
         $authPwlessModel->bindModel(
-            'Model_User', array(
+            'Model_User', [
                 'conditions' => $userConditions,
                 'rule' => 'User'
-            )
+            ]
         );
         return $authPwlessModel;
     }

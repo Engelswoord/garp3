@@ -13,24 +13,19 @@ abstract class Garp_Cli_Command {
      *
      * @var array
      */
-    protected $_allowedArguments = array();
-
-    /**
-     * Data given thru STDIN
-     *
-     * @var string
-     */
-    protected $_stdin = '';
+    protected $_allowedArguments = [];
 
     /**
      * Class constructor
      *
-     * @param string $stdin Data piped into the script using STDIN
+     * @param string $_stdin Data piped into the script using STDIN
      * @return void
      */
-    public function __construct($stdin = '') {
+    public function __construct(/**
+     * Data given thru STDIN
+     */
+    protected $_stdin = '') {
         Zend_Session::$_unitTestEnabled = true;
-        $this->_stdin = $stdin;
     }
 
     /**
@@ -41,7 +36,7 @@ abstract class Garp_Cli_Command {
      *                    Must contain at least a method name as the first parameter.
      * @return bool
      */
-    public function main(array $args = array()) {
+    public function main(array $args = []) {
         $publicMethods = $this->getPublicMethods();
         if (!array_key_exists(0, $args)) {
             if (in_array('help', $publicMethods)) {
@@ -66,7 +61,7 @@ abstract class Garp_Cli_Command {
             // Note, _validateArguments also provides the CLI feedback
             return false;
         }
-        $result = call_user_func_array(array($this, $methodName), array($args));
+        $result = call_user_func_array([$this, $methodName], [$args]);
         return $result;
     }
 
@@ -76,9 +71,9 @@ abstract class Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function complete(array $args = array()) {
+    public function complete(array $args = []) {
         $publicMethods = $this->getPublicMethods();
-        $ignoredMethods = array('complete');
+        $ignoredMethods = ['complete'];
         $publicMethods = array_diff($publicMethods, $ignoredMethods);
         Garp_Cli::lineOut(implode(' ', $publicMethods));
         return true;
@@ -93,15 +88,13 @@ abstract class Garp_Cli_Command {
         $reflect = new ReflectionClass($this);
         $publicMethods = $reflect->getMethods(ReflectionMethod::IS_PUBLIC);
         $publicMethods = array_map(
-            function ($m) {
-                return $m->name;
-            },
+            fn($m) => $m->name,
             $publicMethods
         );
         $publicMethods = array_filter(
             $publicMethods,
             function ($m) {
-                $ignoreMethods = array('__construct', 'main', 'getPublicMethods');
+                $ignoreMethods = ['__construct', 'main', 'getPublicMethods'];
                 return !in_array($m, $ignoreMethods);
             }
         );
@@ -127,8 +120,8 @@ abstract class Garp_Cli_Command {
      *
      * @todo I'm guessing array_splice() would be a better choice here...
      */
-    protected function _remapArguments(array $args = array()) {
-        $out = array();
+    protected function _remapArguments(array $args = []) {
+        $out = [];
         $i = 0;
         foreach ($args as $key => $value) {
             if (is_numeric($key)) {

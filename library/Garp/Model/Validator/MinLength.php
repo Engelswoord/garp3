@@ -18,7 +18,7 @@ class Garp_Model_Validator_MinLength extends Garp_Model_Validator_Abstract {
      *
      * @var array
      */
-    protected $_fields = array();
+    protected $_fields = [];
 
     /**
      * Setup the validation environment
@@ -45,9 +45,7 @@ class Garp_Model_Validator_MinLength extends Garp_Model_Validator_Abstract {
 
         $tooShortFields = array_filter(
             $applicableFields,
-            function ($field) use ($theFields, $data) {
-                return !is_null($data[$field]) && strlen($data[$field]) < $theFields[$field];
-            }
+            fn($field) => !is_null($data[$field]) && strlen($data[$field]) < $theFields[$field]
         );
 
         if (count($tooShortFields)) {
@@ -55,10 +53,10 @@ class Garp_Model_Validator_MinLength extends Garp_Model_Validator_Abstract {
             throw new Garp_Model_Validator_Exception(
                 Garp_Util_String::interpolate(
                     __(self::ERROR_MESSAGE),
-                    array(
+                    [
                         'value' => $first,
                         'min' => $theFields[$first]
-                    )
+                    ]
                 )
             );
         }

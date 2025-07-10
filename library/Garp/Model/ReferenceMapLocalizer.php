@@ -33,14 +33,14 @@ class Garp_Model_ReferenceMapLocalizer {
         // Sanity check: does the model have a reference to the
         // given model in the first place?
         // This will throw an exception if not.
-        $relatedModel = $relatedModel instanceof Garp_Model_Db ? get_class($relatedModel) : $relatedModel;
-        $relatedModel = (substr($relatedModel, 0, 6) !== 'Model_' ? 'Model_' : '') . $relatedModel;
+        $relatedModel = $relatedModel instanceof Garp_Model_Db ? $relatedModel::class : $relatedModel;
+        $relatedModel = (!str_starts_with($relatedModel, 'Model_') ? 'Model_' : '') . $relatedModel;
         $ref = $this->_model->getReference($relatedModel, $ruleKey);
         $locales = Garp_I18n::getLocales();
         foreach ($locales as $locale) {
             $factory = new Garp_I18n_ModelFactory($locale);
             $localizedModel = $factory->getModel($relatedModel);
-            $localizedModelName = get_class($localizedModel);
+            $localizedModelName = $localizedModel::class;
             $cleanLocalizedName = $localizedModel->getNameWithoutNamespace();
             $this->_model->addReference(
                 $cleanLocalizedName,

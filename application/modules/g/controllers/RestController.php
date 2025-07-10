@@ -9,9 +9,9 @@
  */
 class G_RestController extends Garp_Controller_Action {
 
-    protected $_validMethods = array(
+    protected $_validMethods = [
         'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'
-    );
+    ];
 
     public function init() {
         $this->_helper->cache->setNoCacheHeaders($this->getResponse());
@@ -20,7 +20,7 @@ class G_RestController extends Garp_Controller_Action {
             $this->_helper->layout->setLayout('json');
         }
 
-        if (strtoupper($this->getRequest()->getMethod()) === 'OPTIONS') {
+        if (strtoupper((string) $this->getRequest()->getMethod()) === 'OPTIONS') {
             $this->getResponse()->setHeader(
                 'Allow',
                 implode(', ', $this->_validMethods)
@@ -39,7 +39,7 @@ class G_RestController extends Garp_Controller_Action {
     }
 
     public function apiAction() {
-        $method = strtolower($this->getRequest()->getMethod());
+        $method = strtolower((string) $this->getRequest()->getMethod());
         $params = $this->getRequest()->getParams();
 
         try {
@@ -61,7 +61,7 @@ class G_RestController extends Garp_Controller_Action {
             // @todo Is this wise? I don't want to give a 500 error since it's not the server's
             // fault. But this might end up a big list of exceptions...
             // How to choose status 400 or 500 at runtime?
-            $status = strpos($e->getMessage(), 'Duplicate entry') !== false ? 400 : 500;
+            $status = str_contains($e->getMessage(), 'Duplicate entry') ? 400 : 500;
             $this->_respondToError($e->getMessage(), $status);
         } catch (Garp_Content_Api_Rest_Exception $e) {
             $this->_respondToError($e->getMessage(), $e->getHttpStatusCode());
@@ -79,10 +79,10 @@ class G_RestController extends Garp_Controller_Action {
      */
     protected function _respondToError($errorMessage, $httpCode) {
         $this->_setHttpStatusCode($httpCode);
-        $this->view->result = array(
+        $this->view->result = [
             'success' => false,
             'errorMessage' => $errorMessage
-        );
+        ];
     }
 
     protected function _setHttpStatusCode($httpCode) {
@@ -123,7 +123,7 @@ class G_RestController extends Garp_Controller_Action {
     protected function _parsePostData() {
         $postData = $this->getRequest()->getRawBody();
         if (!$postData) {
-            return array();
+            return [];
         }
         try {
             $postData = Zend_Json::decode($postData);

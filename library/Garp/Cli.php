@@ -129,7 +129,7 @@ class Garp_Cli {
         system('stty icanon');
         print "\n";
 
-        $allowedResponses = array('y', 'Y', 'n', 'N');
+        $allowedResponses = ['y', 'Y', 'n', 'N'];
         if (!in_array($char, $allowedResponses)) {
             // nag 'em some more
             Garp_Cli::errorOut('Please respond with a clear y or n');
@@ -202,40 +202,40 @@ class Garp_Cli {
      */
     public static function parseArgs($argv) {
         array_shift($argv);
-        $out = array();
+        $out = [];
         foreach ($argv as $arg) {
             // --foo --bar=baz
-            if (substr($arg, 0, 2) == '--') {
-                $eqPos = strpos($arg,'=');
+            if (str_starts_with((string) $arg, '--')) {
+                $eqPos = strpos((string) $arg,'=');
 
                 // --foo
                 if ($eqPos === false){
-                    $key        = substr($arg,2);
-                    $value      = isset($out[$key]) ? $out[$key] : true;
+                    $key        = substr((string) $arg,2);
+                    $value      = $out[$key] ?? true;
                     $out[$key]  = $value;
                 }
                 // --bar=baz
                 else {
-                    $key        = substr($arg,2,$eqPos-2);
-                    $value      = substr($arg,$eqPos+1);
+                    $key        = substr((string) $arg,2,$eqPos-2);
+                    $value      = substr((string) $arg,$eqPos+1);
                     $out[$key]  = $value;
                 }
             }
             // -k=value -abc
-            elseif (substr($arg, 0, 1) == '-') {
+            elseif (str_starts_with((string) $arg, '-')) {
 
                 // -k=value
-                if (substr($arg, 2, 1) == '=') {
-                    $key        = substr($arg,1,1);
-                    $value      = substr($arg,3);
+                if (substr((string) $arg, 2, 1) == '=') {
+                    $key        = substr((string) $arg,1,1);
+                    $value      = substr((string) $arg,3);
                     $out[$key]  = $value;
                 }
                 // -abc
                 else {
-                    $chars = str_split(substr($arg, 1));
+                    $chars = str_split(substr((string) $arg, 1));
                     foreach ($chars as $char) {
                         $key        = $char;
-                        $value      = isset($out[$key]) ? $out[$key] : true;
+                        $value      = $out[$key] ?? true;
                         $out[$key]  = $value;
                     }
                 }
@@ -286,7 +286,7 @@ class Garp_Cli {
      * @param mixed $bool
      * @return void
      */
-    public static function halt($bool) {
+    public static function halt($bool): never {
         // Convert to boolean
         $bool = !!$bool;
         // Toggle it: PHP uses 0 for FALSE, shell uses 0 for TRUE

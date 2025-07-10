@@ -106,7 +106,7 @@ class Garp_Content_Upload_Mediator {
             $fileData = $this->_source->fetchData($filename, $type);
             return $fileData ?: false;
 
-        } catch (Exception $e) {}
+        } catch (Exception) {}
 
         return false;
     }

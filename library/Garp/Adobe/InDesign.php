@@ -82,7 +82,7 @@ class Garp_Adobe_InDesign {
                 $clusterOffset       = $c * $dynamicPageCount;
                 $clusteredContent    = array_slice($newContent, $clusterOffset, $dynamicPageCount);
                 if ($newAttribs) {
-                    $clusteredAttribs = array();
+                    $clusteredAttribs = [];
                     foreach ($newAttribs as $propName => $attribRows) {
                         $clusteredAttribs[$propName] = array_slice(
                             $attribRows,

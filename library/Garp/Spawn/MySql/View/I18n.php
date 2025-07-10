@@ -80,7 +80,7 @@ class Garp_Spawn_MySql_View_I18n extends Garp_Spawn_MySql_View_Abstract {
         $sql = 'SELECT ';
 
         //  Unilingual fields
-        $unilingualFieldRefs = array();
+        $unilingualFieldRefs = [];
         foreach ($unilingualFields as $field) {
             $unilingualFieldRefs[] = '`' . $table . '`.`' . $field->name . '` AS `' .
                 $field->name . '`';
@@ -88,7 +88,7 @@ class Garp_Spawn_MySql_View_I18n extends Garp_Spawn_MySql_View_Abstract {
         $sql .= implode(', ', $unilingualFieldRefs) . ', ';
 
         //  Multilingual fields
-        $multilingualFieldRefs = array();
+        $multilingualFieldRefs = [];
         foreach ($multilingualFields as $field) {
             $multilingualFieldRefs[] =  "`{$modelId}_{$locale}`.{$field->name} AS `{$field->name}`";
             /*
@@ -133,18 +133,18 @@ class Garp_Spawn_MySql_View_I18n extends Garp_Spawn_MySql_View_Abstract {
     protected function _getMultilingualFieldsFromModel($model) {
         $multilingualFields = $model->fields->getFields('multilingual', true);
         $multilingualRels = $model->relations->getRelations('multilingual', true);
-        foreach ($multilingualRels as $relName => $rel) {
+        foreach ($multilingualRels as $rel) {
             if ($rel->mirrored) {
                 continue;
             }
             $multilingualFields[] = new Garp_Spawn_Field(
-                'relation', $rel->column, array(
+                'relation', $rel->column, [
                 'type' => 'numeric',
                 'editable' => $rel->editable,
                 'visible' => false,
                 'required' => $rel->required,
                 'relationType' => $rel->type
-                )
+                ]
             );
         }
         return $multilingualFields;

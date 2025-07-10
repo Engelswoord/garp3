@@ -36,7 +36,7 @@ class Garp_Form_Element_Text extends Zend_Form_Element_Text {
      *
      * @var array
      */
-    protected static $_mapping = array(
+    protected static $_mapping = [
         self::FIELD_EMAIL           => 'email',
         self::FIELD_EMAIL_ADDRESS   => 'email',
         self::FIELD_URL             => 'url',
@@ -51,7 +51,7 @@ class Garp_Form_Element_Text extends Zend_Form_Element_Text {
         self::FIELD_SEARCH          => 'search',
         self::FIELD_COLOR           => 'color',
         self::FIELD_TEL             => 'tel',
-    );
+    ];
 
     /**
      * Constructor figures out which type of input to render
@@ -79,7 +79,7 @@ class Garp_Form_Element_Text extends Zend_Form_Element_Text {
      * @return String
      */
     protected function _getType() {
-        $className = strtolower(get_class($this));
+        $className = strtolower(static::class);
         $classNameParts = explode('_', $className);
         $type = array_pop($classNameParts);
         if (array_key_exists($type, self::$_mapping)) {

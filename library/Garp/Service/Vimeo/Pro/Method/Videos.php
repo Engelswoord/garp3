@@ -22,7 +22,7 @@ class Garp_Service_Vimeo_Pro_Method_Videos extends Garp_Service_Vimeo_Pro_Method
             throw new Garp_Service_Vimeo_Exception('This method requires an authenticated user. '.
                 'Please provide an access token.');
         }
-        $params = array('user_id' => $user_id, 'video_id' => $video_id);
+        $params = ['user_id' => $user_id, 'video_id' => $video_id];
         if ($role) {
             $params['role'] = $role;
         }
@@ -37,9 +37,9 @@ class Garp_Service_Vimeo_Pro_Method_Videos extends Garp_Service_Vimeo_Pro_Method
      * @return Array
      */
     public function getInfo($video_id) {
-        $video = $this->request('videos.getInfo', array(
+        $video = $this->request('videos.getInfo', [
             'video_id' => $video_id
-        ));
+        ]);
         return $video['video'];
     }
 }

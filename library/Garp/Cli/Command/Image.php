@@ -40,7 +40,7 @@ class Garp_Cli_Command_Image extends Garp_Cli_Command {
         $imageModel = new Model_Image();
         $pngs = $imageModel->fetchAll(
             $imageModel->select()
-                ->from($imageModel->getName(), array('filename'))
+                ->from($imageModel->getName(), ['filename'])
                 ->where('filename LIKE ?', '%.png')
         );
         $pngQuant = new Garp_Image_PngQuant();

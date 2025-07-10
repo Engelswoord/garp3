@@ -60,7 +60,7 @@ class Garp_Model_Behavior_Browsable extends Garp_Model_Behavior_Abstract {
         $view = Zend_Controller_Front::getInstance()->getParam('bootstrap')->getResource('view');
 
         if (!$results instanceof Garp_Db_Table_Rowset) {
-            $results = array($results);
+            $results = [$results];
         }
 
         $url = $this->_url;
@@ -72,7 +72,7 @@ class Garp_Model_Behavior_Browsable extends Garp_Model_Behavior_Abstract {
                        '/'.$model->getName().'/:slug')
                ) {
                 $url = '/'.$model->getName().'/%s';
-                $params = array('slug');
+                $params = ['slug'];
             } else {
                 throw new Garp_Model_Behavior_Exception('Route discovery failed. Please add "/'.$model->getName().'/:slug" to'.
                                     ' routes.ini or give a proper URL configuration to the behavior.');
@@ -87,7 +87,7 @@ class Garp_Model_Behavior_Browsable extends Garp_Model_Behavior_Abstract {
             $columnToValue = function($column) use ($row) {
                 try {
                     return $row->{$column};
-                } catch (Exception $e) {
+                } catch (Exception) {
                     return '';
                 }
             };

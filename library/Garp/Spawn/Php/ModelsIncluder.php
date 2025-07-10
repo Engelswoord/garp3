@@ -8,13 +8,9 @@ class Garp_Spawn_Php_ModelsIncluder {
     const _ACL_FILE = '/configs/acl.ini';
 
     /**
-     * @var string $_modelId
+     * @param string $modelId
      */
-    protected $_modelId;
-
-    public function __construct($modelId) {
-        $this->_modelId = $modelId;
-
+    public function __construct(protected $_modelId) {
         $this->_addToAclIni();
         $this->_addToContentIni();
     }
@@ -80,7 +76,7 @@ class Garp_Spawn_Php_ModelsIncluder {
 
         //  find production environment section in configuration
         foreach ($contentEnvSections as $envIndex => $envSection) {
-            if (strpos($envSection, '[' . $env . ']') !== false) {
+            if (str_contains((string) $envSection, '[' . $env . ']')) {
                 $productionEnvContent = &$contentEnvSections[$envIndex + 1];
                 break;
             }
@@ -102,9 +98,9 @@ class Garp_Spawn_Php_ModelsIncluder {
 
         //  find production environment section in configuration
         foreach ($contentEnvSections as $envIndex => $envSection) {
-            if (strpos($envSection, '[' . $env . ']') !== false) {
+            if (str_contains((string) $envSection, '[' . $env . ']')) {
                 $productionEnvContent = &$contentEnvSections[$envIndex + 1];
-                $productionEnvContent = rtrim($productionEnvContent) . $newContent . "\n\n\n";
+                $productionEnvContent = rtrim((string) $productionEnvContent) . $newContent . "\n\n\n";
                 break;
             }
         }

@@ -16,9 +16,9 @@ class Garp_Service_Vimeo_Pro_Method_People extends Garp_Service_Vimeo_Pro_Method
      * @return Array
      */
     public function getInfo($user_id) {
-        $person = $this->request('people.getInfo', array(
+        $person = $this->request('people.getInfo', [
             'user_id' => $user_id
-        ));
+        ]);
         return $person['person'];
     }
 }

@@ -28,24 +28,24 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   private static $kExpiredAccessToken = 'AAABrFmeaJjgBAIshbq5ZBqZBICsmveZCZBi6O4w9HSTkFI73VMtmkL9jLuWsZBZC9QMHvJFtSulZAqonZBRIByzGooCZC8DWr0t1M4BL9FARdQwPWPnIqCiFQ';
 
   private static function kValidSignedRequest($id = self::TEST_USER, $oauth_token = null) {
-    $facebook = new FBPublic(array(
+    $facebook = new FBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     return $facebook->publicMakeSignedRequest(
-      array(
+      [
         'user_id' => $id,
         'oauth_token' => $oauth_token
-      )
+      ]
     );
   }
 
   private static function kNonTosedSignedRequest() {
-    $facebook = new FBPublic(array(
+    $facebook = new FBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
-    return $facebook->publicMakeSignedRequest(array());
+    ]);
+    return $facebook->publicMakeSignedRequest([]);
   }
 
   private static function kSignedRequestWithEmptyValue() {
@@ -53,35 +53,35 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   private static function kSignedRequestWithBogusSignature() {
-    $facebook = new FBPublic(array(
+    $facebook = new FBPublic([
       'appId'  => self::APP_ID,
       'secret' => 'bogus',
-    ));
+    ]);
     return $facebook->publicMakeSignedRequest(
-      array(
+      [
         'algorithm' => 'HMAC-SHA256',
-      )
+      ]
     );
   }
 
   private static function kSignedRequestWithWrongAlgo() {
-    $facebook = new FBPublic(array(
+    $facebook = new FBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $data['algorithm'] = 'foo';
     $json = json_encode($data);
     $b64 = $facebook->publicBase64UrlEncode($json);
-    $raw_sig = hash_hmac('sha256', $b64, self::SECRET, $raw = true);
+    $raw_sig = hash_hmac('sha256', (string) $b64, self::SECRET, $raw = true);
     $sig = $facebook->publicBase64UrlEncode($raw_sig);
     return $sig.'.'.$b64;
   }
 
   public function testConstructor() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $this->assertEquals($facebook->getAppId(), self::APP_ID,
                         'Expect the App ID to be set.');
     $this->assertEquals($facebook->getAppSecret(), self::SECRET,
@@ -89,11 +89,11 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testConstructorWithFileUpload() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'      => self::APP_ID,
       'secret'     => self::SECRET,
       'fileUpload' => true,
-    ));
+    ]);
     $this->assertEquals($facebook->getAppId(), self::APP_ID,
                         'Expect the App ID to be set.');
     $this->assertEquals($facebook->getAppSecret(), self::SECRET,
@@ -106,40 +106,40 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testSetAppId() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $facebook->setAppId('dummy');
     $this->assertEquals($facebook->getAppId(), 'dummy',
                         'Expect the App ID to be dummy.');
   }
 
   public function testSetAPISecret() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $facebook->setApiSecret('dummy');
     $this->assertEquals($facebook->getApiSecret(), 'dummy',
                         'Expect the API secret to be dummy.');
   }
 
   public function testSetAPPSecret() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $facebook->setAppSecret('dummy');
     $this->assertEquals($facebook->getAppSecret(), 'dummy',
                         'Expect the API secret to be dummy.');
   }
 
   public function testSetAccessToken() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $facebook->setAccessToken('saltydog');
     $this->assertEquals($facebook->getAccessToken(), 'saltydog',
@@ -147,10 +147,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testSetFileUploadSupport() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $this->assertFalse($facebook->getFileUploadSupport(),
                        'Expect file upload support to be off.');
     // alias for getFileUploadSupport (depricated), testing until removed
@@ -165,10 +165,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetCurrentURL() {
-    $facebook = new FBGetCurrentURLFacebook(array(
+    $facebook = new FBGetCurrentURLFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     // fake the HPHP $_SERVER globals
     $_SERVER['HTTP_HOST'] = 'www.test.com';
@@ -201,10 +201,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetLoginURL() {
-    $facebook = new Facebook(array(
+    $facebook = new Facebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     // fake the HPHP $_SERVER globals
     $_SERVER['HTTP_HOST'] = 'www.test.com';
@@ -214,10 +214,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     $this->assertEquals($login_url['host'], 'www.facebook.com');
     $this->assertEquals($login_url['path'], '/dialog/oauth');
     $expected_login_params =
-      array('client_id' => self::APP_ID,
-            'redirect_uri' => 'http://www.test.com/unit-tests.php');
+      ['client_id' => self::APP_ID,
+            'redirect_uri' => 'http://www.test.com/unit-tests.php'];
 
-    $query_map = array();
+    $query_map = [];
     parse_str($login_url['query'], $query_map);
     $this->assertIsSubset($expected_login_params, $query_map);
     // we don't know what the state is, but we know it's an md5 and should
@@ -226,26 +226,26 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetLoginURLWithExtraParams() {
-    $facebook = new Facebook(array(
+    $facebook = new Facebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     // fake the HPHP $_SERVER globals
     $_SERVER['HTTP_HOST'] = 'www.test.com';
     $_SERVER['REQUEST_URI'] = '/unit-tests.php';
-    $extra_params = array('scope' => 'email, sms',
-                          'nonsense' => 'nonsense');
+    $extra_params = ['scope' => 'email, sms',
+                          'nonsense' => 'nonsense'];
     $login_url = parse_url($facebook->getLoginUrl($extra_params));
     $this->assertEquals($login_url['scheme'], 'https');
     $this->assertEquals($login_url['host'], 'www.facebook.com');
     $this->assertEquals($login_url['path'], '/dialog/oauth');
     $expected_login_params =
       array_merge(
-        array('client_id' => self::APP_ID,
-              'redirect_uri' => 'http://www.test.com/unit-tests.php'),
+        ['client_id' => self::APP_ID,
+              'redirect_uri' => 'http://www.test.com/unit-tests.php'],
         $extra_params);
-    $query_map = array();
+    $query_map = [];
     parse_str($login_url['query'], $query_map);
     $this->assertIsSubset($expected_login_params, $query_map);
     // we don't know what the state is, but we know it's an md5 and should
@@ -254,17 +254,17 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetLoginURLWithScopeParamsAsArray() {
-    $facebook = new Facebook(array(
+    $facebook = new Facebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     // fake the HPHP $_SERVER globals
     $_SERVER['HTTP_HOST'] = 'www.test.com';
     $_SERVER['REQUEST_URI'] = '/unit-tests.php';
-    $scope_params_as_array = array('email','sms','read_stream');
-    $extra_params = array('scope' => $scope_params_as_array,
-                          'nonsense' => 'nonsense');
+    $scope_params_as_array = ['email','sms','read_stream'];
+    $extra_params = ['scope' => $scope_params_as_array,
+                          'nonsense' => 'nonsense'];
     $login_url = parse_url($facebook->getLoginUrl($extra_params));
     $this->assertEquals($login_url['scheme'], 'https');
     $this->assertEquals($login_url['host'], 'www.facebook.com');
@@ -275,10 +275,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     $extra_params['scope'] = implode(',', $scope_params_as_array);
     $expected_login_params =
       array_merge(
-        array('client_id' => self::APP_ID,
-              'redirect_uri' => 'http://www.test.com/unit-tests.php'),
+        ['client_id' => self::APP_ID,
+              'redirect_uri' => 'http://www.test.com/unit-tests.php'],
         $extra_params);
-    $query_map = array();
+    $query_map = [];
     parse_str($login_url['query'], $query_map);
     $this->assertIsSubset($expected_login_params, $query_map);
     // we don't know what the state is, but we know it's an md5 and should
@@ -287,10 +287,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetCodeWithValidCSRFState() {
-    $facebook = new FBCode(array(
+    $facebook = new FBCode([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $facebook->setCSRFStateToken();
     $code = $_REQUEST['code'] = $this->generateMD5HashOfRandomValue();
@@ -301,10 +301,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetCodeWithInvalidCSRFState() {
-    $facebook = new FBCode(array(
+    $facebook = new FBCode([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $facebook->setCSRFStateToken();
     $code = $_REQUEST['code'] = $this->generateMD5HashOfRandomValue();
@@ -314,10 +314,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetCodeWithMissingCSRFState() {
-    $facebook = new FBCode(array(
+    $facebook = new FBCode([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $code = $_REQUEST['code'] = $this->generateMD5HashOfRandomValue();
     // intentionally don't set CSRF token at all
@@ -326,10 +326,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetUserFromSignedRequest() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $_REQUEST['signed_request'] = self::kValidSignedRequest();
     $this->assertEquals('499834690', $facebook->getUser(),
@@ -337,10 +337,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testSignedRequestRewrite(){
-    $facebook = new FBRewrite(array(
+    $facebook = new FBRewrite([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $_REQUEST['signed_request'] = self::kValidSignedRequest(self::TEST_USER, 'Hello sweetie');
 
@@ -365,10 +365,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetSignedRequestFromCookie() {
-    $facebook = new FBPublicCookie(array(
+    $facebook = new FBPublicCookie([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $_COOKIE[$facebook->publicGetSignedRequestCookieName()] =
       self::kValidSignedRequest();
@@ -378,10 +378,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetSignedRequestWithIncorrectSignature() {
-    $facebook = new FBPublicCookie(array(
+    $facebook = new FBPublicCookie([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $_COOKIE[$facebook->publicGetSignedRequestCookieName()] =
       self::kSignedRequestWithBogusSignature();
@@ -389,10 +389,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testNonUserAccessToken() {
-    $facebook = new FBAccessToken(array(
+    $facebook = new FBAccessToken([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     // no cookies, and no request params, so no user or code,
     // so no user access token (even with cookie support)
@@ -402,53 +402,53 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testMissingMetadataCookie() {
-    $fb = new FBPublicCookie(array(
+    $fb = new FBPublicCookie([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $this->assertEmpty($fb->publicGetMetadataCookie());
   }
 
   public function testEmptyMetadataCookie() {
-    $fb = new FBPublicCookie(array(
+    $fb = new FBPublicCookie([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $_COOKIE[$fb->publicGetMetadataCookieName()] = '';
     $this->assertEmpty($fb->publicGetMetadataCookie());
   }
 
   public function testMetadataCookie() {
-    $fb = new FBPublicCookie(array(
+    $fb = new FBPublicCookie([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $key = 'foo';
     $val = '42';
     $_COOKIE[$fb->publicGetMetadataCookieName()] = "$key=$val";
-    $this->assertEquals(array($key => $val), $fb->publicGetMetadataCookie());
+    $this->assertEquals([$key => $val], $fb->publicGetMetadataCookie());
   }
 
   public function testQuotedMetadataCookie() {
-    $fb = new FBPublicCookie(array(
+    $fb = new FBPublicCookie([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $key = 'foo';
     $val = '42';
     $_COOKIE[$fb->publicGetMetadataCookieName()] = "\"$key=$val\"";
-    $this->assertEquals(array($key => $val), $fb->publicGetMetadataCookie());
+    $this->assertEquals([$key => $val], $fb->publicGetMetadataCookie());
   }
 
   public function testAPIForLoggedOutUsers() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
-    $response = $facebook->api(array(
+    ]);
+    $response = $facebook->api([
       'method' => 'fql.query',
       'query' => 'SELECT name FROM user WHERE uid=4',
-    ));
+    ]);
     $this->assertEquals(count($response), 1,
                         'Expect one row back.');
     $this->assertEquals($response[0]['name'], 'Mark Zuckerberg',
@@ -456,10 +456,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testAPIWithBogusAccessToken() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $facebook->setAccessToken('this-is-not-really-an-access-token');
     // if we don't set an access token and there's no way to
@@ -470,10 +470,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     // advertise the issue that the access token is at worst broken
     // and at best expired.
     try {
-      $response = $facebook->api(array(
+      $response = $facebook->api([
         'method' => 'fql.query',
         'query' => 'SELECT name FROM profile WHERE id=4',
-      ));
+      ]);
       $this->fail('Should not get here.');
     } catch(FacebookApiException $e) {
       $result = $e->getResult();
@@ -483,10 +483,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testAPIGraphPublicData() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $response = $facebook->api('/jerry');
     $this->assertEquals(
@@ -494,10 +494,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGraphAPIWithBogusAccessToken() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $facebook->setAccessToken('this-is-not-really-an-access-token');
     try {
@@ -512,10 +512,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGraphAPIWithExpiredAccessToken() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $facebook->setAccessToken(self::$kExpiredAccessToken);
     try {
@@ -524,20 +524,20 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     } catch(FacebookApiException $e) {
       // means the server got the access token and didn't like it
       $error_msg_start = 'OAuthException: Error validating access token:';
-      $this->assertTrue(strpos((string) $e, $error_msg_start) === 0,
+      $this->assertTrue(str_starts_with((string) $e, $error_msg_start),
                         'Expect the token validation error message.');
     }
   }
 
   public function testGraphAPIOAuthSpecError() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::MIGRATED_APP_ID,
       'secret' => self::MIGRATED_SECRET,
-    ));
+    ]);
 
     try {
-      $response = $facebook->api('/me', array(
-        'client_id' => self::MIGRATED_APP_ID));
+      $response = $facebook->api('/me', [
+        'client_id' => self::MIGRATED_APP_ID]);
 
       $this->fail('Should not get here.');
     } catch(FacebookApiException $e) {
@@ -550,14 +550,14 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGraphAPIMethodOAuthSpecError() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::MIGRATED_APP_ID,
       'secret' => self::MIGRATED_SECRET,
-    ));
+    ]);
 
     try {
-      $response = $facebook->api('/daaku.shah', 'DELETE', array(
-        'client_id' => self::MIGRATED_APP_ID));
+      $response = $facebook->api('/daaku.shah', 'DELETE', [
+        'client_id' => self::MIGRATED_APP_ID]);
       $this->fail('Should not get here.');
     } catch(FacebookApiException $e) {
       $this->assertEquals(strpos($e, 'invalid_request'), 0);
@@ -565,10 +565,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testCurlFailure() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     if (!defined('CURLOPT_TIMEOUT_MS')) {
       // can't test it if we don't have millisecond timeouts
@@ -596,10 +596,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGraphAPIWithOnlyParams() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
 
     $response = $facebook->api('/jerry');
     $this->assertTrue(isset($response['id']),
@@ -624,10 +624,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   public function testLoginURLDefaults() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
     $_SERVER['REQUEST_URI'] = '/examples';
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $encodedUrl = rawurlencode('http://fbrell.com/examples');
     $this->assertNotNull(strpos($facebook->getLoginUrl(), $encodedUrl),
                          'Expect the current url to exist.');
@@ -636,10 +636,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   public function testLoginURLDefaultsDropStateQueryParam() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
     $_SERVER['REQUEST_URI'] = '/examples?state=xx42xx';
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $expectEncodedUrl = rawurlencode('http://fbrell.com/examples');
     $this->assertTrue(strpos($facebook->getLoginUrl(), $expectEncodedUrl) > -1,
                       'Expect the current url to exist.');
@@ -650,10 +650,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   public function testLoginURLDefaultsDropCodeQueryParam() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
     $_SERVER['REQUEST_URI'] = '/examples?code=xx42xx';
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $expectEncodedUrl = rawurlencode('http://fbrell.com/examples');
     $this->assertTrue(strpos($facebook->getLoginUrl(), $expectEncodedUrl) > -1,
                       'Expect the current url to exist.');
@@ -665,10 +665,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
     $_SERVER['REQUEST_URI'] =
       '/examples?signed_request=xx42xx&do_not_drop=xx43xx';
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $expectEncodedUrl = rawurlencode('http://fbrell.com/examples');
     $this->assertFalse(strpos($facebook->getLoginUrl(), 'xx42xx'),
                        'Expect the session param to be dropped.');
@@ -679,15 +679,15 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   public function testLoginURLCustomNext() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
     $_SERVER['REQUEST_URI'] = '/examples';
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $next = 'http://fbrell.com/custom';
-    $loginUrl = $facebook->getLoginUrl(array(
+    $loginUrl = $facebook->getLoginUrl([
       'redirect_uri' => $next,
       'cancel_url' => $next
-    ));
+    ]);
     $currentEncodedUrl = rawurlencode('http://fbrell.com/examples');
     $expectedEncodedUrl = rawurlencode($next);
     $this->assertNotNull(strpos($loginUrl, $expectedEncodedUrl),
@@ -699,10 +699,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   public function testLogoutURLDefaults() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
     $_SERVER['REQUEST_URI'] = '/examples';
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $encodedUrl = rawurlencode('http://fbrell.com/examples');
     $this->assertNotNull(strpos($facebook->getLogoutUrl(), $encodedUrl),
                          'Expect the current url to exist.');
@@ -712,10 +712,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   public function testLoginStatusURLDefaults() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
     $_SERVER['REQUEST_URI'] = '/examples';
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $encodedUrl = rawurlencode('http://fbrell.com/examples');
     $this->assertNotNull(strpos($facebook->getLoginStatusUrl(), $encodedUrl),
                          'Expect the current url to exist.');
@@ -724,16 +724,16 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   public function testLoginStatusURLCustom() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
     $_SERVER['REQUEST_URI'] = '/examples';
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $encodedUrl1 = rawurlencode('http://fbrell.com/examples');
     $okUrl = 'http://fbrell.com/here1';
     $encodedUrl2 = rawurlencode($okUrl);
-    $loginStatusUrl = $facebook->getLoginStatusUrl(array(
+    $loginStatusUrl = $facebook->getLoginStatusUrl([
       'ok_session' => $okUrl,
-    ));
+    ]);
     $this->assertNotNull(strpos($loginStatusUrl, $encodedUrl1),
                          'Expect the current url to exist.');
     $this->assertNotNull(strpos($loginStatusUrl, $encodedUrl2),
@@ -743,10 +743,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   public function testNonDefaultPort() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com:8080';
     $_SERVER['REQUEST_URI'] = '/examples';
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $encodedUrl = rawurlencode('http://fbrell.com:8080/examples');
     $this->assertNotNull(strpos($facebook->getLoginUrl(), $encodedUrl),
                          'Expect the current url to exist.');
@@ -756,10 +756,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
     $_SERVER['REQUEST_URI'] = '/examples';
     $_SERVER['HTTPS'] = 'on';
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $encodedUrl = rawurlencode('https://fbrell.com/examples');
     $this->assertNotNull(strpos($facebook->getLoginUrl(), $encodedUrl),
                          'Expect the current url to exist.');
@@ -769,10 +769,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     $_SERVER['HTTP_HOST'] = 'fbrell.com:8080';
     $_SERVER['REQUEST_URI'] = '/examples';
     $_SERVER['HTTPS'] = 'on';
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $encodedUrl = rawurlencode('https://fbrell.com:8080/examples');
     $this->assertNotNull(strpos($facebook->getLoginUrl(), $encodedUrl),
                          'Expect the current url to exist.');
@@ -786,10 +786,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testSignedToken() {
-    $facebook = new FBPublic(array(
+    $facebook = new FBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]);
     $payload = $facebook->publicParseSignedRequest(self::kValidSignedRequest());
     $this->assertNotNull($payload, 'Expected token to parse');
     $this->assertEquals($facebook->getSignedRequest(), null);
@@ -798,10 +798,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testNonTossedSignedtoken() {
-    $facebook = new FBPublic(array(
+    $facebook = new FBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]);
     $payload = $facebook->publicParseSignedRequest(
       self::kNonTosedSignedRequest());
     $this->assertNotNull($payload, 'Expected token to parse');
@@ -812,10 +812,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testSignedRequestWithEmptyValue() {
-    $fb = new FBPublicCookie(array(
+    $fb = new FBPublicCookie([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]);
     $_REQUEST['signed_request'] = self::kSignedRequestWithEmptyValue();
     $this->assertNull($fb->getSignedRequest());
     $_COOKIE[$fb->publicGetSignedRequestCookieName()] =
@@ -824,21 +824,21 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testSignedRequestWithWrongAlgo() {
-    $fb = new FBPublic(array(
+    $fb = new FBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]);
     $payload = $fb->publicParseSignedRequest(
       self::kSignedRequestWithWrongAlgo());
     $this->assertNull($payload, 'Expected nothing back.');
   }
 
   public function testMakeAndParse() {
-    $fb = new FBPublic(array(
+    $fb = new FBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
-    $data = array('foo' => 42);
+    ]);
+    $data = ['foo' => 42];
     $sr = $fb->publicMakeSignedRequest($data);
     $decoded = $fb->publicParseSignedRequest($sr);
     $this->assertEquals($data['foo'], $decoded['foo']);
@@ -848,22 +848,22 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
    * @expectedException InvalidArgumentException
    */
   public function testMakeSignedRequestExpectsArray() {
-    $fb = new FBPublic(array(
+    $fb = new FBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]);
     $sr = $fb->publicMakeSignedRequest('');
   }
 
   public function testBundledCACert() {
-    $facebook = new TransientFacebook(array(
+    $facebook = new TransientFacebook([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]);
 
       // use the bundled cert from the start
     Facebook::$CURL_OPTS[CURLOPT_CAINFO] =
-      dirname(__FILE__) . '/../src/fb_ca_chain_bundle.crt';
+      __DIR__ . '/../src/fb_ca_chain_bundle.crt';
     $response = $facebook->api('/naitik');
 
     unset(Facebook::$CURL_OPTS[CURLOPT_CAINFO]);
@@ -872,21 +872,21 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testVideoUpload() {
-    $facebook = new FBRecordURL(array(
+    $facebook = new FBRecordURL([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]);
 
-    $facebook->api(array('method' => 'video.upload'));
+    $facebook->api(['method' => 'video.upload']);
     $this->assertContains('//api-video.', $facebook->getRequestedURL(),
                           'video.upload should go against api-video');
   }
 
   public function testVideoUploadGraph() {
-    $facebook = new FBRecordURL(array(
+    $facebook = new FBRecordURL([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]);
 
     $facebook->api('/me/videos', 'POST');
     $this->assertContains('//graph-video.', $facebook->getRequestedURL(),
@@ -894,10 +894,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetUserAndAccessTokenFromSession() {
-    $facebook = new PersistentFBPublic(array(
+    $facebook = new PersistentFBPublic([
                                          'appId'  => self::APP_ID,
                                          'secret' => self::SECRET
-                                       ));
+                                       ]);
 
     $facebook->publicSetPersistentData('access_token',
                                        self::$kExpiredAccessToken);
@@ -911,10 +911,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetUserAndAccessTokenFromSignedRequestNotSession() {
-    $facebook = new PersistentFBPublic(array(
+    $facebook = new PersistentFBPublic([
                                          'appId'  => self::APP_ID,
                                          'secret' => self::SECRET
-                                       ));
+                                       ]);
 
     $_REQUEST['signed_request'] = self::kValidSignedRequest();
     $facebook->publicSetPersistentData('user_id', 41572);
@@ -934,10 +934,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetUserWithoutCodeOrSignedRequestOrSession() {
-    $facebook = new PersistentFBPublic(array(
+    $facebook = new PersistentFBPublic([
                                          'appId'  => self::APP_ID,
                                          'secret' => self::SECRET
-                                       ));
+                                       ]);
 
     // deliberately leave $_REQUEST and _$SESSION empty
     $this->assertEmpty($_REQUEST,
@@ -956,36 +956,36 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   public function testGetAccessTokenUsingCodeInJsSdkCookie() {
     $code = 'code1';
     $access_token = 'at1';
-    $methods_to_stub = array('getSignedRequest', 'getAccessTokenFromCode');
-    $constructor_args = array(array(
+    $methods_to_stub = ['getSignedRequest', 'getAccessTokenFromCode'];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $stub = $this->getMock(
       'TransientFacebook', $methods_to_stub, $constructor_args);
     $stub
       ->expects($this->once())
       ->method('getSignedRequest')
-      ->will($this->returnValue(array('code' => $code)));
+      ->will($this->returnValue(['code' => $code]));
     $stub
       ->expects($this->once())
       ->method('getAccessTokenFromCode')
-      ->will($this->returnValueMap(array(array($code, '', $access_token))));
+      ->will($this->returnValueMap([[$code, '', $access_token]]));
     $this->assertEquals($stub->getAccessToken(), $access_token);
   }
 
   public function testSignedRequestWithoutAuthClearsData() {
-    $methods_to_stub = array('getSignedRequest', 'clearAllPersistentData');
-    $constructor_args = array(array(
+    $methods_to_stub = ['getSignedRequest', 'clearAllPersistentData'];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $stub = $this->getMock(
       'TransientFacebook', $methods_to_stub, $constructor_args);
     $stub
       ->expects($this->once())
       ->method('getSignedRequest')
-      ->will($this->returnValue(array('foo' => 1)));
+      ->will($this->returnValue(['foo' => 1]));
     $stub
       ->expects($this->once())
       ->method('clearAllPersistentData');
@@ -994,21 +994,21 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
 
   public function testInvalidCodeInSignedRequestWillClearData() {
     $code = 'code1';
-    $methods_to_stub = array(
+    $methods_to_stub = [
       'getSignedRequest',
       'getAccessTokenFromCode',
       'clearAllPersistentData',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $stub = $this->getMock(
       'TransientFacebook', $methods_to_stub, $constructor_args);
     $stub
       ->expects($this->once())
       ->method('getSignedRequest')
-      ->will($this->returnValue(array('code' => $code)));
+      ->will($this->returnValue(['code' => $code]));
     $stub
       ->expects($this->once())
       ->method('getAccessTokenFromCode')
@@ -1021,15 +1021,15 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
 
   public function testInvalidCodeWillClearData() {
     $code = 'code1';
-    $methods_to_stub = array(
+    $methods_to_stub = [
       'getCode',
       'getAccessTokenFromCode',
       'clearAllPersistentData',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $stub = $this->getMock(
       'TransientFacebook', $methods_to_stub, $constructor_args);
     $stub
@@ -1049,15 +1049,15 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   public function testValidCodeToToken() {
     $code = 'code1';
     $access_token = 'at1';
-    $methods_to_stub = array(
+    $methods_to_stub = [
       'getSignedRequest',
       'getCode',
       'getAccessTokenFromCode',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $stub = $this->getMock(
       'TransientFacebook', $methods_to_stub, $constructor_args);
     $stub
@@ -1067,22 +1067,22 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     $stub
       ->expects($this->once())
       ->method('getAccessTokenFromCode')
-      ->will($this->returnValueMap(array(array($code, null, $access_token))));
+      ->will($this->returnValueMap([[$code, null, $access_token]]));
     $this->assertEquals($stub->getAccessToken(), $access_token);
   }
 
   public function testSignedRequestWithoutAuthClearsDataInAvailData() {
-    $methods_to_stub = array('getSignedRequest', 'clearAllPersistentData');
-    $constructor_args = array(array(
+    $methods_to_stub = ['getSignedRequest', 'clearAllPersistentData'];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $stub = $this->getMock(
       'TransientFacebook', $methods_to_stub, $constructor_args);
     $stub
       ->expects($this->once())
       ->method('getSignedRequest')
-      ->will($this->returnValue(array('foo' => 1)));
+      ->will($this->returnValue(['foo' => 1]));
     $stub
       ->expects($this->once())
       ->method('clearAllPersistentData');
@@ -1090,15 +1090,15 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testFailedToGetUserFromAccessTokenClearsData() {
-    $methods_to_stub = array(
+    $methods_to_stub = [
       'getAccessToken',
       'getUserFromAccessToken',
       'clearAllPersistentData',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $stub = $this->getMock(
       'TransientFacebook', $methods_to_stub, $constructor_args);
     $stub
@@ -1115,15 +1115,15 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testUserFromAccessTokenIsStored() {
-    $methods_to_stub = array(
+    $methods_to_stub = [
       'getAccessToken',
       'getUserFromAccessToken',
       'setPersistentData',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $user = 42;
     $stub = $this->getMock(
       'TransientFacebook', $methods_to_stub, $constructor_args);
@@ -1142,14 +1142,14 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testUserFromAccessTokenPullsID() {
-    $methods_to_stub = array(
+    $methods_to_stub = [
       'getAccessToken',
       'api',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $user = 42;
     $stub = $this->getMock(
       'TransientFacebook', $methods_to_stub, $constructor_args);
@@ -1160,20 +1160,20 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     $stub
       ->expects($this->once())
       ->method('api')
-      ->will($this->returnValue(array('id' => $user)));
+      ->will($this->returnValue(['id' => $user]));
     $this->assertEquals($user, $stub->getUser());
   }
 
   public function testUserFromAccessTokenResetsOnApiException() {
-    $methods_to_stub = array(
+    $methods_to_stub = [
       'getAccessToken',
       'clearAllPersistentData',
       'api',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $stub = $this->getMock(
       'TransientFacebook', $methods_to_stub, $constructor_args);
     $stub
@@ -1191,24 +1191,24 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testEmptyCodeReturnsFalse() {
-    $fb = new FBPublicGetAccessTokenFromCode(array(
+    $fb = new FBPublicGetAccessTokenFromCode([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]);
     $this->assertFalse($fb->publicGetAccessTokenFromCode(''));
     $this->assertFalse($fb->publicGetAccessTokenFromCode(null));
     $this->assertFalse($fb->publicGetAccessTokenFromCode(false));
   }
 
   public function testNullRedirectURIUsesCurrentURL() {
-    $methods_to_stub = array(
+    $methods_to_stub = [
       '_oauthRequest',
       'getCurrentUrl',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $access_token = 'at1';
     $stub = $this->getMock(
       'FBPublicGetAccessTokenFromCode', $methods_to_stub, $constructor_args);
@@ -1224,14 +1224,14 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testNullRedirectURIAllowsEmptyStringForCookie() {
-    $methods_to_stub = array(
+    $methods_to_stub = [
       '_oauthRequest',
       'getCurrentUrl',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $access_token = 'at1';
     $stub = $this->getMock(
       'FBPublicGetAccessTokenFromCode', $methods_to_stub, $constructor_args);
@@ -1247,13 +1247,13 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testAPIExceptionDuringCodeExchangeIsIgnored() {
-    $methods_to_stub = array(
+    $methods_to_stub = [
       '_oauthRequest',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $stub = $this->getMock(
       'FBPublicGetAccessTokenFromCode', $methods_to_stub, $constructor_args);
     $stub
@@ -1264,13 +1264,13 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testEmptyResponseInCodeExchangeIsIgnored() {
-    $methods_to_stub = array(
+    $methods_to_stub = [
       '_oauthRequest',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $stub = $this->getMock(
       'FBPublicGetAccessTokenFromCode', $methods_to_stub, $constructor_args);
     $stub
@@ -1281,21 +1281,21 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testExistingStateRestoredInConstructor() {
-    $fb = new FBPublicState(array(
+    $fb = new FBPublicState([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]);
     $this->assertEquals(FBPublicState::STATE, $fb->publicGetState());
   }
 
   public function testMissingAccessTokenInCodeExchangeIsIgnored() {
-    $methods_to_stub = array(
+    $methods_to_stub = [
       '_oauthRequest',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $stub = $this->getMock(
       'FBPublicGetAccessTokenFromCode', $methods_to_stub, $constructor_args);
     $stub
@@ -1307,7 +1307,7 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
 
   public function testExceptionConstructorWithErrorCode() {
     $code = 404;
-    $e = new FacebookApiException(array('error_code' => $code));
+    $e = new FacebookApiException(['error_code' => $code]);
     $this->assertEquals($code, $e->getCode());
   }
 
@@ -1318,41 +1318,41 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testExceptionTypeMixedDraft00() {
-    $e = new FacebookApiException(array('error' => array('message' => 'foo')));
+    $e = new FacebookApiException(['error' => ['message' => 'foo']]);
     $this->assertEquals('Exception', $e->getType());
   }
 
   public function testExceptionTypeDraft00() {
     $error = 'foo';
     $e = new FacebookApiException(
-      array('error' => array('type' => $error, 'message' => 'hello world')));
+      ['error' => ['type' => $error, 'message' => 'hello world']]);
     $this->assertEquals($error, $e->getType());
   }
 
   public function testExceptionTypeDraft10() {
     $error = 'foo';
-    $e = new FacebookApiException(array('error' => $error));
+    $e = new FacebookApiException(['error' => $error]);
     $this->assertEquals($error, $e->getType());
   }
 
   public function testExceptionTypeDefault() {
-    $e = new FacebookApiException(array('error' => false));
+    $e = new FacebookApiException(['error' => false]);
     $this->assertEquals('Exception', $e->getType());
   }
 
   public function testExceptionToString() {
-    $e = new FacebookApiException(array(
+    $e = new FacebookApiException([
       'error_code' => 1,
       'error_description' => 'foo',
-    ));
+    ]);
     $this->assertEquals('Exception: 1: foo', (string) $e);
   }
 
   public function testDestroyClearsCookie() {
-    $fb = new FBPublicCookie(array(
+    $fb = new FBPublicCookie([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $_COOKIE[$fb->publicGetSignedRequestCookieName()] = 'foo';
     $_COOKIE[$fb->publicGetMetadataCookieName()] = 'base_domain=fbrell.com';
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
@@ -1362,14 +1362,14 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testAuthExpireSessionDestroysSession() {
-    $methods_to_stub = array(
+    $methods_to_stub = [
       '_oauthRequest',
       'destroySession',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $key = 'foo';
     $val = 42;
     $stub = $this->getMock(
@@ -1382,20 +1382,20 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
       ->expects($this->once())
       ->method('destroySession');
     $this->assertEquals(
-      array($key => $val),
-      $stub->api(array('method' => 'auth.expireSession'))
+      [$key => $val],
+      $stub->api(['method' => 'auth.expireSession'])
     );
   }
 
   public function testLowercaseAuthRevokeAuthDestroysSession() {
-    $methods_to_stub = array(
+    $methods_to_stub = [
       '_oauthRequest',
       'destroySession',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $key = 'foo';
     $val = 42;
     $stub = $this->getMock(
@@ -1408,8 +1408,8 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
       ->expects($this->once())
       ->method('destroySession');
     $this->assertEquals(
-      array($key => $val),
-      $stub->api(array('method' => 'auth.revokeauthorization'))
+      [$key => $val],
+      $stub->api(['method' => 'auth.revokeauthorization'])
     );
   }
 
@@ -1417,42 +1417,42 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
    * @expectedException FacebookAPIException
    */
   public function testErrorCodeFromRestAPIThrowsException() {
-    $methods_to_stub = array(
+    $methods_to_stub = [
       '_oauthRequest',
-    );
-    $constructor_args = array(array(
+    ];
+    $constructor_args = [[
       'appId'  => self::APP_ID,
       'secret' => self::SECRET
-    ));
+    ]];
     $stub = $this->getMock(
       'TransientFacebook', $methods_to_stub, $constructor_args);
     $stub
       ->expects($this->once())
       ->method('_oauthRequest')
       ->will($this->returnValue('{"error_code": 500}'));
-    $stub->api(array('method' => 'foo'));
+    $stub->api(['method' => 'foo']);
   }
 
   public function testJsonEncodeOfNonStringParams() {
-    $foo = array(1, 2);
-    $params = array(
+    $foo = [1, 2];
+    $params = [
       'method' => 'get',
       'foo' => $foo,
-    );
-    $fb = new FBRecordMakeRequest(array(
+    ];
+    $fb = new FBRecordMakeRequest([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $fb->api('/naitik', $params);
     $requests = $fb->publicGetRequests();
     $this->assertEquals(json_encode($foo), $requests[0]['params']['foo']);
   }
 
   public function testSessionBackedFacebook() {
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $key = 'state';
     $val = 'foo';
     $fb->publicSetPersistentData($key, $val);
@@ -1467,10 +1467,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testSessionBackedFacebookIgnoresUnsupportedKey() {
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $key = '--invalid--';
     $val = 'foo';
     $fb->publicSetPersistentData($key, $val);
@@ -1484,10 +1484,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testClearSessionBackedFacebook() {
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $key = 'state';
     $val = 'foo';
     $fb->publicSetPersistentData($key, $val);
@@ -1510,10 +1510,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testSessionBackedFacebookIgnoresUnsupportedKeyInClear() {
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $key = '--invalid--';
     $val = 'foo';
     $session_var_name = sprintf('fb_%s_%s', self::APP_ID, $key);
@@ -1524,10 +1524,10 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function testClearAllSessionBackedFacebook() {
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $key = 'state';
     $val = 'foo';
     $session_var_name = sprintf('fb_%s_%s', self::APP_ID, $key);
@@ -1541,11 +1541,11 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
 
   public function testSharedSessionBackedFacebook() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
       'sharedSession' => true,
-    ));
+    ]);
     $key = 'state';
     $val = 'foo';
     $session_var_name = sprintf(
@@ -1561,11 +1561,11 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
 
   public function testSharedSessionBackedFacebookIgnoresUnsupportedKey() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
       'sharedSession' => true,
-    ));
+    ]);
     $key = '--invalid--';
     $val = 'foo';
     $session_var_name = sprintf(
@@ -1581,11 +1581,11 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
 
   public function testSharedClearSessionBackedFacebook() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
       'sharedSession' => true,
-    ));
+    ]);
     $key = 'state';
     $val = 'foo';
     $session_var_name = sprintf(
@@ -1604,11 +1604,11 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
 
   public function testSharedSessionBackedFacebookIgnoresUnsupportedKeyInClear() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
       'sharedSession' => true,
-    ));
+    ]);
     $key = '--invalid--';
     $val = 'foo';
     $session_var_name = sprintf(
@@ -1625,11 +1625,11 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
 
   public function testSharedClearAllSessionBackedFacebook() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
       'sharedSession' => true,
-    ));
+    ]);
     $key = 'state';
     $val = 'foo';
     $session_var_name = sprintf(
@@ -1648,11 +1648,11 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
 
   public function testSharedSessionBackedFacebookIsRestored() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
       'sharedSession' => true,
-    ));
+    ]);
     $key = 'state';
     $val = 'foo';
     $shared_session_id = $fb->publicGetSharedSessionID();
@@ -1667,11 +1667,11 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     $this->assertEquals($val, $fb->publicGetPersistentData($key));
 
     // check the new instance has the same data
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
       'sharedSession' => true,
-    ));
+    ]);
     $this->assertEquals(
       $shared_session_id,
       $fb->publicGetSharedSessionID()
@@ -1681,11 +1681,11 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
 
   public function testSharedSessionBackedFacebookIsNotRestoredWhenCorrupt() {
     $_SERVER['HTTP_HOST'] = 'fbrell.com';
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
       'sharedSession' => true,
-    ));
+    ]);
     $key = 'state';
     $val = 'foo';
     $shared_session_id = $fb->publicGetSharedSessionID();
@@ -1701,14 +1701,14 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
 
     // break the cookie
     $cookie_name = $fb->publicGetSharedSessionCookieName();
-    $_COOKIE[$cookie_name] = substr($_COOKIE[$cookie_name], 1);
+    $_COOKIE[$cookie_name] = substr((string) $_COOKIE[$cookie_name], 1);
 
     // check the new instance does not have the data
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
       'sharedSession' => true,
-    ));
+    ]);
     $this->assertFalse($fb->publicGetPersistentData($key));
     $this->assertNotEquals(
       $shared_session_id,
@@ -1720,20 +1720,20 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     $real = 'foo.com';
     $_SERVER['HTTP_HOST'] = $real;
     $_SERVER['HTTP_X_FORWARDED_HOST'] = 'evil.com';
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $this->assertEquals($real, $fb->publicGetHttpHost());
   }
 
   public function testHttpProtocol() {
     $_SERVER['HTTPS'] = 'on';
     $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'http';
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
-    ));
+    ]);
     $this->assertEquals('https', $fb->publicGetHttpProtocol());
   }
 
@@ -1741,33 +1741,33 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     $real = 'foo.com';
     $_SERVER['HTTP_HOST'] = 'localhost';
     $_SERVER['HTTP_X_FORWARDED_HOST'] = $real;
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
       'trustForwarded' => true,
-    ));
+    ]);
     $this->assertEquals($real, $fb->publicGetHttpHost());
   }
 
   public function testHttpProtocolForwarded() {
     $_SERVER['HTTPS'] = 'on';
     $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'http';
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
       'trustForwarded' => true,
-    ));
+    ]);
     $this->assertEquals('http', $fb->publicGetHttpProtocol());
   }
 
   public function testHttpProtocolForwardedSecure() {
     $_SERVER['HTTPS'] = 'on';
     $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
-    $fb = new PersistentFBPublic(array(
+    $fb = new PersistentFBPublic([
       'appId'  => self::APP_ID,
       'secret' => self::SECRET,
       'trustForwarded' => true,
-    ));
+    ]);
     $this->assertEquals('https', $fb->publicGetHttpProtocol());
   }
 
@@ -1782,16 +1782,16 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function provideEndsWith() {
-    return array(
-      array('', '', true),
-      array('', 'a', false),
-      array('a', '', true),
-      array('a', 'b', false),
-      array('a', 'a', true),
-      array('aa', 'a', true),
-      array('ab', 'a', false),
-      array('ba', 'a', true),
-    );
+    return [
+      ['', '', true],
+      ['', 'a', false],
+      ['a', '', true],
+      ['a', 'b', false],
+      ['a', 'a', true],
+      ['aa', 'a', true],
+      ['ab', 'a', false],
+      ['ba', 'a', true],
+    ];
   }
 
   /**
@@ -1805,13 +1805,13 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   }
 
   public function provideIsAllowedDomain() {
-    return array(
-      array('fbrell.com', 'fbrell.com', true),
-      array('foo.fbrell.com', 'fbrell.com', true),
-      array('foofbrell.com', 'fbrell.com', false),
-      array('evil.com', 'fbrell.com', false),
-      array('foo.fbrell.com', 'bar.fbrell.com', false),
-    );
+    return [
+      ['fbrell.com', 'fbrell.com', true],
+      ['foo.fbrell.com', 'fbrell.com', true],
+      ['foofbrell.com', 'fbrell.com', false],
+      ['evil.com', 'fbrell.com', false],
+      ['foo.fbrell.com', 'bar.fbrell.com', false],
+    ];
   }
 
   protected function generateMD5HashOfRandomValue() {
@@ -1831,11 +1831,11 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
     unset($_SERVER['HTTPS']);
     unset($_SERVER['HTTP_HOST']);
     unset($_SERVER['REQUEST_URI']);
-    $_SESSION = array();
-    $_COOKIE = array();
-    $_REQUEST = array();
-    $_POST = array();
-    $_GET = array();
+    $_SESSION = [];
+    $_COOKIE = [];
+    $_REQUEST = [];
+    $_POST = [];
+    $_GET = [];
     if (session_id()) {
       session_destroy();
     }
@@ -1850,7 +1850,7 @@ class PHPSDKTestCase extends PHPUnit_Framework_TestCase {
   protected function assertIsSubset($correct, $actual, $msg='') {
     foreach ($correct as $key => $value) {
       $actual_value = $actual[$key];
-      $newMsg = (strlen($msg) ? ($msg.' ') : '').'Key: '.$key;
+      $newMsg = (strlen((string) $msg) ? ($msg.' ') : '').'Key: '.$key;
       $this->assertEquals($value, $actual_value, $newMsg);
     }
   }
@@ -1878,13 +1878,13 @@ class FBRecordURL extends TransientFacebook {
 }
 
 class FBRecordMakeRequest extends TransientFacebook {
-  private $requests = array();
+  private $requests = [];
 
   protected function makeRequest($url, $params, $ch=null) {
-    $this->requests[] = array(
+    $this->requests[] = [
       'url' => $url,
       'params' => $params,
-    );
+    ];
     return parent::makeRequest($url, $params, $ch);
   }
 

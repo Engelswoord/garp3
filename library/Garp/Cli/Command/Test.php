@@ -18,13 +18,13 @@ class Garp_Cli_Command_Test extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function main(array $args = array()) {
-        if (1 === count($args) && !empty($args[0]) && 'help' === strtolower($args[0])) {
+    public function main(array $args = []) {
+        if (1 === count($args) && !empty($args[0]) && 'help' === strtolower((string) $args[0])) {
             $this->help();
             return true;
         }
         // check for illegal options
-        $allowedArgs = array('module', 'group');
+        $allowedArgs = ['module', 'group'];
         foreach ($args as $key => $value) {
             if (!in_array($key, $allowedArgs)) {
                 Garp_Cli::errorOut('Illegal option ' . $key);

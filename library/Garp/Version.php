@@ -9,7 +9,7 @@
  * @package Garp
  * @author  Harmen Janssen <harmen@grrr.nl>
  */
-class Garp_Version {
+class Garp_Version implements \Stringable {
 
     const VERSION_FILENAME = 'VERSION';
 

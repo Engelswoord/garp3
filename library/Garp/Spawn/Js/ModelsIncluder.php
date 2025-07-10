@@ -21,9 +21,9 @@ class Garp_Spawn_Js_ModelsIncluder {
         $modelsIncludeFile = explode("\n", file_get_contents($this->_getIncludesFilename()));
 
         foreach ($modelsIncludeFile as $i => $line) {
-            if (strpos($line, self::START_TAG) !== false) {
+            if (str_contains($line, self::START_TAG)) {
                 $startLine = $i;
-            } elseif (strpos($line, self::END_TAG) !== false) {
+            } elseif (str_contains($line, self::END_TAG)) {
                 $endLine = $i;
             }
         }
@@ -40,7 +40,7 @@ class Garp_Spawn_Js_ModelsIncluder {
             $spawnerCalls .= $this->_createScriptInclude($model->id, self::JS_APP_PATH) . "\n";
         }
 
-        return $this->_save(implode("\n", array($fileHead, $spawnerCalls, $fileFoot)));
+        return $this->_save(implode("\n", [$fileHead, $spawnerCalls, $fileFoot]));
     }
 
     protected function _createScriptInclude($modelId, $path) {

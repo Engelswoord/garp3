@@ -44,7 +44,7 @@ class Garp_Service_Slack {
      *                  'icon_emoji' => ':ghost:',
      *                  'channel' => '#my-channel'
      */
-    public function postMessage($text, $params = array()) {
+    public function postMessage($text, $params = []) {
         $config = $this->getConfig();
         $params['text'] = $text;
         $params = $config->getParams($params);
@@ -63,9 +63,9 @@ class Garp_Service_Slack {
     }
 
     protected function _constructParameters(array $params) {
-        return array(
+        return [
             'payload' => json_encode($params)
-        );
+        ];
     }
 
     protected function _constructWebhookUrl() {
@@ -76,7 +76,7 @@ class Garp_Service_Slack {
     }
 
     protected function _fsock_post($url, $data) {
-        $parsedUrl = parse_url($url);
+        $parsedUrl = parse_url((string) $url);
         $isHttps = $parsedUrl['scheme'] === 'https';
         $host = $parsedUrl['host'];
         $port = $isHttps ? 443 : 80;

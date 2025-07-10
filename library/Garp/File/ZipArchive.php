@@ -23,7 +23,7 @@ class Garp_File_ZipArchive extends ZipArchive {
                 $file = str_replace('\\', '/', $file);
 
                 // Ignore "." and ".." folders
-                if( in_array(substr($file, strrpos($file, '/')+1), array('.', '..')) )
+                if( in_array(substr($file, strrpos($file, '/')+1), ['.', '..']) )
                     continue;
 
                 if (!is_link($file)) {

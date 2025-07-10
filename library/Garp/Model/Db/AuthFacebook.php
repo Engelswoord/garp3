@@ -14,7 +14,7 @@ class Garp_Model_Db_AuthFacebook extends Model_Base_AuthFacebook {
 
     public function init() {
         parent::init();
-        $this->registerObserver(new Garp_Model_Behavior_Authenticatable(array($this)));
+        $this->registerObserver(new Garp_Model_Behavior_Authenticatable([$this]));
     }
 
     /**

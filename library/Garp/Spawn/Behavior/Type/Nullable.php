@@ -7,9 +7,9 @@ class Garp_Spawn_Behavior_Type_Nullable extends Garp_Spawn_Behavior_Type_Abstrac
 
     public function getParams() {
         $model = $this->getModel();
-        return array(
+        return [
             'nullableFields' => $model->fields->getFieldNames('required', false)
-        );
+        ];
     }
 
     static public function isNeededBy(Garp_Spawn_Model_Abstract $model) {

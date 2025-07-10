@@ -29,10 +29,10 @@ class Garp_Model_Behavior_Videoable extends Garp_Model_Behavior_Abstract {
      */
     protected function _setup($config) {
         if (empty($config['vimeo'])) {
-            $config['vimeo'] = array();
+            $config['vimeo'] = [];
         }
         if (empty($config['youtube'])) {
-            $config['youtube'] = array();
+            $config['youtube'] = [];
         }
         $this->_config = $config;
     }
@@ -91,7 +91,7 @@ class Garp_Model_Behavior_Videoable extends Garp_Model_Behavior_Abstract {
      * @return Boolean
      */
     protected function _isYouTubeUrl($url) {
-        return false !== strpos($url, 'youtube.com') || false !== strpos($url, 'youtu.be');
+        return str_contains($url, 'youtube.com') || str_contains($url, 'youtu.be');
     }
 
 
@@ -101,6 +101,6 @@ class Garp_Model_Behavior_Videoable extends Garp_Model_Behavior_Abstract {
      * @return Boolean
      */
     protected function _isVimeoUrl($url) {
-        return false !== strpos($url, 'vimeo.com');
+        return str_contains($url, 'vimeo.com');
     }
 }

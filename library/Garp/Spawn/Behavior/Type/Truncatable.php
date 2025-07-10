@@ -21,18 +21,16 @@ class Garp_Spawn_Behavior_Type_Truncatable extends Garp_Spawn_Behavior_Type_Abst
         $textFields = array_filter($this->getModel()->fields->getFields(),
             $this->_getArrayFilterForTruncatableFields());
 
-        $columns = array();
+        $columns = [];
         foreach ($textFields as $textField) {
             $columns[$textField->name] = $textField->maxLength;
         }
 
-        $params = array('columns' => $columns);
+        $params = ['columns' => $columns];
         return $params;
     }
 
     protected function _getArrayFilterForTruncatableFields() {
-        return function(Garp_Spawn_Field $field) {
-            return $field->isTextual() && $field->maxLength;
-        };
+        return fn(Garp_Spawn_Field $field) => $field->isTextual() && $field->maxLength;
     }
 }

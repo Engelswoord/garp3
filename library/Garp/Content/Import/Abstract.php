@@ -54,10 +54,10 @@ abstract class Garp_Content_Import_Abstract {
             return;
         }
         $primaryCols = (array)$model->info(Zend_Db_Table::PRIMARY);
-        $where = array();
+        $where = [];
         foreach ($primaryKeys as $pk) {
-            $recordWhere = array();
-            foreach ((array)$pk as $i => $key) {
+            $recordWhere = [];
+            foreach ((array)$pk as $key) {
                 $recordWhere[] = $model->getAdapter()->quoteIdentifier(current($primaryCols)).' = '.
                                  $model->getAdapter()->quote($key);
             }

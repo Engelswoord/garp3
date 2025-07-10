@@ -18,7 +18,7 @@ class G_View_Helper_Html extends Zend_View_Helper_HtmlElement {
      * @param array $attributes
      * @return string
      */
-    public function html($tag, $value = null, array $attributes = array()) {
+    public function html($tag, $value = null, array $attributes = []) {
         // This happens when used from a Garp_Form context
         if (array_key_exists('id', $attributes) && !$attributes['id']) {
             unset($attributes['id']);

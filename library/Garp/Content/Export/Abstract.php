@@ -34,24 +34,24 @@ abstract class Garp_Content_Export_Abstract {
         $params->setDefault('rule', null)
             ->setDefault('rule2', null);
 
-        $filter = array();
+        $filter = [];
         if ($params->offsetExists('filter') && $params['filter']) {
             $filter = Zend_Json::decode($params['filter']);
         }
-        $fetchOptions = array(
+        $fetchOptions = [
             'query' => $filter,
             'rule'  => $params['rule'],
             'rule2' => $params['rule2'],
-        );
+        ];
 
         if (!empty($params['fields'])) {
             $fields = is_array($params['fields']) ? $params['fields'] :
-                explode(',', $params['fields']);
+                explode(',', (string) $params['fields']);
             $fetchOptions['fields'] = array_combine($fields, $fields);
         }
 
         if (isset($params['sortField']) && isset($params['sortDir'])) {
-            $fetchOptions['sort'] = array($params['sortField'] . ' ' . $params['sortDir']);
+            $fetchOptions['sort'] = [$params['sortField'] . ' ' . $params['sortDir']];
         }
 
         switch ($params['selection']) {
@@ -84,19 +84,19 @@ abstract class Garp_Content_Export_Abstract {
         $this->_bindModels($model);
 
         // Allow the model or its observers to modify the fetchOptions
-        $model->notifyObservers('beforeExport', array(&$fetchOptions));
+        $model->notifyObservers('beforeExport', [&$fetchOptions]);
 
         $manager = new Garp_Content_Manager($model);
         $data = $manager->fetch($fetchOptions);
         $data = (array)$data;
 
         // Allow the model or its observers to modify the data
-        $model->notifyObservers('afterExport', array(&$data, &$fetchOptions));
+        $model->notifyObservers('afterExport', [&$data, &$fetchOptions]);
 
         if (empty($data)) {
-            $data = array(
-                array('message' => __('no results found'))
-            );
+            $data = [
+                ['message' => __('no results found')]
+            ];
         }
         $humanizedData = $this->_humanizeData($data, $model);
         $formattedData = $this->format($model, $humanizedData);
@@ -141,7 +141,7 @@ abstract class Garp_Content_Export_Abstract {
      * @return array
      */
     protected function _humanizeData($data, Garp_Model_Db $model) {
-        $humanizedData = array();
+        $humanizedData = [];
         foreach ($data as $i => $datum) {
             if (!is_array($datum)) {
                 $humanizedData[$i] = $datum;
@@ -186,7 +186,7 @@ abstract class Garp_Content_Export_Abstract {
      * @return string
      */
     protected function _humanizeMultilingualData(array $value) {
-        $out = array();
+        $out = [];
         foreach ($value as $key => $data) {
             $out[] = "[$key]: $data";
         }
@@ -220,7 +220,7 @@ abstract class Garp_Content_Export_Abstract {
     protected function _bindModels(Garp_Model_Db $model) {
         // Add HABTM related records
         $relations = $model->getConfiguration('relations');
-        foreach ($relations as $key => $config) {
+        foreach ($relations as $config) {
             if ($config['type'] !== 'hasAndBelongsToMany' && $config['type'] !== 'hasMany') {
                 continue;
             }
@@ -247,7 +247,7 @@ abstract class Garp_Content_Export_Abstract {
             }
 
             $labelFields = $otherModel->getListFields();
-            $prefixedLabelFields = array();
+            $prefixedLabelFields = [];
             foreach ($labelFields as $labelField) {
                 $prefixedLabelFields[] = "$otherModelAlias.$labelField";
             }
@@ -258,17 +258,17 @@ abstract class Garp_Content_Export_Abstract {
             // purpose.
             $otherModel->unregisterObserver('Translatable');
 
-            $options = array(
+            $options = [
                 'bindingModel' => $bindingModel,
                 'modelClass' => $otherModel,
                 'conditions' => $otherModel->select()
                     ->setIntegrityCheck(false)
                     ->from(
-                        array($otherModelAlias => $otherModel->getName()),
-                        array($config['label'] => $labelFields)
+                        [$otherModelAlias => $otherModel->getName()],
+                        [$config['label'] => $labelFields]
                     )
                     ->order("$otherModelAlias.id")
-            );
+            ];
             $model->bindModel($config['label'], $options);
         }
     }

@@ -49,13 +49,13 @@ class Garp_Db_PrimaryKeyExtractor {
      * @return Array
      */
     public function extract() {
-        $pkValues = array();
+        $pkValues = [];
         // Lose the parentheses, they mean nothing to us (more importantly, "((key = value))" fails)
         // @fixme A string primary key containing a "(" will not be returned.
-        $where = str_replace(array('(', ')'), '', $this->_where);
+        $where = str_replace(['(', ')'], '', $this->_where);
         foreach ($this->_pkColumns as $pk) {
-            $regexp = '/(?:`?' . preg_quote($this->_tableName) . '`?\.|\s|^){1}`?(?:' .
-                preg_quote($pk) .
+            $regexp = '/(?:`?' . preg_quote((string) $this->_tableName) . '`?\.|\s|^){1}`?(?:' .
+                preg_quote((string) $pk) .
                 ')`?\s?=\s?(?:(?P<q>[\'"])(?P<value>(?:(?!\k<q>).)*)\k<q>|(?P<rest>\w*))/';
             if (!preg_match($regexp, $where, $matches)) {
                 continue;

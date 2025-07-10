@@ -15,11 +15,11 @@
  * @author  David Spreekmeester <david@grrr.nl>
  */
 if (!defined('BASE_PATH')) {
-    define('BASE_PATH', realpath(dirname(__FILE__) . '/../..'));
+    define('BASE_PATH', realpath(__DIR__ . '/../..'));
 }
 
 define('APPLICATION_PATH', BASE_PATH . '/application');
-define('GARP_APPLICATION_PATH', realpath(dirname(__FILE__)));
+define('GARP_APPLICATION_PATH', realpath(__DIR__));
 
 if (file_exists(APPLICATION_PATH . '/../.env')) {
     $dotenv = Dotenv\Dotenv::createUnsafeImmutable(APPLICATION_PATH . '/..');
@@ -118,7 +118,7 @@ if ($memcacheIsConfigured && $memcachedAvailable) {
     $useWriteControl   = false;
 }
 
-$frontendOptions = array(
+$frontendOptions = [
     // for debug purposes; quickly turn off caching here
     'caching' => $cacheStoreEnabled,
     'lifetime' => 7200,
@@ -126,18 +126,18 @@ $frontendOptions = array(
     // slightly slower, but necessary when caching arrays or objects (like query results)
     'automatic_serialization' => true,
     'write_control' => $useWriteControl,
-);
-$backendOptions = array(
+];
+$backendOptions = [
     'cache_dir' => APPLICATION_PATH . '/data/cache',
     // include the hostname and app environment in the filename for security
     'file_name_prefix' => $filePrefix,
-    'servers' => array(
-        array(
+    'servers' => [
+        [
             'host' => MEMCACHE_HOST,
             'port' => MEMCACHE_PORT
-        )
-    ),
-);
+        ]
+    ],
+];
 
 $cache = Zend_Cache::factory(
     $frontendName,

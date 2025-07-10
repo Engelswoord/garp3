@@ -20,15 +20,15 @@ class Garp_Validate_Date extends Zend_Validate_Abstract {
      */
     protected $_validateParsedDate = false;
 
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::FORMAT_MISMATCH => "'%value%' does not fit the date format '%readableFormat%'",
         self::INVALID_DATE => "'%value%' does not appear to be a valid date"
-    );
+    ];
 
-    protected $_messageVariables = array(
+    protected $_messageVariables = [
         'format'  => '_format',
         'readableFormat' => '_readableFormat'
-    );
+    ];
 
     /**
      * The chosen date format
@@ -49,7 +49,7 @@ class Garp_Validate_Date extends Zend_Validate_Abstract {
      *
      * @var String
      */
-    protected $_dateRegexpMapper = array(
+    protected $_dateRegexpMapper = [
         // Day
         'd' => '\d{2}',
         'D' => 'Mon|Tue|Wed|Thu|Fri|Sat|Sun',
@@ -74,7 +74,7 @@ class Garp_Validate_Date extends Zend_Validate_Abstract {
         'Y' => '\d{1,4}',
         'y' => '\d{2}',
         // @todo Add Full date/time formats?
-    );
+    ];
 
     /**
      * Class constructor
@@ -116,7 +116,7 @@ class Garp_Validate_Date extends Zend_Validate_Abstract {
     public function isValid($value) {
         $this->_setValue($value);
         $regexp = $this->getRegexp();
-        if (!preg_match($regexp, $value)) {
+        if (!preg_match($regexp, (string) $value)) {
             $this->_error(self::FORMAT_MISMATCH);
             return false;
         }

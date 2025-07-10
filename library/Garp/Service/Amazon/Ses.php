@@ -49,8 +49,7 @@ class Garp_Service_Amazon_Ses extends Zend_Service_Amazon_Abstract
             }
         }
         if (!$region) {
-            $region = isset($ini->amazon->ses->region) ?
-                $ini->amazon->ses->region : self::DEFAULT_REGION;
+            $region = $ini->amazon->ses->region ?? self::DEFAULT_REGION;
         }
         $this->setRegion($region);
         parent::__construct($accessKey, $secretKey);
@@ -230,9 +229,7 @@ class Garp_Service_Amazon_Ses extends Zend_Service_Amazon_Abstract
                 $renameKeys = f\rename_keys(['To' => 'ToAddresses', 'Cc' => 'CcAddresses', 'Bcc' => 'BccAddresses']);
                 $destination = $renameKeys($args['Destination']);
 
-                $toArray = function ($mixed) {
-                    return (array)$mixed;
-                };
+                $toArray = (fn($mixed) => (array)$mixed);
                 $destination = f\map($toArray, $destination);
             }
         } else {

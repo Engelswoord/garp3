@@ -11,7 +11,7 @@ class Garp_Spawn_Behavior_Type_Weighable extends Garp_Spawn_Behavior_Type_Abstra
      */
     public function getNonHabtmParams() {
         $params = $this->getParams();       
-        $params = array_filter($params, array($this, '_isNotHabtmRelName'));
+        $params = array_filter($params, [$this, '_isNotHabtmRelName']);
         
         return $params;
     }

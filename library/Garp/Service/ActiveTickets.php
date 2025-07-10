@@ -13,11 +13,9 @@ class Garp_Service_ActiveTickets {
         "http://webservices.activetickets.com/members/ActiveTicketsMembersServices.asmx?WSDL";  
     const DATETIME_FORMAT = '%FT%T';
 
-    protected $_username;
-
-    protected $_clientOptions = array(
+    protected $_clientOptions = [
         'compression' => SOAP_COMPRESSION_ACCEPT
-    );
+    ];
 
 
     /**
@@ -26,8 +24,7 @@ class Garp_Service_ActiveTickets {
     protected $_client;
 
     
-    public function __construct($username) {
-        $this->_username = $username;
+    public function __construct(protected $_username) {
         $this->_client = new Zend_Soap_Client(self::WSDL, $this->_clientOptions);
     }
 

@@ -22,7 +22,7 @@ class Garp_Content_Upload_FileNode {
      */
     protected $_type;
 
-    protected $_bannedBaseNames = array('scaled');
+    protected $_bannedBaseNames = ['scaled'];
 
 
     public function __construct($filename, $type) {

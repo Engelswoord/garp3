@@ -70,16 +70,16 @@ class Garp_Content_Cdn_Distributor {
             throw new Garp_File_Exception(Garp_File::EXCEPTION_CDN_READONLY);
         }
         if (!$assetCount) {
-            return array();
+            return [];
         }
 
         $s3 = new Garp_File_Storage_S3(
             $config,
-            dirname(current($assetList)),
+            dirname((string) current($assetList)),
             true
         );
 
-        $noop = function () {
+        $noop = function (): void {
         };
 
         $successFn = $successFn ?: $noop;
@@ -92,12 +92,12 @@ class Garp_Content_Cdn_Distributor {
                 $filename = basename($asset);
                 if ($s3->store($filename, $fileData, true, false)) {
                     $successFn($asset);
-                    return f\concat($successes, array($asset));
+                    return f\concat($successes, [$asset]);
                 }
                 $failureFn($asset);
                 return $successes;
             },
-            array(),
+            [],
             $assetList
         );
     }

@@ -45,34 +45,33 @@ define('TK_UNKNOWN',        13);
 
 
 class BeautifierOptions {
-    var $indent_size = 4;
-    var $indent_char = ' ';
-    var $indent_with_tabs = false;
-    var $preserve_newlines = true;
-    var $max_preserve_newlines = 10;
-    var $jslint_happy = false;
-    var $brace_style = 'collapse';
-    var $keep_array_indentation = false;
-    var $keep_function_indentation = false;
-    var $eval_code = false;
+    public $indent_size = 4;
+    public $indent_char = ' ';
+    public $indent_with_tabs = false;
+    public $preserve_newlines = true;
+    public $max_preserve_newlines = 10;
+    public $jslint_happy = false;
+    public $brace_style = 'collapse';
+    public $keep_array_indentation = false;
+    public $keep_function_indentation = false;
+    public $eval_code = false;
 }
 
 class BeautifierFlags {
-    var $previous_mode = 'BLOCK';
-    var $mode;
-    var $var_line = false;
-    var $var_line_tainted = false;
-    var $var_line_reindented = false;
-    var $in_html_comment = false;
-    var $if_line = false;
-    var $in_case = false;
-    var $eat_next_space = false;
-    var $indentation_baseline = -1;
-    var $indentation_level = 0;
-    var $ternary_depth = 0;
+    public $previous_mode = 'BLOCK';
+    public $var_line = false;
+    public $var_line_tainted = false;
+    public $var_line_reindented = false;
+    public $in_html_comment = false;
+    public $if_line = false;
+    public $in_case = false;
+    public $eat_next_space = false;
+    public $indentation_baseline = -1;
+    public $indentation_level = 0;
+    public $ternary_depth = 0;
 
-    function __construct($mode) {
-    	$this->mode = $mode;
+    function __construct(public $mode)
+    {
     }
 }
 
@@ -84,7 +83,7 @@ function js_beautify($string, $options = null) {
 
 class JSBeautifier {
 
-	var $options;
+	public $options;
 
 	function __construct($options = null) {
 		$this->options = $options ?: new BeautifierOptions();
@@ -93,12 +92,12 @@ class JSBeautifier {
 
 	function blank_state() {
         $this->flags = new BeautifierFlags('BLOCK');
-        $this->flag_store = Array();
+        $this->flag_store = [];
         $this->wanted_newline = false;
         $this->just_added_newline = false;
         $this->do_block_just_closed = false;
 
-        $this->indent_string = $this->options->indent_with_tabs ? "\t" : str_repeat($this->options->indent_char, $this->options->indent_size);
+        $this->indent_string = $this->options->indent_with_tabs ? "\t" : str_repeat((string) $this->options->indent_char, $this->options->indent_size);
 
         $this->preindent_string = '';
         $this->last_word = '';              # last TK_WORD seen
@@ -107,9 +106,9 @@ class JSBeautifier {
         $this->last_last_text = '';         # pre-last token text
 
         $this->input = null;
-        $this->output = Array();            # formatted javascript gets built here
+        $this->output = [];            # formatted javascript gets built here
 
-        $this->whitespace = Array("\n", "\r", "\t", " ");
+        $this->whitespace = ["\n", "\r", "\t", " "];
         $this->wordchar = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$';
         $this->digits = '0123456789';
         $this->punct = '+ - * / % & ++ -- = += -= *= /= %= == === != !== > < >= <= >> << >>> >>>= >>= <<= && &= | || ! !! , : ? ^ ^= |= ::';
@@ -147,15 +146,15 @@ class JSBeautifier {
 	function beautify($string, $options = null) {
 		if ($options) $this->options = $options;
 
-		if (!in_array($this->options->brace_style, Array('expand', 'collapse', 'end-expand'))) {
+		if (!in_array($this->options->brace_style, ['expand', 'collapse', 'end-expand'])) {
 			throw new Wxception('opts.brace_style must be "expand", "collapse" or "end-expand".');
 		}
 
 		$this->blank_state();
 
-		while ($string && strpos(" \t", $string[0]) !== false) {
+		while ($string && str_contains(" \t", (string) $string[0])) {
 			$this->preindent_string .= $string[0];
-			$string = substr($string, 1);
+			$string = substr((string) $string, 1);
 		}
 
 		# TODO: Implement unpackers
@@ -163,7 +162,7 @@ class JSBeautifier {
 		$this->input = $string;
 
 		$this->parser_pos = 0;
-		$handlers = Array(
+		$handlers = [
             TK_START_EXPR     => 'handle_start_expr',
             TK_END_EXPR       => 'handle_end_expr',
             TK_START_BLOCK    => 'handle_start_block',
@@ -177,16 +176,16 @@ class JSBeautifier {
             TK_INLINE_COMMENT => 'handle_inline_comment',
             TK_COMMENT        => 'handle_comment',
             TK_UNKNOWN        => 'handle_unknown',
-		);
+		];
 
 		while (true) {
-			list($token_text, $token_type) = $this->get_next_token();
+			[$token_text, $token_type] = $this->get_next_token();
 			if ($token_type === TK_EOF) {
 				break;
 			}
             $token_type_str = 'N/A';
             foreach (get_defined_constants() as $k=>$v) {
-                if (substr($k, 0, 3) == 'TK_' && $v == $token_type) {
+                if (str_starts_with($k, 'TK_') && $v == $token_type) {
                     $token_type_str = $k;
                     break;
                 }
@@ -198,7 +197,7 @@ class JSBeautifier {
 			$this->last_text = $token_text;
 		}
 
-		$sweet_code = $this->preindent_string . preg_replace("/[\n ]+$/", '', join('', $this->output));
+		$sweet_code = $this->preindent_string . preg_replace("/[\n ]+$/", '', implode('', $this->output));
 		return $sweet_code;
 	}
 
@@ -226,7 +225,7 @@ class JSBeautifier {
 		while (count($this->output) && ($this->output[count($this->output)-1] == ' ' ||
 										$this->output[count($this->output)-1] == $this->indent_string ||
 										$this->output[count($this->output)-1] == $this->preindent_string ||
-										($eat_newlines && (strpos("\n\r", $this->output[count($this->output)-1]) !== false)))) {
+										($eat_newlines && (str_contains("\n\r", (string) $this->output[count($this->output)-1]))))) {
 			array_pop($this->output);
 		}
 	}
@@ -236,7 +235,7 @@ class JSBeautifier {
 
 		$this->n_newlines = 0;
 		if ($this->parser_pos >= strlen($this->input)) {
-			return array('', TK_EOF);
+			return ['', TK_EOF];
 		}
 
 		$this->wanted_newline = false;
@@ -277,7 +276,7 @@ class JSBeautifier {
             			break;
             	}
             	if ($this->parser_pos >= strlen($this->input)) {
-                    return array('', TK_EOF);
+                    return ['', TK_EOF];
             	}
 
             	$c = $this->input[$this->parser_pos];
@@ -308,7 +307,7 @@ class JSBeautifier {
 					}
 				}
 				if ($this->parser_pos >= strlen($this->input)) {
-					return Array('', TK_EOF);
+					return ['', TK_EOF];
 				}
 
 				$c = $this->input[$this->parser_pos];
@@ -325,9 +324,9 @@ class JSBeautifier {
 			$this->wanted_newline = $this->n_newlines > 0;
 		}
 
-		if (strpos($this->wordchar, $c) !== false) {
+		if (str_contains($this->wordchar, (string) $c)) {
             if ($this->parser_pos < strlen($this->input)) {
-				while (strpos($this->wordchar, $this->input[$this->parser_pos]) !== false) {
+				while (str_contains($this->wordchar, (string) $this->input[$this->parser_pos])) {
 					$c .= $this->input[$this->parser_pos];
 					$this->parser_pos++;
 					if ($this->parser_pos == strlen($this->input)) {
@@ -338,17 +337,17 @@ class JSBeautifier {
 
 			# small and surprisingly unugly hack for 1E-10 representation
 			if (($this->parser_pos != strlen($this->input)) &&
-			    (strpos('+-', $this->input[$this->parser_pos]) !== false) &&
-			    preg_match('/^[0-9]+[Ee]$/', $c)) {
+			    (str_contains('+-', (string) $this->input[$this->parser_pos])) &&
+			    preg_match('/^[0-9]+[Ee]$/', (string) $c)) {
 			    $sign = $this->input[$this->parser_pos];
 			    $this->parser_pos++;
 			    $t = $this->get_next_token();
 			    $c .= $sign . $t[0];
-			    return Array($c, TK_WORD);
+			    return [$c, TK_WORD];
 			}
 
 			if ($c == 'in') { # in is an operator, need to hack
-				return Array($c, TK_OPERATOR);
+				return [$c, TK_OPERATOR];
 			}
 
 			if ($this->wanted_newline &&
@@ -358,27 +357,27 @@ class JSBeautifier {
 				($this->options->preserve_newlines || ($this->last_text != 'var'))) {
 				$this->append_newline();
 			}
-            return Array($c, TK_WORD);
+            return [$c, TK_WORD];
 		}
 
-		if (strpos('([', $c) !== false) {
-			return Array($c, TK_START_EXPR);
+		if (str_contains('([', (string) $c)) {
+			return [$c, TK_START_EXPR];
 		}
 
-		if (strpos(')]', $c) !== false) {
-			return Array($c, TK_END_EXPR);
+		if (str_contains(')]', (string) $c)) {
+			return [$c, TK_END_EXPR];
 		}
 
 		if ($c == '{') {
-			return Array($c, TK_START_BLOCK);
+			return [$c, TK_START_BLOCK];
 		}
 
 		if ($c == '}') {
-			return Array($c, TK_END_BLOCK);
+			return [$c, TK_END_BLOCK];
 		}
 
 		if ($c == ';') {
-			return Array($c, TK_SEMICOLON);
+			return [$c, TK_SEMICOLON];
 		}
 
 		if ($c == '/') {
@@ -396,7 +395,7 @@ class JSBeautifier {
                             ($this->parser_pos < strlen($this->input))) {
                         $c = $this->input[$this->parser_pos];
                         $comment .= $c;
-                        if (strpos("\r\n", $c) !== false) {
+                        if (str_contains("\r\n", (string) $c)) {
                             $comment_mode = TK_BLOCK_COMMENT;
                         }
                         $this->parser_pos ++;
@@ -406,11 +405,11 @@ class JSBeautifier {
                     }
 				}
                 $this->parser_pos += 2;
-                return Array('/*' . $comment . '*/', $comment_mode);
+                return ['/*' . $comment . '*/', $comment_mode];
 			}
             if ($this->input[$this->parser_pos] == '/') { # peek // comment
                 $comment = $c;
-                while (strpos("\r\n", $this->input[$this->parser_pos]) === false) {
+                while (!str_contains("\r\n", (string) $this->input[$this->parser_pos])) {
                     $comment .= $this->input[$this->parser_pos];
                     $this->parser_pos++;
                     if ($this->parser_pos >= strlen($this->input)) {
@@ -421,14 +420,14 @@ class JSBeautifier {
                 if ($this->wanted_newline) {
                     $this->append_newline();
                 }
-                return Array($comment, TK_COMMENT);
+                return [$comment, TK_COMMENT];
             }
 		}
 
         if (($c == "'") || ($c == '"') ||
-            ($c == '/' && (($this->last_type == TK_WORD && in_array($this->last_text, Array('return', 'do'))) ||
-                           (in_array($this->last_type, Array(TK_COMMENT, TK_START_EXPR, TK_START_BLOCK, TK_END_BLOCK, TK_OPERATOR,
-                                                             TK_EQUALS, TK_EOF, TK_SEMICOLON)))))) {
+            ($c == '/' && (($this->last_type == TK_WORD && in_array($this->last_text, ['return', 'do'])) ||
+                           (in_array($this->last_type, [TK_COMMENT, TK_START_EXPR, TK_START_BLOCK, TK_END_BLOCK, TK_OPERATOR,
+                                                             TK_EQUALS, TK_EOF, TK_SEMICOLON]))))) {
 
             $sep = $c;
             $esc = false;
@@ -455,7 +454,7 @@ class JSBeautifier {
                         if ($this->parser_pos >= strlen($this->input)) {
                             # incomplete regex when end-of-file reached
                             # bail out with what has received so far
-                            return Array($resulting_string, TK_STRING);
+                            return [$resulting_string, TK_STRING];
                         }
                     }
                 } else {
@@ -471,7 +470,7 @@ class JSBeautifier {
                         if ($this->parser_pos >= strlen($this->input)) {
                             # incomplete string when end-of-file reached
                             # bail out with what has received so far
-                            return Array($resulting_string, TK_STRING);
+                            return [$resulting_string, TK_STRING];
                         }
                     }
                 }
@@ -481,13 +480,13 @@ class JSBeautifier {
 
             if ($sep == '/') {
                 # regexps may have modifiers /regexp/MOD, so fetch those too
-                while ($this->parser_pos < strlen($this->input) && strpos($this->wordchar, $this->input[$this->parser_pos]) !== false) {
+                while ($this->parser_pos < strlen($this->input) && str_contains($this->wordchar, (string) $this->input[$this->parser_pos])) {
                     $resulting_string .= $this->input[$this->parser_pos];
                     $this->parser_pos++;
                 }
             }
 
-            return Array($resulting_string, TK_STRING);
+            return [$resulting_string, TK_STRING];
         }
 
         if ($c == '#') {
@@ -500,7 +499,7 @@ class JSBeautifier {
                     $resulting_string .= $c;
                     $this->parser_pos++;
                 }
-                $this->output[] = trim($resulting_string) . "\n";
+                $this->output[] = trim((string) $resulting_string) . "\n";
                 $this->append_newline();
                 return $this->get_next_token();
             }
@@ -509,7 +508,7 @@ class JSBeautifier {
             # https://developer.mozilla.org/En/Sharp_variables_in_JavaScript
             # http://mxr.mozilla.org/mozilla-central/source/js/src/jsscan.cpp around line 1935
             $sharp = '#';
-            if ($this->parser_pos < strlen($this->input) && strpos($this->digits, $this->input[$this->parser_pos]) !== false) {
+            if ($this->parser_pos < strlen($this->input) && str_contains($this->digits, (string) $this->input[$this->parser_pos])) {
                 while (true) {
                     $c = $this->input[$this->parser_pos];
                     $sharp .= $c;
@@ -528,13 +527,13 @@ class JSBeautifier {
                 $sharp .= '{}';
                 $this->parser_pos += 2;
             }
-            return Array($sharp, TK_WORD);
+            return [$sharp, TK_WORD];
         }
 
         if ($c == '<' && substr($this->input, $this->parser_pos - 1, 4) == '<!--') {
             $this->parser_pos += 3;
             $this->flags->in_html_comment = true;
-            return Array('<!--', TK_COMMENT);
+            return ['<!--', TK_COMMENT];
         }
 
         if ($c == '-' && $this->flags->in_html_comment && substr($this->input, $this->parser_pos - 1, 3) == '-->') {
@@ -543,7 +542,7 @@ class JSBeautifier {
             if ($this->wanted_newline) {
                 $this->append_newline();
             }
-            return Array('-->', TK_COMMENT);
+            return ['-->', TK_COMMENT];
         }
 
         if (in_array($c, $this->punct)) {
@@ -555,13 +554,13 @@ class JSBeautifier {
                 }
             }
             if ($c == '=') {
-                return Array($c, TK_EQUALS);
+                return [$c, TK_EQUALS];
             } else {
-                return Array($c, TK_OPERATOR);
+                return [$c, TK_OPERATOR];
             }
         }
 
-        return Array($c, TK_UNKNOWN);
+        return [$c, TK_UNKNOWN];
 
 	}
 
@@ -576,7 +575,7 @@ class JSBeautifier {
                 return;
             }
 
-            if (in_array($this->flags->mode, Array('[EXPRESSION]', '[INDENTED-EXPRESSION]'))) {
+            if (in_array($this->flags->mode, ['[EXPRESSION]', '[INDENTED-EXPRESSION]'])) {
                 if ($this->last_last_text == ']' && $this->last_text == ',') {
                     # ], [ goers to a new line
                     if ($this->flags->mode == '[EXPRESSION]') {
@@ -613,9 +612,9 @@ class JSBeautifier {
 
         if ($this->last_text == ';' || $this->last_type == TK_START_BLOCK) {
             $this->append_newline();
-        } elseif (in_array($this->last_type, Array(TK_END_EXPR, TK_START_EXPR, TK_END_BLOCK)) || $this->last_text == '.') {
+        } elseif (in_array($this->last_type, [TK_END_EXPR, TK_START_EXPR, TK_END_BLOCK]) || $this->last_text == '.') {
             # do nothing on (( and )( and ][ and ]( and .(
-        } elseif (!in_array($this->last_type, Array(TK_WORD, TK_OPERATOR))) {
+        } elseif (!in_array($this->last_type, [TK_WORD, TK_OPERATOR])) {
             $this->append(' ');
         } elseif ($this->last_word == 'function' || $this->last_word == 'typeof') {
             # function() vs function (), typeof() vs typeof ()
@@ -662,7 +661,7 @@ class JSBeautifier {
 
         if ($this->options->brace_style == 'expand') {
             if ($this->last_type != TK_OPERATOR) {
-                if (in_array($this->last_text, Array('return', '='))) {
+                if (in_array($this->last_text, ['return', '='])) {
                     $this->append(' ');
                 } else {
                     $this->append_newline(true);
@@ -672,7 +671,7 @@ class JSBeautifier {
             $this->append($token_text);
             $this->indent();
         } else {
-            if (!in_array($this->last_type, Array(TK_OPERATOR, TK_START_EXPR))) {
+            if (!in_array($this->last_type, [TK_OPERATOR, TK_START_EXPR])) {
                 if ($this->last_type == TK_START_BLOCK) {
                     $this->append_newline();
                 } else {
@@ -754,7 +753,7 @@ class JSBeautifier {
             }
         }
 
-        if (in_array($token_text, Array('case', 'default'))) {
+        if (in_array($token_text, ['case', 'default'])) {
             if ($this->last_text == ':') {
                 $this->remove_indent();
             } else {
@@ -770,17 +769,17 @@ class JSBeautifier {
         $prefix = 'NONE';
 
         if ($this->last_type == TK_END_BLOCK) {
-            if (!in_array($token_text, Array('else', 'catch', 'finally'))) {
+            if (!in_array($token_text, ['else', 'catch', 'finally'])) {
                 $prefix = 'NEWLINE';
             } else {
-                if (in_array($this->options->brace_style, Array('expand', 'and-expand'))) {
+                if (in_array($this->options->brace_style, ['expand', 'and-expand'])) {
                     $prefix = 'NEWLINE';
                 } else {
                     $prefix = 'SPACE';
                     $this->append(' ');
                 }
             }
-        } elseif ($this->last_type == TK_SEMICOLON && in_array($this->flags->mode, Array('BLOCK', 'DO_BLOCK'))) {
+        } elseif ($this->last_type == TK_SEMICOLON && in_array($this->flags->mode, ['BLOCK', 'DO_BLOCK'])) {
             $prefix = 'NEWLINE';
         } elseif ($this->last_type == TK_SEMICOLON && $this->is_expression($this->flags->mode)) {
             $prefix = 'SPACE';
@@ -812,7 +811,7 @@ class JSBeautifier {
             }
         }
 
-        if (in_array($token_text, Array('else', 'catch', 'finally'))) {
+        if (in_array($token_text, ['else', 'catch', 'finally'])) {
             if ($this->last_type != TK_END_BLOCK ||
                 $this->options->brace_style == 'expand' ||
                 $this->options->brace_style == 'end-expand') {
@@ -822,12 +821,12 @@ class JSBeautifier {
                 $this->append(' ');
             }
         } elseif ($prefix == 'NEWLINE') {
-            if ($token_text == 'function' && ($this->last_type == TK_START_EXPR || in_array($this->last_text, Array('=',',')))) {
+            if ($token_text == 'function' && ($this->last_type == TK_START_EXPR || in_array($this->last_text, ['=',',']))) {
                 # no need to force newline on "function" -
                 #   (function...
             } elseif ($token_text == 'function' && $this->last_text == 'new') {
                 $this->append(' ');
-            } elseif (in_array($this->last_text, Array('return', 'throw'))) {
+            } elseif (in_array($this->last_text, ['return', 'throw'])) {
                 # no newline between return nnn
                 $this->append(' ');
             } elseif ($this->last_type != TK_END_EXPR) {
@@ -881,11 +880,11 @@ class JSBeautifier {
 
 
     function is_array($mode) {
-        return in_array($mode, Array('[EXPRESSION]', '[INDENTED-EXPRESSION]'));
+        return in_array($mode, ['[EXPRESSION]', '[INDENTED-EXPRESSION]']);
     }
 
     function is_expression($mode) {
-        return in_array($mode, Array('[EXPRESSION]', '[INDENTED-EXPRESSION]', '(EXPRESSION)'));
+        return in_array($mode, ['[EXPRESSION]', '[INDENTED-EXPRESSION]', '(EXPRESSION)']);
     }
 
     function append_newline($ignore_repeated = true) {
@@ -923,7 +922,7 @@ class JSBeautifier {
     }
 
     function handle_string($token_text) {
-        if (in_array($this->last_type, Array(TK_START_BLOCK, TK_END_BLOCK, TK_SEMICOLON))) {
+        if (in_array($this->last_type, [TK_START_BLOCK, TK_END_BLOCK, TK_SEMICOLON])) {
             $this->append_newline();
         } elseif ($this->last_type == TK_WORD) {
             $this->append(' ');
@@ -938,7 +937,7 @@ class JSBeautifier {
     }
 
     function handle_unknown($token_text) {
-        if (in_array($this->last_text, Array('return', 'throw'))) {
+        if (in_array($this->last_text, ['return', 'throw'])) {
             $this->append(' ');
         }
 
@@ -966,7 +965,7 @@ class JSBeautifier {
             }
         }
 
-        if (in_array($this->last_text, Array('return', 'throw'))) {
+        if (in_array($this->last_text, ['return', 'throw'])) {
             # return had a special handling in TK_WORD
             $this->append(' ');
             $this->append($token_text);
@@ -1016,8 +1015,8 @@ class JSBeautifier {
             }
            # comma handled
            return;
-        } elseif (in_array($token_text, Array('--', '++', '!')) ||
-                  (in_array($token_text, Array('+', '-')) && in_array($this->last_type, Array(TK_START_BLOCK, TK_START_EXPR, TK_EQUALS, TK_OPERATOR))) ||
+        } elseif (in_array($token_text, ['--', '++', '!']) ||
+                  (in_array($token_text, ['+', '-']) && in_array($this->last_type, [TK_START_BLOCK, TK_START_EXPR, TK_EQUALS, TK_OPERATOR])) ||
                   in_array($this->last_text, $this->line_starters)) {
             $space_before = false;
             $space_after = false;
@@ -1032,7 +1031,7 @@ class JSBeautifier {
                 $space_before = true;
             }
 
-            if ($this->flags->mode == 'BLOCK' && in_array($this->last_text, Array('{', ';'))) {
+            if ($this->flags->mode == 'BLOCK' && in_array($this->last_text, ['{', ';'])) {
                 # { foo: --i }
                 # foo(): --bar
                 $this->append_newline();
@@ -1078,7 +1077,7 @@ class JSBeautifier {
         # all lines start with an asterisk? that's a proper box comment
         $all_lines_start_with_asterisk = true;
         for ($i = 1; $i < count($lines); $i++) {
-            if (trim($lines[$i]) == '' || substr(trim($lines[$i]), 0, 1) != '*') {
+            if (trim($lines[$i]) == '' || !str_starts_with(trim($lines[$i]), '*')) {
                 $all_lines_start_with_asterisk = false;
             }
         }
@@ -1125,7 +1124,7 @@ class JSBeautifier {
             # make sure only single space gets drawn
             if ($this->flags->eat_next_space) {
                 $this->flags->eat_next_space = false;
-            } elseif (count($this->output) && !in_array($this->output[count($this->output)-1], Array(' ', "\n", $this->indent_string))) {
+            } elseif (count($this->output) && !in_array($this->output[count($this->output)-1], [' ', "\n", $this->indent_string])) {
                 $this->output[] = ' ';
             }
         } else {
@@ -1147,7 +1146,7 @@ class JSBeautifier {
     }
 
     function remove_indent() {
-        if (count($this->output) && in_array($this->output[count($this->output)-1], Array($this->indent_string, $this->preindent_string))) {
+        if (count($this->output) && in_array($this->output[count($this->output)-1], [$this->indent_string, $this->preindent_string])) {
             array_pop($this->output);
         }
     }

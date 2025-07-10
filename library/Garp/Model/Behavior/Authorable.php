@@ -34,8 +34,8 @@ class Garp_Model_Behavior_Authorable extends Garp_Model_Behavior_Abstract {
         if (!$model->isCmsContext()) {
             return;
         }
-        if (!Garp_Auth::getInstance()->isAllowed(get_class($model), 'fetch')
-            && Garp_Auth::getInstance()->isAllowed(get_class($model), 'fetch_own')
+        if (!Garp_Auth::getInstance()->isAllowed($model::class, 'fetch')
+            && Garp_Auth::getInstance()->isAllowed($model::class, 'fetch_own')
         ) {
             $currentUserData = Garp_Auth::getInstance()->getUserData();
             $currentUserId   = $currentUserData['id'];

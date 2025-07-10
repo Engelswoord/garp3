@@ -58,7 +58,7 @@ class Garp_Service_Elasticsearch_Model {
         $body       = $response->getBody();
 
 
-        return json_decode($body, true);
+        return json_decode((string) $body, true);
     }
 
     public function delete($id) {
@@ -88,10 +88,10 @@ class Garp_Service_Elasticsearch_Model {
     public function _getPath($id) {
         $modelName  = $this->getModelName();
 
-        $urlParts = array(
+        $urlParts = [
             $modelName,
             $id
-        );
+        ];
 
         $url = self::SEPARATOR . implode(self::SEPARATOR, $urlParts);
         return $url;

@@ -114,7 +114,7 @@ class Garp_Controller_Helper_Cache extends Zend_Controller_Action_Helper_Cache {
      * @return bool
      */
     protected function _requestUriTooLong() {
-        $reqUri = basename($this->getRequest()->getRequestUri());
+        $reqUri = basename((string) $this->getRequest()->getRequestUri());
         return strlen($reqUri) > self::MAX_REQUEST_LENGTH;
     }
 }

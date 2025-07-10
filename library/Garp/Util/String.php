@@ -21,9 +21,7 @@ class Garp_Util_String {
         $str = lcfirst($str);
         return preg_replace_callback(
             '/([A-Z])/',
-            function ($str) {
-                return "_" . strtolower($str[1]);
-            },
+            fn($str) => "_" . strtolower((string) $str[1]),
             $str
         );
     }
@@ -38,9 +36,7 @@ class Garp_Util_String {
         $str = lcfirst($str);
         return preg_replace_callback(
             '/([A-Z])/',
-            function ($str) {
-                return "-" . strtolower($str[1]);
-            },
+            fn($str) => "-" . strtolower((string) $str[1]),
             $str
         );
     }
@@ -56,9 +52,7 @@ class Garp_Util_String {
             // this uses positive lookahead to grab all uppercase chars followed by more uppercase
             // chars, or whitespace, or the end of the string.
             '/([A-Z]{2,}(?=[A-Z]|$|\s+))/',
-            function ($matches) {
-                return ucfirst(strtolower($matches[1]));
-            },
+            fn($matches) => ucfirst(strtolower((string) $matches[1])),
             $str
         );
     }
@@ -79,14 +73,12 @@ class Garp_Util_String {
         $str = self::acronymsToLowercase($str);
         $str = preg_replace_callback(
             '/([A-Z])/',
-            function ($str) {
-                return "-" . strtolower($str[1]);
-            },
+            fn($str) => "-" . strtolower((string) $str[1]),
             $str
         );
-        $str = preg_replace('/[^a-z0-9]/', '-', $str);
-        $str = preg_replace('/\-{2,}/', '-', $str);
-        return trim($str, "\n\t -");
+        $str = preg_replace('/[^a-z0-9]/', '-', (string) $str);
+        $str = preg_replace('/\-{2,}/', '-', (string) $str);
+        return trim((string) $str, "\n\t -");
     }
 
     /**
@@ -145,7 +137,7 @@ class Garp_Util_String {
      */
     static public function arabicToArabicChatAlphabet($input) {
         // Based loosely on https://en.wikipedia.org/wiki/Arabic_chat_alphabet
-        $chatAlphabet = array(
+        $chatAlphabet = [
             'ا' => 'a',
             'أ' => 'a',
             'إ' => 'i',
@@ -191,10 +183,10 @@ class Garp_Util_String {
 
             '؟' => '?',
             '،' => ','
-        );
+        ];
 
         // Weird little accents and stuff that mess up a lot
-        $diacritics = array('ِ', 'ُ', 'ٓ', 'ٰ', 'ْ', 'ٌ', 'ٍ', 'ً', 'ّ', 'َ', 'ء');
+        $diacritics = ['ِ', 'ُ', 'ٓ', 'ٰ', 'ْ', 'ٌ', 'ٍ', 'ً', 'ّ', 'َ', 'ء'];
 
         $input = str_replace($diacritics, '', $input);
 
@@ -218,7 +210,7 @@ class Garp_Util_String {
         $string = self::arabicToArabicChatAlphabet($string);
 
         if (self::seemsUtf8($string)) {
-            $chars = array(
+            $chars = [
             // Decompositions for Latin-1 Supplement
             chr(194) . chr(170) => 'a', chr(194) . chr(186) => 'o',
             chr(195) . chr(128) => 'A', chr(195) . chr(129) => 'A',
@@ -395,7 +387,7 @@ class Garp_Util_String {
             // always replace ringel-S, even outside German locale
             // (this is an addition to the WordPress code)
             chr(195) . chr(159) => 'ss',
-            );
+            ];
 
             // Used for locale-specific rules
             $locale = Zend_Registry::get('config')->app->locale;
@@ -434,15 +426,15 @@ class Garp_Util_String {
             $chars['out'] = "EfSZszYcYuAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy";
 
             $string = strtr($string, $chars['in'], $chars['out']);
-            $double_chars['in'] = array(
+            $double_chars['in'] = [
                 chr(140), chr(156), chr(198), chr(208), chr(222),
                 chr(223), chr(230), chr(240), chr(254)
-            );
-            $double_chars['out'] = array('OE', 'oe', 'AE', 'DH', 'TH', 'ss', 'ae', 'dh', 'th');
+            ];
+            $double_chars['out'] = ['OE', 'oe', 'AE', 'DH', 'TH', 'ss', 'ae', 'dh', 'th'];
             $string = str_replace($double_chars['in'], $double_chars['out'], $string);
         }
 
-        $array_ignore = array('"', "'", "`", "^", "~", "+");
+        $array_ignore = ['"', "'", "`", "^", "~", "+"];
         $string = str_replace($array_ignore, '', $string);
 
         return trim($string, "\n\t -");
@@ -544,7 +536,7 @@ class Garp_Util_String {
      * @see resetMbstringEncoding()
      */
     static public function mbstringBinarySafeEncoding($reset = false) {
-        static $encodings = array();
+        static $encodings = [];
         static $overloaded = null;
 
         if (is_null($overloaded)) {
@@ -576,7 +568,7 @@ class Garp_Util_String {
      * @return bool
      */
     static public function endsIn($needle, $haystack) {
-        return substr($haystack, -(strlen($needle))) === $needle;
+        return str_ends_with($haystack, $needle);
     }
 
     /**
@@ -616,16 +608,16 @@ class Garp_Util_String {
      */
     static public function excerpt($content, $chars = 140, $respectWords = true) {
         mb_internal_encoding('UTF-8');
-        $content = str_replace(array("<br>", "<br />", "<br >", "<br/>"), "\n", $content);
+        $content = str_replace(["<br>", "<br />", "<br >", "<br/>"], "\n", $content);
         $content = htmlspecialchars(
             str_replace(
-                array(
+                [
                     '. · ',
                     '.  · '
-                ),
+                ],
                 '. ',
                 strip_tags(
-                    preg_replace('~</([a-z]+)><~i', '</$1> · <', $content)
+                    (string) preg_replace('~</([a-z]+)><~i', '</$1> · <', $content)
                 )
             )
         );
@@ -692,7 +684,7 @@ class Garp_Util_String {
      * @param array $attribs HTML attributes
      * @return string
      */
-    static public function linkify($text, array $attribs = array()) {
+    static public function linkify($text, array $attribs = []) {
         return self::linkUrls(self::linkEmailAddresses($text, $attribs), $attribs);
     }
 
@@ -703,8 +695,8 @@ class Garp_Util_String {
      * @param array $attribs HTML attributes
      * @return string
      */
-    static public function linkUrls($text, array $attribs = array()) {
-        $htmlAttribs = array();
+    static public function linkUrls($text, array $attribs = []) {
+        $htmlAttribs = [];
         foreach ($attribs as $name => $value) {
             $htmlAttribs[] = $name . '="' . $value . '"';
         }
@@ -715,8 +707,8 @@ class Garp_Util_String {
         $regexpWww      = "/(?:^|\s)((www\.)[^\s<]+[\w\/#])([?!,.])?(?=$|\s)/i";
 
         $text = preg_replace($regexpProtocol, " <a href=\"\\1\"$htmlAttribs>\\1</a>\\3 ", $text);
-        $text = preg_replace($regexpWww, " <a href=\"http://\\1\"$htmlAttribs>\\1</a>\\3 ", $text);
-        return trim($text);
+        $text = preg_replace($regexpWww, " <a href=\"http://\\1\"$htmlAttribs>\\1</a>\\3 ", (string) $text);
+        return trim((string) $text);
     }
 
     /**
@@ -726,8 +718,8 @@ class Garp_Util_String {
      * @param array $attribs HTML attributes
      * @return string
      */
-    static public function linkEmailAddresses($text, array $attribs = array()) {
-        $htmlAttribs = array();
+    static public function linkEmailAddresses($text, array $attribs = []) {
+        $htmlAttribs = [];
         foreach ($attribs as $name => $value) {
             $htmlAttribs[] = $name . '="' . $value . '"';
         }
@@ -791,7 +783,7 @@ class Garp_Util_String {
         $vals = array_values($vars);
         // surround keys by "%"
         array_walk(
-            $keys, function (&$s) {
+            $keys, function (&$s): void {
                 $s = '%' . $s . '%';
             }
         );
@@ -823,8 +815,8 @@ class Garp_Util_String {
         while ($i > 0) {
             --$i;
             $tmp = !isset($tmp) ?
-                (!is_null($value) ? array($keys[$i] => $value) : $keys[$i]) :
-                array($keys[$i] => $tmp);
+                (!is_null($value) ? [$keys[$i] => $value] : $keys[$i]) :
+                [$keys[$i] => $tmp];
         }
         return $tmp;
     }
@@ -863,7 +855,7 @@ class Garp_Util_String {
      * @return string A string with a protocol present.
      */
     static public function ensureUrlProtocol($url) {
-        return strpos($url, '//') === false ? '//' . $url : $url;
+        return !str_contains($url, '//') ? '//' . $url : $url;
     }
 
 }

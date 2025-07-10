@@ -67,7 +67,7 @@ class Garp_Form extends Zend_Form {
     public function __clone() {
         parent::__clone();
 
-        $decorators = array();
+        $decorators = [];
         $oldDecorators = $this->getDecorators();
         foreach ($oldDecorators as $oldDecorator) {
             $decorators[] = clone $oldDecorator;
@@ -132,7 +132,7 @@ class Garp_Form extends Zend_Form {
             return new $htmlElementClass($name, $options);
         }
 
-        $options = $options ?: array();
+        $options = $options ?: [];
 
         // I don't like the id to be the same as $name, 'cause it's usually a tad generic.
         if (empty($options['id'])) {
@@ -142,7 +142,7 @@ class Garp_Form extends Zend_Form {
         // Escape the label, since i
         $escape = $options['escape'] ?? true;
         if (!empty($options['label']) && $escape) {
-            $options['label'] = htmlspecialchars($options['label'], ENT_COMPAT, 'UTF-8');
+            $options['label'] = htmlspecialchars((string) $options['label'], ENT_COMPAT, 'UTF-8');
         }
 
         $decoratorInheritance = $this->_parseDecoratorInheritance($options['decorators']['inherit'] ?? []);
@@ -202,10 +202,10 @@ class Garp_Form extends Zend_Form {
     public function addDisplayGroup(array $elements, $name, $options = null) {
         // Allow custom decorators, but default to a sensible set
         if (empty($options['decorators'])) {
-            $options['decorators'] = array(
+            $options['decorators'] = [
                 'FormElements',
                 'Fieldset',
-            );
+            ];
         }
         return parent::addDisplayGroup($elements, $name, $options);
     }
@@ -255,10 +255,10 @@ class Garp_Form extends Zend_Form {
     public function setAjax($flag) {
         $this->_ajax = $flag;
         $class = $this->getAttrib('class');
-        if ($flag && !preg_match('/(^|\s)ajax($|\s)/', $class)) {
+        if ($flag && !preg_match('/(^|\s)ajax($|\s)/', (string) $class)) {
             $class .= ' ajax';
         } else {
-            $class = preg_replace('/(^|\s)(ajax)($|\s)/', '$1$3', $class);
+            $class = preg_replace('/(^|\s)(ajax)($|\s)/', '$1$3', (string) $class);
         }
         $this->setAttrib('class', $class);
         return $this;
@@ -281,9 +281,9 @@ class Garp_Form extends Zend_Form {
     public function addTimestampValidation() {
         // Add timestamp-based spam counter-measure
         $this->addElement(
-            'hidden', self::TIMESTAMP_FIELD_KEY, array(
-            'validators' => array(new Garp_Validate_Duration)
-            )
+            'hidden', self::TIMESTAMP_FIELD_KEY, [
+            'validators' => [new Garp_Validate_Duration]
+            ]
         );
         // If the form is submitted, do not set the value.
         if (!$this->getValue(self::TIMESTAMP_FIELD_KEY)) {
@@ -346,10 +346,10 @@ class Garp_Form extends Zend_Form {
      * @return void
      */
     protected function _addIdAttribute($name, array &$options) {
-        $names = array(
+        $names = [
             $this->getName(),
             $name
-        );
+        ];
         $parent = $this;
         while ($parent = $parent->getParent()) {
             $name = $parent->getName();
@@ -483,10 +483,8 @@ class Garp_Form extends Zend_Form {
     }
 
     protected function _getDecoratorMergeCallback(string $decoratorIdentifier) {
-        return function ($decoratorValue, $decoratorKey) use ($decoratorIdentifier) {
-            return $decoratorKey === $decoratorIdentifier
-                || f\last(explode('_', $decoratorKey)) === $decoratorIdentifier;
-        };
+        return fn($decoratorValue, $decoratorKey) => $decoratorKey === $decoratorIdentifier
+            || f\last(explode('_', (string) $decoratorKey)) === $decoratorIdentifier;
     }
 
 }

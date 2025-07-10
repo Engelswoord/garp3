@@ -12,14 +12,14 @@ class Garp_Image_Scaler {
      *
      * @var array
      */
-    public $args = array(
+    public $args = [
         'w',
         'h',
         'bgcolor',
         'crop',
         'cropfocus',
         'grow'
-    );
+    ];
 
     /**
      * The scaled image's basename, including the correct extension
@@ -34,7 +34,7 @@ class Garp_Image_Scaler {
      *
      * @var array
      */
-    private $_params = array(
+    private $_params = [
         'quality'       => 80,
         'grow'          => 1,
         'crop'          => 1,
@@ -47,14 +47,14 @@ class Garp_Image_Scaler {
         'sourceHeight'  => null,
         'type'          => null,
         'filter'        => null
-    );
+    ];
 
     /**
      * Array that represents the image config settings from an application specific ini file.
      *
      * @var array
      */
-    private static $_config = array();
+    private static $_config = [];
 
     /**
      * Parameters that were provided during the request,
@@ -62,7 +62,7 @@ class Garp_Image_Scaler {
      *
      * @var array
      */
-    private $_inputParams = array();
+    private $_inputParams = [];
 
     const SCALED_FOLDER = 'scaled';
 
@@ -121,11 +121,11 @@ class Garp_Image_Scaler {
             imagedestroy($canvas);
         }
 
-        $output = array(
+        $output = [
             'resource' => $outputImage,
             'mime' => $this->_params['mime'],
             'timestamp' => time()
-        );
+        ];
         imagedestroy($source);
 
         return $output;
@@ -255,7 +255,7 @@ class Garp_Image_Scaler {
             $imageType
         );
 
-        $scaledFilePath = $this->getScaledPath($id, $template);
+        $scaledFilePath = static::getScaledPath($id, $template);
 
         if ($overwrite || !$file->exists($scaledFilePath)) {
             $file->store($scaledFilePath, $scaledImageDataArray['resource'], true, false);
@@ -345,17 +345,11 @@ class Garp_Image_Scaler {
     }
 
     private function _createCanvasImage($imageType) {
-        switch ($imageType) {
-        case IMAGETYPE_GIF:
-            $canvas = imageCreate($this->_params['w'], $this->_params['h']);
-            break;
-        case IMAGETYPE_JPEG:
-        case IMAGETYPE_PNG:
-            $canvas = imageCreateTrueColor($this->_params['w'], $this->_params['h']);
-            break;
-        default:
-            throw new Exception('Sorry, this image type is not supported');
-        }
+        $canvas = match ($imageType) {
+            IMAGETYPE_GIF => imageCreate($this->_params['w'], $this->_params['h']),
+            IMAGETYPE_JPEG, IMAGETYPE_PNG => imageCreateTrueColor($this->_params['w'], $this->_params['h']),
+            default => throw new Exception('Sorry, this image type is not supported'),
+        };
 
         $this->_paintCanvas($canvas);
         return $canvas;
@@ -461,8 +455,8 @@ class Garp_Image_Scaler {
     private function _projectSourceOnCanvas(&$source, &$canvas) {
         $srcX = 0;
         $srcY = 0;
-        list($projectionWidth, $projectionHeight) = $this->_getProjectionSize();
-        list($destX, $destY) = $this->_getLeftUpperCoordinateOnCanvas(
+        [$projectionWidth, $projectionHeight] = $this->_getProjectionSize();
+        [$destX, $destY] = $this->_getLeftUpperCoordinateOnCanvas(
             $projectionWidth,
             $projectionHeight
         );
@@ -518,7 +512,7 @@ class Garp_Image_Scaler {
                 $y = ($this->_params['h'] - $projectionHeight) / 2;
             }
         }
-        return array($x, $y);
+        return [$x, $y];
     }
 
 
@@ -558,7 +552,7 @@ class Garp_Image_Scaler {
             ${'projection' . $leadDimension} = ${'canvas' . $leadDimension};
         }
 
-        list($projectionWidth, $projectionHeight) = $this->_getProjectionSize();
+        [$projectionWidth, $projectionHeight] = $this->_getProjectionSize();
 
         if (isset($projectionWidth)) {
             $projectionHeight = $projectionWidth / $sourceRatio;
@@ -566,7 +560,7 @@ class Garp_Image_Scaler {
             $projectionWidth = $projectionHeight * $sourceRatio;
         }
 
-        return array(round($projectionWidth), round($projectionHeight));
+        return [round($projectionWidth), round($projectionHeight)];
     }
 
 }

@@ -15,10 +15,10 @@ class Garp_Validate_Duration extends Zend_Validate_Abstract {
     const MIN_DURATION = 1;
     const DURATION_TOO_SHORT = 'durationTooShort';
 
-    protected $_errorMessages = array(
+    protected $_errorMessages = [
         //                           is this proper English?
         self::DURATION_TOO_SHORT => 'The timestamp is not long ago enough'
-    );
+    ];
 
     public function isValid($value) {
         if (!is_numeric($value) || time() - $value <= self::MIN_DURATION) {

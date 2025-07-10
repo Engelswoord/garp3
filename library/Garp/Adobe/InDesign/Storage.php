@@ -7,17 +7,8 @@
  * @author  David Spreekmeester <david@grrr.nl>
  */
 class Garp_Adobe_InDesign_Storage {
-    protected $_workingDir;
-
-    protected $_sourcePath;
-
-    protected $_targetPath;
-
-
-    public function __construct($workingDir, $sourcePath, $targetPath) {
-        $this->_workingDir = $workingDir;
-        $this->_sourcePath = $sourcePath;
-        $this->_targetPath = $targetPath;
+    public function __construct(protected $_workingDir, protected $_sourcePath, protected $_targetPath)
+    {
     }
 
     /**
@@ -83,7 +74,7 @@ class Garp_Adobe_InDesign_Storage {
                 $file = str_replace('\\', '/', $file);
 
                 // Ignore "." and ".." folders
-                if (in_array(substr($file, strrpos($file, '/')+1), array('.', '..')) ) {
+                if (in_array(substr($file, strrpos($file, '/')+1), ['.', '..']) ) {
                     continue;
                 }
 

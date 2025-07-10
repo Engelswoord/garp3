@@ -37,7 +37,7 @@ class Garp_Image_PngQuant {
     public function isPngData($data) {
         $finfo = new finfo(FILEINFO_MIME);
         $mime = $finfo->buffer($data);
-        $containsPngMime = strpos($mime, 'image/png') !== false;
+        $containsPngMime = str_contains($mime, 'image/png');
         return $containsPngMime;
     }
     

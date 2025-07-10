@@ -31,12 +31,12 @@ class Garp_Auth_Adapter_Vimeo extends Garp_Auth_Adapter_Abstract {
         if (!$authVars->consumerKey || !$authVars->consumerSecret) {
             throw new Garp_Auth_Exception('Required key "consumerKey" or "consumerSecret" not set in application.ini.');
         }
-        $config = array(
+        $config = [
             'siteUrl' => 'http://vimeo.com/oauth',
             'consumerKey' => $authVars->consumerKey,
             'consumerSecret' => $authVars->consumerSecret,
             'callbackUrl' => $callbackUrl
-        );
+        ];
         try {
             $consumer = new Zend_Oauth_Consumer($config);
             if ($request->isPost()) {
@@ -96,14 +96,14 @@ class Garp_Auth_Adapter_Vimeo extends Garp_Auth_Adapter_Abstract {
         $sessionColumns = Zend_Db_Select::SQL_WILDCARD;
         if (!empty($ini->auth->login->sessionColumns)) {
             $sessionColumns = $ini->auth->login->sessionColumns;
-            $sessionColumns = explode(',', $sessionColumns);
+            $sessionColumns = explode(',', (string) $sessionColumns);
         }
         $userModel = new Model_User();
         $userConditions = $userModel->select()->from($userModel->getName(), $sessionColumns);
 
         //@phpstan-ignore class.notFound
         $model = new Model_AuthVimeo();
-        $model->bindModel('Model_User', array('conditions' => $userConditions));
+        $model->bindModel('Model_User', ['conditions' => $userConditions]);
         $userData = $model->fetchRow(
             $model->select()
                   ->where('vimeo_id = ?', $id)

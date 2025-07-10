@@ -16,7 +16,7 @@ class G_View_Helper_Vimeo extends Zend_View_Helper_HtmlElement {
      * @param array $options Various rendering options
      * @return mixed
      */
-    public function vimeo($vimeo = null, array $options = array()) {
+    public function vimeo($vimeo = null, array $options = []) {
         if (!func_num_args()) {
             return $this;
         }
@@ -31,7 +31,7 @@ class G_View_Helper_Vimeo extends Zend_View_Helper_HtmlElement {
      * @param array $options Various rendering options
      * @return mixed
      */
-    public function render($vimeo, array $options = array()) {
+    public function render($vimeo, array $options = []) {
         $this->_setDefaultAttribs($options);
         $_attribs = $options['attribs'];
         $_attribs['width']  = $options['width'];
@@ -50,10 +50,10 @@ class G_View_Helper_Vimeo extends Zend_View_Helper_HtmlElement {
         return $html;
     }
 
-    public function getPlayerUrl($vimeo, $options = array()) {
+    public function getPlayerUrl($vimeo, $options = []) {
         $this->_setDefaultQueryParams($options);
         $playerurl = (is_string($vimeo) ? $vimeo :
-            (isset($vimeo['player']) ? $vimeo['player'] : ''));
+            ($vimeo['player'] ?? ''));
 
         $playerurl .= '?' . http_build_query((array)$options);
         return $playerurl;
@@ -71,7 +71,7 @@ class G_View_Helper_Vimeo extends Zend_View_Helper_HtmlElement {
         $options
             ->setDefault('height', isset($options['width']) ? round($options['width']*0.55) : 264)
             ->setDefault('width', 480)
-            ->setDefault('attribs', array());
+            ->setDefault('attribs', []);
     }
 
     /**

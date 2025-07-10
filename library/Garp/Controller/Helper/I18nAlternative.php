@@ -29,20 +29,20 @@ class Garp_Controller_Helper_I18nAlternative extends Zend_Controller_Action_Help
             $alt_param_slug = $record->slug;
         }
         $alternate_url_params = array_fill_keys(Garp_I18n::getLocales(),
-            array('slug' => $alt_param_slug));
+            ['slug' => $alt_param_slug]);
         $model_name = 'Model_' . $model_name . 'I18n';
         $i18n_model = new $model_name;
         $select = $i18n_model
             ->select()
-            ->from($i18n_model->getName(), array('slug', 'lang'))
+            ->from($i18n_model->getName(), ['slug', 'lang'])
             ->where("$foreign_key = ?", $record_id)
             ->where('lang != ?', Garp_I18n::getCurrentLocale())
         ;
         $localized_recordset = $i18n_model->fetchAll($select);
         foreach ($localized_recordset as $record) {
-            $alternate_url_params[$record->lang] = array(
+            $alternate_url_params[$record->lang] = [
                 'slug' => $record->slug
-            );
+            ];
         }
         return $alternate_url_params;
     }

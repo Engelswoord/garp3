@@ -14,9 +14,9 @@ class Garp_Validate_LessThanOrEqualTo extends Zend_Validate_LessThan
     /**
      * @var array
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::NOT_LESS_OR_EQUAL_TO => "'%value%' is not less than or equal to '%max%'"
-    );
+    ];
 
     /**
      * Defined by Zend_Validate_Interface

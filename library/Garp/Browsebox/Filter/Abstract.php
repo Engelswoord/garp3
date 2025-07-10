@@ -15,13 +15,6 @@
  */
 abstract class Garp_Browsebox_Filter_Abstract {
     /**
-     * Internal id
-     * @var String
-     */
-    protected $_id;
-
-    
-    /**
      * Configuration
      * @var Array
      */
@@ -30,12 +23,14 @@ abstract class Garp_Browsebox_Filter_Abstract {
 
     /**
      * Class constructor
-     * @param String $id
+     * @param String $_id
      * @param Array $params
      * @return Void
      */
-    public function __construct($id, array $config = array()) {
-        $this->_id = $id;
+    public function __construct(/**
+     * Internal id
+     */
+    protected $_id, array $config = []) {
         $this->_config = $config;
     }
 
@@ -54,7 +49,7 @@ abstract class Garp_Browsebox_Filter_Abstract {
      * @param Array $params
      * @return Void
      */
-    abstract public function init(array $params = array());
+    abstract public function init(array $params = []);
 
 
     /**

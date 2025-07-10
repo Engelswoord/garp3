@@ -38,7 +38,7 @@ class Garp_Cli_Command_Spawn extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function main(array $args = array()) {
+    public function main(array $args = []) {
         if ($this->_isHelpRequested($args)) {
             $this->_displayHelp();
             return true;
@@ -223,7 +223,7 @@ class Garp_Cli_Command_Spawn extends Garp_Cli_Command {
     protected function _showJsBaseModel($modelId) {
         $modelSet = $this->getModelSet();
 
-        if (array_key_exists($modelId, $modelSet)) {
+        if (property_exists($modelSet, $modelId)) {
             $model = $modelSet[$modelId];
             $minBaseModel = $model->renderJsBaseModel($modelSet);
             include_once GARP_APPLICATION_PATH .
@@ -256,7 +256,7 @@ class Garp_Cli_Command_Spawn extends Garp_Cli_Command {
             return false;
         }
 
-        $helpWasAsked = strcasecmp($args[0], 'help') === 0;
+        $helpWasAsked = strcasecmp((string) $args[0], 'help') === 0;
         return $helpWasAsked;
     }
 
@@ -271,7 +271,7 @@ class Garp_Cli_Command_Spawn extends Garp_Cli_Command {
     }
 
     protected function _displayHelp() {
-        $lines = array(
+        $lines = [
             "",
             "• Batch",
             "garp spawn -b",
@@ -299,7 +299,7 @@ class Garp_Cli_Command_Spawn extends Garp_Cli_Command {
             "",
             "garp spawn --showJsBaseModel=YourModel > YourFile.json",
             "\tWrite the non-minified JS base model to a file."
-        );
+        ];
 
         $out = implode("\n", $lines);
         Garp_Cli::lineOut($out);

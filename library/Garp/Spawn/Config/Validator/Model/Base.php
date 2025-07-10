@@ -4,7 +4,7 @@
  * @author David Spreekmeester | grrr.nl
  */
 class Garp_Spawn_Config_Validator_Model_Base extends Garp_Spawn_Config_Validator_Model_Abstract {
-    protected $_mandatoryProps = array('id', 'inputs');
+    protected $_mandatoryProps = ['id', 'inputs'];
 
 
     public function validate(ArrayObject $config) {
@@ -23,7 +23,7 @@ class Garp_Spawn_Config_Validator_Model_Base extends Garp_Spawn_Config_Validator
                 ) {
                     $relaterModelName = $config['id'];
                     $relateeModelName = array_key_exists('model', $relation) ? $relation['model'] : $relationName;
-                    if (strcmp($relaterModelName, $relateeModelName) > 0) {
+                    if (strcmp((string) $relaterModelName, (string) $relateeModelName) > 0) {
                         throw new Exception("You've configured a hasAndBelongsToMany relation {$relaterModelName} > {$relateeModelName}, but it should be configured in alphabetical order. Please configure it as {$relateeModelName} > {$relaterModelName}.");
                     }
                 }

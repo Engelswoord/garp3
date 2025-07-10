@@ -51,7 +51,7 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
                 $msg
             );
         }
-        $url .= urlencode($msg);
+        $url .= urlencode((string) $msg);
         return $url;
     }
 
@@ -74,7 +74,7 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
                 $msg
             );
         }
-        $url .= urlencode($msg);
+        $url .= urlencode((string) $msg);
         return $url;
     }
 
@@ -86,7 +86,7 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
      * @return string
      * @see http://twitter.com/about/resources/tweetbutton
      */
-    public function tweetButton(array $params = array()) {
+    public function tweetButton(array $params = []) {
         $params = new Garp_Util_Configuration($params);
         $params->setDefault('url', null)
             ->setDefault('text', null)
@@ -97,10 +97,10 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
             ->setDefault('loadScript', true);
 
         // set required parameters
-        $attributes = array(
+        $attributes = [
             'class'      => 'twitter-share-button',
             'data-count' => $params['count']
-        );
+        ];
 
         // set optional attributes
         $params['url'] && $attributes['data-url'] = $params['url'];
@@ -159,10 +159,10 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
         $channelUrl = $this->facebookChannelUrl();
 
         return $this->view->partial(
-            'partials/social/facebook/init.phtml', 'g', array(
+            'partials/social/facebook/init.phtml', 'g', [
                 'appId' => $appId,
                 'channelUrl' => $channelUrl
-            )
+            ]
         );
     }
 
@@ -207,12 +207,12 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
      * @param bool $useFacebookPageAsUrl
      * @return string
      */
-    public function facebookLikeButton(array $params = array(), $useFacebookPageAsUrl = false) {
+    public function facebookLikeButton(array $params = [], $useFacebookPageAsUrl = false) {
         $this->_needsFacebookInit = true;
         $params = new Garp_Util_Configuration($params);
         $params->setDefault(
             'href',
-            array_key_exists('href', $params) && $params['href'] ?
+            property_exists($params, 'href') && $params['href'] ?
                 $params['href'] :
                 $this->_getCurrentUrl()
         )
@@ -240,7 +240,7 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
      * @return string
      */
     public function facebookRecommendButton(
-        array $params = array(), $useFacebookPageAsUrl = false
+        array $params = [], $useFacebookPageAsUrl = false
     ) {
         $this->_needsFacebookInit = true;
         $params['action'] = 'recommend';
@@ -253,12 +253,12 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
      * @param array $params Various Facebook URL parameters
      * @return string
      */
-    public function facebookComments(array $params = array()) {
+    public function facebookComments(array $params = []) {
         $this->_needsFacebookInit = true;
         $params = new Garp_Util_Configuration($params);
         $params->setDefault(
             'href',
-            array_key_exists('href', $params) && $params['href'] ?
+            property_exists($params, 'href') && $params['href'] ?
                 $params['href'] :
                 $this->view->fullUrl($this->view->url())
         )
@@ -277,11 +277,11 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
      * @param bool $useFacebookPageAsUrl
      * @return string
      */
-    public function facebookFacepile(array $params = array(), $useFacebookPageAsUrl = false) {
+    public function facebookFacepile(array $params = [], $useFacebookPageAsUrl = false) {
         $this->_needsFacebookInit = true;
         $params = new Garp_Util_Configuration($params);
         $params->setDefault(
-            'href', array_key_exists('href', $params) && $params['href'] ?
+            'href', property_exists($params, 'href') && $params['href'] ?
                 $params['href'] :
                 $this->_getCurrentUrl()
         )
@@ -303,7 +303,7 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
      * @param array $ogData The Open Graph information
      * @return string The HTML
      */
-    public function facebookOgData(array $ogData = array()) {
+    public function facebookOgData(array $ogData = []) {
         $html = '';
         $metaTemplate = '<meta property="%s" content="%s">';
         $ini = Zend_Registry::get('config');
@@ -349,7 +349,7 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
         }
 
         if (empty($ogData['image']) && !empty($this->view->config()->app->image)) {
-            if (basename($this->view->config()->app->image) === $this->view->config()->app->image) {
+            if (basename((string) $this->view->config()->app->image) === $this->view->config()->app->image) {
                 $ogData['image'] = $this->view->image()->getUrl($this->view->config()->app->image);
             } else {
                 $ogData['image'] = $this->view->fullUrl($this->view->config()->app->image);
@@ -371,7 +371,7 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
         }
 
         foreach ($ogData as $ogKey => $ogValue) {
-            $prefix = in_array($ogKey, array('admins', 'app_id')) ? 'fb' : 'og';
+            $prefix = in_array($ogKey, ['admins', 'app_id']) ? 'fb' : 'og';
             $metaHtml = sprintf(
                 $metaTemplate,
                 $this->view->escape($prefix . ':' . $ogKey),
@@ -389,7 +389,7 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
      * @return string
      * @see http://www.linkedin.com/publishers
      */
-    public function linkedinShareButton(array $params = array()) {
+    public function linkedinShareButton(array $params = []) {
         $html = '<script type="in/share" ';
         if (!empty($params['url'])) {
             $html .= 'data-url="' . $this->view->escape($params['url']) . '" ';
@@ -432,9 +432,9 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
      */
     protected function _getCurrentUrl() {
         $url = $this->view->fullUrl($this->view->url());
-        $quesPos = strpos($url, '?');
+        $quesPos = strpos((string) $url, '?');
         if ($quesPos !== false) {
-            $url = substr($url, 0, $quesPos);
+            $url = substr((string) $url, 0, $quesPos);
         }
         return $url;
     }
@@ -446,7 +446,7 @@ class G_View_Helper_Social extends Zend_View_Helper_Abstract {
      * @return string
      */
     protected function _renderHtmlAttribs(Garp_Util_Configuration $attribs) {
-        $attributePairs = array();
+        $attributePairs = [];
         foreach ($attribs as $attribName => $attribValue) {
             $attributesPairs[] = $attribName . '="' . $attribValue . '"';
         }

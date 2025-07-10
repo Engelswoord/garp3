@@ -13,7 +13,7 @@ abstract class Garp_Cli_Ui implements Garp_Cli_Ui_Protocol {
     public static function getInstance() {
         static $ui = null;
         if ($ui === null) {
-            $uiClass = get_called_class();
+            $uiClass = static::class;
             $ui = new $uiClass();
         }
         return $ui;

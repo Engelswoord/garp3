@@ -66,7 +66,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
      *
      * @var Array
      */
-    protected $_queue = array();
+    protected $_queue = [];
 
     /**
      * Wether to force i18n type output (e.g. arrays with localized content per column)
@@ -85,7 +85,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
      * @return Garp_Model_Db
      */
     public function getI18nModel(Garp_Model_Db $model) {
-        $modelName = get_class($model);
+        $modelName = $model::class;
         $modelName .= self::I18N_MODEL_SUFFIX;
         $model = new $modelName;
 
@@ -106,13 +106,13 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
     public function bindWithI18nModel(Garp_Model_Db $model) {
         $i18nModel = $this->getI18nModel($model);
         $model->bindModel(
-            self::I18N_MODEL_BINDING_ALIAS, array(
+            self::I18N_MODEL_BINDING_ALIAS, [
             'modelClass' => $i18nModel,
             'conditions' => $i18nModel->select()->from(
                 $i18nModel->getName(),
-                array_merge($this->_translatableFields, array(self::LANG_COLUMN))
+                array_merge($this->_translatableFields, [self::LANG_COLUMN])
             )
-            )
+            ]
         );
     }
 
@@ -153,7 +153,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
         }
         $iterator = new Garp_Db_Table_Rowset_Iterator(
             $results,
-            array($this, 'mergeTranslatedFields')
+            $this->mergeTranslatedFields(...)
         );
         $iterator->walk();
     }
@@ -172,7 +172,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
         if ($translationRecordList instanceof Zend_Db_Table_Rowset_Abstract) {
             $translationRecordList = $translationRecordList->toArray();
         }
-        $translatedFields = array();
+        $translatedFields = [];
         $allLocales = Garp_I18n::getLocales();
         foreach ($this->_translatableFields as $translatableField) {
             // provide default values
@@ -238,7 +238,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
         $primaryKey = (array)$primaryKey;
         // ...and push that into an array to be compliant with afterUpdate(),
         // which might return multiple updated records
-        $pKeys = array($primaryKey);
+        $pKeys = [$primaryKey];
         $this->_afterSave($model, $pKeys);
     }
 
@@ -268,7 +268,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
      * @return Void
      */
     protected function _beforeSave($model, &$data, $where = null) {
-        $localizedData = array();
+        $localizedData = [];
         foreach ($this->_translatableFields as $field) {
             if (array_key_exists($field, $data)) {
                 $localizedData[$field] = $data[$field];
@@ -280,7 +280,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
 
         // We now have an array containing all values that are provided in one or more languages
         $languages = Garp_I18n::getLocales();
-        $existingRows = array_fill_keys($languages, array());
+        $existingRows = array_fill_keys($languages, []);
         if (!is_null($where)) {
             $pKeys = $this->_getPrimaryKeysOfAffectedRows($model, $where);
             if (!count($pKeys)) {
@@ -292,7 +292,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
         }
 
         $defaultLanguage = Garp_I18n::getDefaultLocale();
-        $languages = array_diff($languages, array($defaultLanguage));
+        $languages = array_diff($languages, [$defaultLanguage]);
         foreach ($localizedData as $column => $val) {
             foreach ($languages as $language) {
                 if (!empty($val[$language])) {
@@ -342,7 +342,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
     }
 
     protected function _fetchLocalizedRows(array $languages, Garp_Model_Db $model, array $pKeys) {
-        $out = array();
+        $out = [];
         foreach ($languages as $language) {
             $out[$language] = $this->_fetchLocalizedRow($language, $model, $pKeys);
         }
@@ -351,10 +351,10 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
 
     protected function _fetchLocalizedRow($language, Garp_Model_Db $model, array $pKeys) {
         $i18nModel = $this->getI18nModel($model);
-        $referenceMap = $i18nModel->getReference(get_class($model));
+        $referenceMap = $i18nModel->getReference($model::class);
         $foreignKeyData = $this->_getForeignKeyData($referenceMap, $pKeys);
         $whereClause = $i18nModel->arrayToWhereClause(
-            array_merge($foreignKeyData, array(self::LANG_COLUMN => $language))
+            array_merge($foreignKeyData, [self::LANG_COLUMN => $language])
         );
 
         return $i18nModel->fetchRow($i18nModel->select()->where($whereClause));
@@ -378,7 +378,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
             }
         }
         // Reset queue
-        $this->_queue = array();
+        $this->_queue = [];
     }
 
     /**
@@ -416,7 +416,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
     }
 
     protected function _mergeDataWithForeignKeyColumns(array $data, Garp_Model_Db $model, $pKeys) {
-        $referenceMap = $this->getI18nModel($model)->getReference(get_class($model));
+        $referenceMap = $this->getI18nModel($model)->getReference($model::class);
         $foreignKeyData = $this->_getForeignKeyData($referenceMap, $pKeys);
         return array_merge($data, $foreignKeyData);
     }
@@ -430,7 +430,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
      */
     protected function _extractDataForLanguage($language, Garp_Model_Db $model) {
         $localizedData = array_filter($this->_queue, 'is_array');
-        $out = array();
+        $out = [];
         foreach ($localizedData as $key => $value) {
             if (array_key_exists($language, $value)) {
                 $out[$key] = $value[$language];
@@ -455,10 +455,10 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
         $pkExtractor = new Garp_Db_PrimaryKeyExtractor($model, $where);
         $pks = $pkExtractor->extract();
         if (count($pks)) {
-            return array($pks);
+            return [$pks];
         }
         $rows = $model->fetchAll($where);
-        $pks = array();
+        $pks = [];
         foreach ($rows as $row) {
             if (!$row->isConnected()) {
                 $row->setTable($model);
@@ -480,7 +480,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
      * @return Array
      */
     protected function _getForeignKeyData(array $referenceMap, array $pKeys) {
-        $data = array();
+        $data = [];
         $foreignKeyColumns = $referenceMap['columns'];
         if (count($foreignKeyColumns) !== count($pKeys)) {
             throw new Garp_Model_Behavior_Exception(
@@ -502,8 +502,8 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
         $select->reset(Zend_Db_Select::WHERE);
         foreach ($where as $clause) {
             // Check if it's a search query
-            if (stripos($clause, 'like') !== false) {
-                preg_match('/%.*?%/', $clause, $matches);
+            if (stripos((string) $clause, 'like') !== false) {
+                preg_match('/%.*?%/', (string) $clause, $matches);
                 if (!empty($matches[0])) {
                     $clause = $this->_cleanClause($clause);
                     $clause .= ' OR ' . $this->_joinCmsSearchQuery($model, $select, $matches[0]);
@@ -511,7 +511,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
             }
             // re-attach clause
             $whereBoolType = $this->_determineAndOrOr($clause);
-            $clause = preg_replace('/(^OR|^AND)/', '', $clause);
+            $clause = preg_replace('/(^OR|^AND)/', '', (string) $clause);
             $clause = $this->_cleanClause($clause);
             if ($whereBoolType === 'OR') {
                 $select->orWhere($clause);
@@ -528,7 +528,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
      * @return string OR or AND
      */
     protected function _determineAndOrOr($clause) {
-        return substr(trim($clause), 0, 2) === 'OR' ? 'OR' : 'AND';
+        return str_starts_with(trim($clause), 'OR') ? 'OR' : 'AND';
     }
 
     /**
@@ -557,25 +557,25 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
         Garp_Model_Db $model, Zend_Db_Select &$select, $likeValue
     ) {
         $languages = Garp_I18n::getLocales();
-        $default_language = array(Garp_I18n::getDefaultLocale());
+        $default_language = [Garp_I18n::getDefaultLocale()];
         $langColumn = self::LANG_COLUMN;
         // Exclude default language, since that's already joined in the joint view
         $languages = array_diff($languages, $default_language);
         $adapter = $model->getAdapter();
-        $where = array();
+        $where = [];
         foreach ($languages as $language) {
             $i18nModel = $this->getI18nModel($model);
             $i18nAlias = $model->getName() . '_i18n_' . $language;
             $onClause = $i18nModel->refMapToOnClause(
-                get_class($model), $i18nAlias,
+                $model::class, $i18nAlias,
                 $model->getJointView()
             );
 
             // join i18n model
             $select->joinLeft(
-                array($i18nAlias => $i18nModel->getName()),
+                [$i18nAlias => $i18nModel->getName()],
                 "$onClause AND {$i18nAlias}.{$langColumn} = '{$language}'",
-                array()
+                []
             );
 
             // add WHERE clauses that search in the i18n model

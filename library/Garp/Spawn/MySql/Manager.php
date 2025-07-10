@@ -98,7 +98,7 @@ class Garp_Spawn_MySql_Manager {
             $habtmRelations = $model->relations->getRelations('type', 'hasAndBelongsToMany');
 
             foreach ($habtmRelations as $relation) {
-                if (strcmp($model->id, $relation->model) <= 0) {
+                if (strcmp((string) $model->id, (string) $relation->model) <= 0) {
                     //  only sync binding tables from models A -> B, not from B -> A
                     $this->_createBindingModelTableIfNotExists($relation);
                 }
@@ -114,7 +114,7 @@ class Garp_Spawn_MySql_Manager {
             $habtmRelations = $model->relations->getRelations('type', 'hasAndBelongsToMany');
 
             foreach ($habtmRelations as $relation) {
-                if (strcmp($model->id, $relation->model) <= 0) {
+                if (strcmp((string) $model->id, (string) $relation->model) <= 0) {
                     //  only sync binding tables from models A -> B, not from B -> A
                     $this->_syncBindingModel($relation);
                 }
@@ -212,7 +212,7 @@ class Garp_Spawn_MySql_Manager {
         if ($model->isMultilingual()) {
             $i18nModel = $model->getI18nModel();
             $tableFactory->setModel($i18nModel);
-            $i18nTable = $tableFactory->produceConfigTable($i18nModel);
+            $i18nTable = $tableFactory->produceConfigTable();
             $this->_createTableIfNotExists($i18nTable);
         }
     }
@@ -271,7 +271,7 @@ class Garp_Spawn_MySql_Manager {
 
         try {
             $this->onI18nTableFork($model);
-        } catch (Exception $e) {}
+        } catch (Exception) {}
     }
 
     protected function _syncBindingModel(Garp_Spawn_Relation $relation) {

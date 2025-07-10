@@ -13,7 +13,7 @@ class Garp_Model_Db_Video extends Model_Base_Video {
         try {
             return parent::insert($data);
         } catch (Exception $e) {
-            if (strpos($e->getMessage(), 'Duplicate entry') === false) {
+            if (!str_contains($e->getMessage(), 'Duplicate entry')) {
                 throw $e;
             }
 
@@ -21,7 +21,7 @@ class Garp_Model_Db_Video extends Model_Base_Video {
                 throw new Exception("Missing the 'url' parameter in provided video data.");
             }
 
-            $videoUrl = trim($data['url']);
+            $videoUrl = trim((string) $data['url']);
             $this->unregisterObserver('Translatable');
 
             if ($this->_isVimeoUrl($videoUrl)) {
@@ -45,20 +45,20 @@ class Garp_Model_Db_Video extends Model_Base_Video {
 
 
     protected function _isVimeoUrl($url) {
-        return strpos($url, 'vimeo.com') !== false;
+        return str_contains((string) $url, 'vimeo.com');
     }
 
     protected function _isYouTuBeUrl($url) {
-        return strpos($url, 'youtu.be') !== false;
+        return str_contains((string) $url, 'youtu.be');
     }
 
     protected function _isYouTubeComUrl($url) {
-        return strpos($url, 'youtube.com') !== false;
+        return str_contains((string) $url, 'youtube.com');
     }
 
     protected function _getYouTubeIdFromURL($url) {
         $pattern = '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i';
-        preg_match($pattern, $url, $matches);
+        preg_match($pattern, (string) $url, $matches);
 
         if (isset($matches[1])) {
             return $matches[1];

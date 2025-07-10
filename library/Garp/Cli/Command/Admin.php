@@ -13,7 +13,7 @@ class Garp_Cli_Command_Admin extends Garp_Cli_Command {
      * @param array $args
      * @return void
      */
-    public function add(array $args = array()) {
+    public function add(array $args = []) {
         $ini = Garp_Auth::getInstance()->getConfigValues();
         if (empty($ini['adapters']['db'])) {
             Garp_Cli::errorOut('Error: DB adapter is not configured in application.ini.');
@@ -24,10 +24,10 @@ class Garp_Cli_Command_Admin extends Garp_Cli_Command {
                 'Error: identityColumn or credentialColumn not configured in application.ini'
             );
         } else {
-            $newUserData = array(
+            $newUserData = [
                 'role' => 'admin'
-            );
-            $promptData = array();
+            ];
+            $promptData = [];
 
             // Pull required fields from Spawner config
             $modelSet = Garp_Spawn_Model_Set::getInstance();
@@ -55,9 +55,9 @@ class Garp_Cli_Command_Admin extends Garp_Cli_Command {
                 $newUserData[$key] = trim(Garp_Cli::prompt($key . ':'));
             }
 
-            $newAuthLocalData = array(
+            $newAuthLocalData = [
                 'password' => trim(Garp_Cli::prompt('Choose a password:'))
-            );
+            ];
 
             /**
              * A lot of assumptions are made here;
@@ -81,8 +81,8 @@ class Garp_Cli_Command_Admin extends Garp_Cli_Command {
                     Garp_Cli::errorOut('Error: could not create administrator.');
                 }
             } catch (Zend_Db_Statement_Exception $e) {
-                if (strpos($e->getMessage(), 'Duplicate entry') !== false
-                    && strpos($e->getMessage(), 'email_unique') !== false
+                if (str_contains($e->getMessage(), 'Duplicate entry')
+                    && str_contains($e->getMessage(), 'email_unique')
                 ) {
                     Garp_Cli::errorOut(
                         'Error: this email address is already in use. ' .
@@ -102,7 +102,7 @@ class Garp_Cli_Command_Admin extends Garp_Cli_Command {
      * @param array $args
      * @return void
      */
-    public function make(array $args = array()) {
+    public function make(array $args = []) {
         $userModel = new Model_User();
         if (!empty($args)) {
             $id = $args[0];
@@ -130,10 +130,10 @@ class Garp_Cli_Command_Admin extends Garp_Cli_Command {
                     $authLocalModel->select()->where('user_id = ?', $user->id)
                 );
                 if (!$authLocalRecord) {
-                    $newAuthLocalData = array(
+                    $newAuthLocalData = [
                         'password' => trim(Garp_Cli::prompt('Choose a password:')),
                         'user_id'  => $user->id
-                    );
+                    ];
                     $authLocalModel->insert($newAuthLocalData);
                 }
                 Garp_Cli::lineOut(

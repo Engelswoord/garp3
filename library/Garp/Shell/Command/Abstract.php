@@ -25,7 +25,7 @@ abstract class Garp_Shell_Command_Abstract implements Garp_Shell_Command_Protoco
      * @return String The command's output
      */
     public function executeRemotely(Garp_Shell_RemoteSession $session) {
-        $commandString  = $this->renderThrottledCommandIfNecessary($session);
+        $commandString  = $this->renderThrottledCommandIfNecessary();
         return $this->_executeStringRemotely($commandString, $session);
     }
 

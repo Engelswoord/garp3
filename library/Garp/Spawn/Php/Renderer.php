@@ -27,7 +27,7 @@ class Garp_Spawn_Php_Renderer {
         $extendedModel->save();
 
         if ($habtmRelations = $model->relations->getRelations('type', 'hasAndBelongsToMany')) {
-            array_walk($habtmRelations, array($this, '_saveBindingModel'));
+            array_walk($habtmRelations, [$this, '_saveBindingModel']);
         }
 
         if ($model->isMultilingual()) {
@@ -67,7 +67,7 @@ class Garp_Spawn_Php_Renderer {
         $modelId = $this->getModel()->id;
         $relatedModelId = $habtmRelation->model;
 
-        $modelIds = array($modelId, $relatedModelId);
+        $modelIds = [$modelId, $relatedModelId];
         sort($modelIds);
 
         return $modelId === $modelIds[0];
@@ -75,7 +75,7 @@ class Garp_Spawn_Php_Renderer {
 
     protected function _saveLocalizedModels() {
         $locales = Garp_I18n::getLocales();
-        array_walk($locales, array($this, '_saveLocalizedModel'));
+        array_walk($locales, [$this, '_saveLocalizedModel']);
     }
 
     protected function _saveLocalizedModel($locale) {

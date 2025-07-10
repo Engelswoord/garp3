@@ -33,14 +33,14 @@ abstract class Garp_Spawn_Behavior_Type_Abstract {
     /**
      * @var Array $_generatedFields
      */
-    protected $_fields = array();
+    protected $_fields = [];
 
     /**
      * @var Garp_Spawn_Model_Abstract $_model
      */
     protected $_model;
     
-    protected $_validOrigins = array('default', 'config', 'relation');
+    protected $_validOrigins = ['default', 'config', 'relation'];
 
 
     /**

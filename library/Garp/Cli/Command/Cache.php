@@ -6,11 +6,11 @@
  * @author  Harmen Janssen <harmen@grrr.nl>
  */
 class Garp_Cli_Command_Cache extends Garp_Cli_Command {
-    protected $_allowedArguments = array(
+    protected $_allowedArguments = [
         'clear' => '*',
-        'info'  => array(),
+        'info'  => [],
         'opcache' => false
-    );
+    ];
 
     /**
      * Clear all the cache
@@ -18,7 +18,7 @@ class Garp_Cli_Command_Cache extends Garp_Cli_Command {
      * @param array $args Tags.
      * @return bool
      */
-    public function clear(array $args = array()) {
+    public function clear(array $args = []) {
         $app = Zend_Registry::get('application');
         $bootstrap = $app->getBootstrap();
         $cacheDir = false;
@@ -37,7 +37,7 @@ class Garp_Cli_Command_Cache extends Garp_Cli_Command {
     public function info() {
         $backend = Garp_Cache_Manager::getCacheBackend();
         Garp_Cli::lineOut('# Server cache backend');
-        $out = $backend ? 'Backend type: ' . get_class($backend) : 'No cache backend found';
+        $out = $backend ? 'Backend type: ' . $backend::class : 'No cache backend found';
         Garp_Cli::lineOut($out);
         return true;
     }

@@ -14,7 +14,7 @@ class Garp_Model_Db_AuthLocal extends Model_Base_AuthLocal {
 
     public function init() {
         parent::init();
-        $this->registerObserver(new Garp_Model_Behavior_Authenticatable(array($this)));
+        $this->registerObserver(new Garp_Model_Behavior_Authenticatable([$this]));
     }
 
     /**
@@ -35,7 +35,7 @@ class Garp_Model_Db_AuthLocal extends Model_Base_AuthLocal {
         }
         $select = $this->select()
           ->setIntegrityCheck(false)
-          ->from($this->_name, array($authVars['credentialColumn']))
+          ->from($this->_name, [$authVars['credentialColumn']])
           ->joinInner($theOtherTable, $this->_name.'.user_id = '.$theOtherTable.'.id', $sessionColumns)
           ->where($theOtherTable.'.'.$authVars['identityColumn'].' = ?', $identity)
           ->order($this->_name.'.id')

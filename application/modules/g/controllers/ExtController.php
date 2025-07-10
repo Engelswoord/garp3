@@ -16,7 +16,7 @@ class G_ExtController extends G_ContentController {
      *
      * @var Array
      */
-    protected $_postModifyMethods = array();
+    protected $_postModifyMethods = [];
 
     /**
      * Sometimes additional data from the original request is needed to properly
@@ -25,13 +25,13 @@ class G_ExtController extends G_ContentController {
      *
      * @var Array
      */
-    protected $_originalRequests = array();
+    protected $_originalRequests = [];
 
     public function init() {
         parent::init();
         $this->_helper->cache(
-            array('smd', 'getlocale'),
-            array(),
+            ['smd', 'getlocale'],
+            [],
             'js'
         );
     }
@@ -87,21 +87,21 @@ class G_ExtController extends G_ContentController {
         if ($this->getRequest()->isPost()) {
             $post = $this->_getJsonRpcRequest();
             $requests = Zend_Json::decode($post, Zend_Json::TYPE_ARRAY);
-            $modifiedRequests = array();
+            $modifiedRequests = [];
             /**
              * Check if this was a batch request. In that case the array is a plain array of
              * arrays. If not, there will be a 'jsonrpc' key in the root of the array.
              */
             $batch = !array_key_exists('jsonrpc', $requests);
             if (!$batch) {
-                $requests = array($requests);
+                $requests = [$requests];
             }
             foreach ($requests as $i => $request) {
                 $this->_saveRequestForModification($request, $i);
                 if (array_key_exists('method', $request)) {
-                    $methodParts = explode('.', $request['method']);
+                    $methodParts = explode('.', (string) $request['method']);
                     $method = array_pop($methodParts);
-                    if (in_array($method, array('create', 'update', 'destroy'))) {
+                    if (in_array($method, ['create', 'update', 'destroy'])) {
                         $modifyMethod = '_modifyBefore' . ucfirst($method);
                         $request = $this->{$modifyMethod}($request);
                     }
@@ -129,21 +129,21 @@ class G_ExtController extends G_ContentController {
         parent::postDispatch();
         if (!empty($this->_postModifyMethods)) {
             $response = Zend_Json::decode($this->view->response, Zend_Json::TYPE_ARRAY);
-            $modifiedResponse = array();
+            $modifiedResponse = [];
             /**
              * Check if this was a batch request. In that case the array is a plain array of
              * arrays. If not, there will be a 'jsonrpc' key in the root of the array.
              */
             $batch = !array_key_exists('jsonrpc', $response);
             if (!$batch) {
-                $response = array($response);
+                $response = [$response];
             }
             /**
              * Post modify methods are recorded from $this:preDispatch()
              */
             foreach ($this->_postModifyMethods as $i => $postMethod) {
                 if (!empty($response[$i]) && !empty($this->_originalRequests[$i])) {
-                    $modifyMethod = '_modifyAfter' . ucfirst($postMethod);
+                    $modifyMethod = '_modifyAfter' . ucfirst((string) $postMethod);
                     $response[$i] = $this->{$modifyMethod}(
                         $response[$i],
                         $this->_originalRequests[$i]
@@ -168,9 +168,9 @@ class G_ExtController extends G_ContentController {
      */
     protected function _saveRequestForModification($request, $i) {
         if (array_key_exists('method', $request)) {
-            $methodParts = explode('.', $request['method']);
+            $methodParts = explode('.', (string) $request['method']);
             $method = array_pop($methodParts);
-            if (in_array($method, array('fetch', 'create', 'update', 'destroy'))) {
+            if (in_array($method, ['fetch', 'create', 'update', 'destroy'])) {
                 $this->_postModifyMethods[$i] = $method;
                 $this->_originalRequests[$i] = $request;
             }
@@ -186,7 +186,7 @@ class G_ExtController extends G_ContentController {
      */
     protected function _fetchTotal($modelName, $conditions) {
         if (!array_key_exists('query', $conditions)) {
-            $conditions['query'] = array();
+            $conditions['query'] = [];
         }
         $man = new Garp_Content_Manager($modelName);
         return $man->count($conditions);
@@ -229,15 +229,15 @@ class G_ExtController extends G_ContentController {
     protected function _modifyAfterFetch($response, $request) {
         if (!$this->_methodFailed($response)) {
             $rows = $response['result'];
-            $methodParts = explode('.', $request['method']);
+            $methodParts = explode('.', (string) $request['method']);
             $modelClass  = Garp_Content_Api::modelAliasToClass(array_shift($methodParts));
 
             $params = $request['params'];
-            $params = !empty($params) ? $params[0] : array();
-            $response['result'] = array(
+            $params = !empty($params) ? $params[0] : [];
+            $response['result'] = [
                 'rows' => $rows,
                 'total' => $this->_fetchTotal($modelClass, $params)
-            );
+            ];
         }
         return $response;
     }
@@ -252,22 +252,22 @@ class G_ExtController extends G_ContentController {
     protected function _modifyAfterCreate($response, $request) {
         if (!$this->_methodFailed($response)) {
             // figure out model name (request.method)
-            $methodParts = explode('.', $request['method']);
+            $methodParts = explode('.', (string) $request['method']);
             $modelClass  = Garp_Content_Api::modelAliasToClass(array_shift($methodParts));
             $model = new $modelClass();
             // combine primary keys to query params
             $primaryKey = array_values((array)$model->info(Zend_Db_Table::PRIMARY));
             $primaryKeyValues = array_values((array)$response['result']);
-            $query = array();
+            $query = [];
             foreach ($primaryKey as $i => $key) {
                 $query[$key] = $primaryKeyValues[$i];
             }
             // find the newly inserted rows
-            $man = new Garp_Content_Manager(get_class($model));
-            $rows = $man->fetch(array('query' => $query));
-            $response['result'] = array(
+            $man = new Garp_Content_Manager($model::class);
+            $rows = $man->fetch(['query' => $query]);
+            $response['result'] = [
                 'rows' => $rows
-            );
+            ];
         }
         return $response;
     }
@@ -283,17 +283,17 @@ class G_ExtController extends G_ContentController {
         if ($this->_methodFailed($response)) {
             return $response;
         }
-        $methodParts = explode('.', $request['method']);
+        $methodParts = explode('.', (string) $request['method']);
         $modelClass  = Garp_Content_Api::modelAliasToClass(array_shift($methodParts));
         $man = new Garp_Content_Manager($modelClass);
         $rows = $man->fetch(
-            array(
-                'query' => array('id' => $request['params'][0]['rows']['id'])
-            )
+            [
+                'query' => ['id' => $request['params'][0]['rows']['id']]
+            ]
         );
-        $response['result'] = array(
+        $response['result'] = [
             'rows' => $rows
-        );
+        ];
         return $response;
     }
 
@@ -306,9 +306,9 @@ class G_ExtController extends G_ContentController {
      */
     protected function _modifyAfterDestroy($response, $request) {
         if (!$this->_methodFailed($response)) {
-            $response['result'] = array(
-                'rows' => array()
-            );
+            $response['result'] = [
+                'rows' => []
+            ];
         }
         return $response;
     }
@@ -320,7 +320,7 @@ class G_ExtController extends G_ContentController {
      * @return Array
      */
     protected function _modifyBeforeCreate($request) {
-        $request['params'] = array($request['params'][0]['rows']);
+        $request['params'] = [$request['params'][0]['rows']];
         return $request;
     }
 
@@ -331,7 +331,7 @@ class G_ExtController extends G_ContentController {
      * @return Array
      */
     protected function _modifyBeforeUpdate($request) {
-        $request['params'] = array($request['params'][0]['rows']);
+        $request['params'] = [$request['params'][0]['rows']];
         return $request;
     }
 
@@ -342,7 +342,7 @@ class G_ExtController extends G_ContentController {
      * @return Array
      */
     protected function _modifyBeforeDestroy($request) {
-        $request['params'] = array(array('id' => $request['params'][0]['rows']));
+        $request['params'] = [['id' => $request['params'][0]['rows']]];
         return $request;
     }
 

@@ -27,7 +27,7 @@ class G_View_Helper_I18n extends Zend_View_Helper_Abstract {
      * @return string
      */
     public function getAlternateUrl(
-        $language, array $routeParams = array(), $route = null, $defaultToHome = true
+        $language, array $routeParams = [], $route = null, $defaultToHome = true
     ) {
         if (!$route) {
             $router = Zend_Controller_Front::getInstance()->getRouter();
@@ -37,7 +37,7 @@ class G_View_Helper_I18n extends Zend_View_Helper_Abstract {
             return null;
         }
         $routes = $this->_getRoutesWithFallback($language);
-        $localizedRoutes = Garp_I18n::getLocalizedRoutes($routes, array($language));
+        $localizedRoutes = Garp_I18n::getLocalizedRoutes($routes, [$language]);
 
         $router = new Zend_Controller_Router_Rewrite();
         $router->addConfig(new Zend_Config($localizedRoutes));
@@ -73,7 +73,7 @@ class G_View_Helper_I18n extends Zend_View_Helper_Abstract {
      * @return mixed
      */
     public function __call($method, $args) {
-        return call_user_func_array(array('Garp_I18n', $method), $args);
+        return call_user_func_array(['Garp_I18n', $method], $args);
     }
 
     /**
@@ -86,7 +86,7 @@ class G_View_Helper_I18n extends Zend_View_Helper_Abstract {
      */
     protected function _constructHomeFallbackUrl($altLang) {
         // Default to the homepage
-        $homeUrl = $this->view->url(array(), 'home');
+        $homeUrl = $this->view->url([], 'home');
         // Strip the baseUrl from the current url, because that contains the current language.
         $baseUrl = $this->view->baseUrl();
         $homeUrl = str_replace($baseUrl, '', $homeUrl);

@@ -4,36 +4,36 @@
  * @author David Spreekmeester | grrr.nl
  */
 abstract class Garp_Spawn_Config_Validator_Model_Abstract implements Garp_Spawn_Config_Validator_Interface {
-    protected $_mandatoryProps = array('id');
+    protected $_mandatoryProps = ['id'];
 
-    protected $_valueRestrictedProps = array(
-        'module' => array('default', 'garp')
-    );
+    protected $_valueRestrictedProps = [
+        'module' => ['default', 'garp']
+    ];
 
-    protected $_valueTypeRestrictedProps = array(
-        'order' => array(
+    protected $_valueTypeRestrictedProps = [
+        'order' => [
             'type' => 'string',
             'message' => "The 'order' attribute in the model configuration should be a string. To sort by multiple columns, use comma seperated SQL syntax, i.e.: 'name ASC, created DESC'."
-        )
-    );
+        ]
+    ];
 
-    protected $_fieldTypeRestrictions = array(
-        'checkbox' => array(
+    protected $_fieldTypeRestrictions = [
+        'checkbox' => [
             'required' => true
-        )
-    );
+        ]
+    ];
 
 
     /* Translations from internal model property (key) to configuration field (value).
      * i.e.: Since not all model fields can be configurated directly,
      * the 'fields' of a model are defined in config files as 'inputs'. */
-    protected $_translatedProperties = array('fields' => 'inputs');
+    protected $_translatedProperties = ['fields' => 'inputs'];
 
-    protected $_configurableRelationTypes = array('hasOne', 'belongsTo', 'hasAndBelongsToMany');
+    protected $_configurableRelationTypes = ['hasOne', 'belongsTo', 'hasAndBelongsToMany'];
 
     protected $_defaultRelationType = 'hasOne';
 
-    protected $_configurablePropertiesOutsideOfModel = array('listFields');
+    protected $_configurablePropertiesOutsideOfModel = ['listFields'];
 
 
     public function validate(ArrayObject $config) {
@@ -52,7 +52,7 @@ abstract class Garp_Spawn_Config_Validator_Model_Abstract implements Garp_Spawn_
 
     protected function _getAllowedConfigProps() {
         $modelClass = new ReflectionClass('Garp_Spawn_Model_Base');
-        $getName = function($value) { return $value->name; };
+        $getName = (fn($value) => $value->name);
         $modelProps = array_map($getName, $modelClass->getProperties(ReflectionProperty::IS_PUBLIC));
 
         foreach ($this->_translatedProperties as $fromProp => $toProp) {
@@ -162,7 +162,7 @@ abstract class Garp_Spawn_Config_Validator_Model_Abstract implements Garp_Spawn_
      * Throw a warning when a field is set to unique, while its maxLength is too large.
      */
     protected function _validateUniqueKeyLength(ArrayObject $config) {
-        $restrictedFieldTypes = array('text', 'html');
+        $restrictedFieldTypes = ['text', 'html'];
 
         if (array_key_exists('inputs', (array)$config)) {
             foreach ($config['inputs'] as $inputName => $input) {
@@ -198,9 +198,9 @@ abstract class Garp_Spawn_Config_Validator_Model_Abstract implements Garp_Spawn_
     protected function _validateIdCharacters(ArrayObject $config) {
         $id = $config['id'];
         if ($id[0] === '_') {
-            $id = substr($id, 1);
+            $id = substr((string) $id, 1);
         }
-        if (!ctype_alnum($id)) {
+        if (!ctype_alnum((string) $id)) {
             throw new Exception("Your model name '{$id}' should only consist of alphanumeric characters.");
         }
     }

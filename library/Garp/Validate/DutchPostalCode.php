@@ -13,10 +13,10 @@ class Garp_Validate_DutchPostalCode extends Zend_Validate_Abstract {
     const INVALID_INPUT = 'invalidInput';
     const INVALID_POSTALCODE = 'invalidPostcode';
 
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::INVALID_INPUT    => "'%value%' is not a string",
         self::INVALID_POSTALCODE => "'%value%' is not a valid Dutch postcode."
-    );
+    ];
 
     public function isValid($value) {
         $this->_setValue($value);

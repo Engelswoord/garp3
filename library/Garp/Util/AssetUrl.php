@@ -7,7 +7,7 @@
  * @author  Harmen Janssen <harmen@grrr.nl>
  * @author  David Spreekmeester <david@grrr.nl>
  */
-class Garp_Util_AssetUrl implements JsonSerializable {
+class Garp_Util_AssetUrl implements JsonSerializable, \Stringable {
     /**
      * Statically stored rev-manifest json file
      *
@@ -58,7 +58,7 @@ class Garp_Util_AssetUrl implements JsonSerializable {
      */
     public function getVersionedQuery(string $file): string {
         $versionAppendix = (new Garp_Version())->__toString() ?: intval(microtime(true));
-        return !empty($file) && substr($file, -1) !== '/'
+        return !empty($file) && !str_ends_with($file, '/')
             ? $file . '?' . $versionAppendix
             : $file;
     }
@@ -78,12 +78,12 @@ class Garp_Util_AssetUrl implements JsonSerializable {
         }
 
         // Strip appended query string
-        if (false !== strpos($file, '?')) {
-            $file = substr($file, 0, strpos($file, '?'));
+        if (str_contains((string) $file, '?')) {
+            $file = substr((string) $file, 0, strpos((string) $file, '?'));
         }
 
-        $fileParts = explode('.', $file);
-        $lastPart = $fileParts[sizeof($fileParts) - 1];
+        $fileParts = explode('.', (string) $file);
+        $lastPart = $fileParts[count($fileParts) - 1];
 
         return $lastPart;
     }
@@ -94,7 +94,7 @@ class Garp_Util_AssetUrl implements JsonSerializable {
             return $file;
         }
 
-        $base = basename($file);
+        $base = basename((string) $file);
         $manifest = $this->getRevManifest();
         if (!$manifest) {
             throw new Exception('There is no manifest file for environment ' . APPLICATION_ENV);
@@ -103,7 +103,7 @@ class Garp_Util_AssetUrl implements JsonSerializable {
         if (array_key_exists($base, $manifest)) {
             $base = $manifest[$base];
         }
-        return dirname($file) . DIRECTORY_SEPARATOR . $base;
+        return dirname((string) $file) . DIRECTORY_SEPARATOR . $base;
     }
 
     /**
@@ -123,7 +123,7 @@ class Garp_Util_AssetUrl implements JsonSerializable {
         return self::$_revManifest;
     }
 
-    public function __toString() {
+    public function __toString(): string {
         return strval($this->_url);
     }
 

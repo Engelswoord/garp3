@@ -75,7 +75,7 @@ class Garp_Spawn_Config_Model_Set extends ArrayObject {
     }
 
     protected function _listModelIds() {
-        $modelIds = array();
+        $modelIds = [];
         $objectIds = $this->_storage->listObjectIds();
 
         foreach ($objectIds as $objectId) {

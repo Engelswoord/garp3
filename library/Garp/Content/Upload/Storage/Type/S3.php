@@ -44,7 +44,7 @@ class Garp_Content_Upload_Storage_Type_S3 extends Garp_Content_Upload_Storage_Ty
 
         foreach ($dirList as $path) {
             if ($this->_isFilePath($path) && $this->_isAllowedPath($path)) {
-                $baseName = basename($path);
+                $baseName = basename((string) $path);
                 $fileNode = new Garp_Content_Upload_FileNode($baseName, $type);
                 $fileList->addEntry($fileNode);
             }
@@ -55,7 +55,7 @@ class Garp_Content_Upload_Storage_Type_S3 extends Garp_Content_Upload_Storage_Ty
 
 
     protected function _isFilePath($path) {
-        return $path[strlen($path) - 1] !== '/';
+        return $path[strlen((string) $path) - 1] !== '/';
     }
 
 
@@ -124,8 +124,8 @@ class Garp_Content_Upload_Storage_Type_S3 extends Garp_Content_Upload_Storage_Ty
      * @return  String          The relative path to the directory where the file resides.
      */
     protected function _getRelDir($path) {
-        $filename = basename($path);
-        $dir = substr($path, 0, strlen($path) - strlen($filename));
+        $filename = basename((string) $path);
+        $dir = substr((string) $path, 0, strlen((string) $path) - strlen($filename));
         return $dir;
     }
 

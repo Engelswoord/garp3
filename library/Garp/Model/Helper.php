@@ -20,7 +20,7 @@ abstract class Garp_Model_Helper extends Garp_Util_ObserverAbstract {
      * @param Array $config Configuration values.
      * @return Void
      */
-    public function __construct($config = array()) {
+    public function __construct($config = []) {
         $this->_setup($config);
     }
 

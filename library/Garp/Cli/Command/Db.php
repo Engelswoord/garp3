@@ -15,7 +15,7 @@ class Garp_Cli_Command_Db extends Garp_Cli_Command {
      * @param array $args
      * @return void
      */
-    public function info(array $args = array()) {
+    public function info(array $args = []) {
         if (empty($args)) {
             Garp_Cli::errorOut('Insufficient arguments');
             Garp_Cli::lineOut('Usage: garp Db info <tablename>');
@@ -28,7 +28,7 @@ class Garp_Cli_Command_Db extends Garp_Cli_Command {
         Garp_Cli::lineOut('');
     }
 
-    public function sync(array $args = array()) {
+    public function sync(array $args = []) {
         $sourceEnv = $args ? current($args) : null;
         //@phpstan-ignore class.notFound
         new Garp_Db_Synchronizer($sourceEnv);
@@ -44,13 +44,13 @@ class Garp_Cli_Command_Db extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function replace(array $args = array()) {
+    public function replace(array $args = []) {
         $subject = !empty($args[0]) ? $args[0] :
             Garp_Cli::prompt('What is the string you wish to replace?');
         $replacement = !empty($args[1]) ? $args[1] :
             Garp_Cli::prompt('What is the new string you wish to insert?');
-        $subject = trim($subject);
-        $replacement = trim($replacement);
+        $subject = trim((string) $subject);
+        $replacement = trim((string) $replacement);
 
         $models = Garp_Content_Api::getAllModels();
         foreach ($models as $model) {
@@ -73,14 +73,14 @@ class Garp_Cli_Command_Db extends Garp_Cli_Command {
             return false;
         }
         $config = $adapter->getConfig();
-        $params = array(
-            '-u' . escapeshellarg($config['username']),
-            '-p' . escapeshellarg($config['password']),
-            '-h' . escapeshellarg($config['host']),
-            ' ' . escapeshellarg($config['dbname'])
-        );
+        $params = [
+            '-u' . escapeshellarg((string) $config['username']),
+            '-p' . escapeshellarg((string) $config['password']),
+            '-h' . escapeshellarg((string) $config['host']),
+            ' ' . escapeshellarg((string) $config['dbname'])
+        ];
         $cmd = 'mysql ' . implode(' ', $params);
-        $process = proc_open($cmd, array(0 => STDIN, 1 => STDOUT, 2 => STDERR), $pipes);
+        $process = proc_open($cmd, [0 => STDIN, 1 => STDOUT, 2 => STDERR], $pipes);
         $proc_status = proc_get_status($process);
         $exit_code = proc_close($process);
         return ($proc_status["running"] ? $exit_code : $proc_status["exitcode"] ) == 0;
@@ -150,7 +150,7 @@ class Garp_Cli_Command_Db extends Garp_Cli_Command {
      */
     protected function _getTextualColumns(Garp_Model_Db $model) {
         $columns = $model->info(Zend_Db_Table::METADATA);
-        $textTypes = array('varchar', 'text', 'mediumtext', 'longtext', 'tinytext');
+        $textTypes = ['varchar', 'text', 'mediumtext', 'longtext', 'tinytext'];
         foreach ($columns as $column => $meta) {
             if (!in_array($meta['DATA_TYPE'], $textTypes)) {
                 unset($columns[$column]);

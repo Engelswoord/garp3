@@ -21,7 +21,7 @@ class Garp_Model_Behavior_ImageScalable extends Garp_Model_Behavior_Abstract {
      *
      * @var Array
      */
-    protected $_synchronouslyScaledTemplates = array();
+    protected $_synchronouslyScaledTemplates = [];
 
     /**
      * Configure
@@ -96,7 +96,7 @@ class Garp_Model_Behavior_ImageScalable extends Garp_Model_Behavior_Abstract {
             new Garp_Job_Background(
                 'image generateScaled --filename=' . $filename
             );
-        } catch (Garp_Job_Background_Exception $e) {
+        } catch (Garp_Job_Background_Exception) {
             // Recover by scaling sync
             return $this->_scaleSync($filename, $id, null);
         }

@@ -40,7 +40,7 @@ abstract class Garp_Spawn_Js_Model_File_Abstract {
      * @return Void
      */
     protected function _ensurePathExistence($filePath) {
-        $folders = explode(DIRECTORY_SEPARATOR, $filePath);
+        $folders = explode(DIRECTORY_SEPARATOR, (string) $filePath);
         // discard the actual file
         array_pop($folders);
         $path = implode(DIRECTORY_SEPARATOR, $folders);

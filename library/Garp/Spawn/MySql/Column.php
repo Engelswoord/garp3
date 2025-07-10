@@ -6,7 +6,6 @@
  * @author  David Spreekmeester <david@grrr.nl>
  */
 class Garp_Spawn_MySql_Column {
-    public $position;
     public $name;
     public $type;
     public $default         = null;
@@ -23,13 +22,13 @@ class Garp_Spawn_MySql_Column {
 
     protected $_statement;
 
-    protected $_ignorableDiffProperties = array('position');
+    protected $_ignorableDiffProperties = ['position'];
 
-    protected $_columnOptions = array(
+    protected $_columnOptions = [
         'not_nullable'   => 'NOT NULL',
         'unsigned'       => 'UNSIGNED',
         'auto_increment' => 'AUTO_INCREMENT'
-    );
+    ];
 
 
     /**
@@ -37,8 +36,7 @@ class Garp_Spawn_MySql_Column {
      * @param string $line Line with a column definition statement in SQL
      * @return void
      */
-    public function __construct($position, $line) {
-        $this->position = $position;
+    public function __construct(public $position, $line) {
         $params = $this->_parseColumnStatement($line);
 
         foreach ($params as $pName => $pValue) {
@@ -47,7 +45,7 @@ class Garp_Spawn_MySql_Column {
             } else {
                 $refl = new ReflectionObject($this);
                 $reflProps = $refl->getProperties(ReflectionProperty::IS_PUBLIC);
-                $publicProps = array();
+                $publicProps = [];
                 foreach ($reflProps as $reflProp) {
                     if ($reflProp->name !== 'position') {
                         $publicProps[] = $reflProp->name;
@@ -67,7 +65,7 @@ class Garp_Spawn_MySql_Column {
      *               compared to the provided column
      */
     public function getDiffProperties(Garp_Spawn_MySql_Column $columnToCompareWith) {
-        $diffPropertyNames = array();
+        $diffPropertyNames = [];
 
         $refl = new ReflectionObject($this);
         $reflProps = $refl->getProperties(ReflectionProperty::IS_PUBLIC);
@@ -95,7 +93,7 @@ class Garp_Spawn_MySql_Column {
      *                f.i.: col1 BIGINT UNSIGNED DEFAULT 1
      */
     public function renderSqlDefinition() {
-        $nodes = array();
+        $nodes = [];
         $nodes[] = '`' . $this->name . '`';
 
         $typeStatement = $this->type;
@@ -109,7 +107,7 @@ class Garp_Spawn_MySql_Column {
         }
         $nodes[] = $typeStatement;
 
-        if ($this->unsigned && $this->isNumeric($this->type)) {
+        if ($this->unsigned && static::isNumeric($this->type)) {
             $nodes[] = 'UNSIGNED';
         }
 
@@ -125,7 +123,7 @@ class Garp_Spawn_MySql_Column {
             $default = $this->default;
 
             $default = $this->_convertDefaultIfNecessary($default);
-            $default = $this->quoteIfNecessary($this->type, $default);
+            $default = static::quoteIfNecessary($this->type, $default);
             $nodes[] = 'DEFAULT ' . $default;
         } elseif (is_null($this->default) && $this->nullable) {
             $nodes[] = 'DEFAULT NULL';
@@ -204,7 +202,7 @@ class Garp_Spawn_MySql_Column {
     }
 
     static public function getRequiredAndDefault(Garp_Spawn_Field $field) {
-        $out = array();
+        $out = [];
         if ($field->type === 'checkbox'
             || ($field->required && $field->relationType !== 'hasOne')
         ) {
@@ -274,26 +272,21 @@ class Garp_Spawn_MySql_Column {
     }
 
 
-    static public function isNumeric($sqlType) {
-        switch ($sqlType) {
-        case 'numeric':
-        case 'timestamp':
-        case 'bigint':
-        case 'tinyint':
-        case 'int':
-        case 'float':
-            return true;
-        }
-        return false;
+    public static function isNumeric($sqlType)
+    {
+        return match ($sqlType) {
+            'numeric', 'timestamp', 'bigint', 'tinyint', 'int', 'float' => true,
+            default => false,
+        };
     }
 
 
     protected function _parseColumnStatement($line) {
-        $matches = array();
+        $matches = [];
         // @codingStandardsIgnoreStart
         $pattern = '/`(?P<name>\w+)` (?P<type>[\w]*)(\(((?P<length>\d*),?\s*(?P<decimals>\d*))(?P<options>[^\)]*)\))? ?(?P<unsigned>UNSIGNED)? ?(?P<not_nullable>NOT NULL)? ?(?P<auto_increment>AUTO_INCREMENT)? ?(DEFAULT \'?(?P<default>[^\',]*)\'?)?/i';
         // @codingStandardsIgnoreEnd
-        preg_match($pattern, trim($line), $matches);
+        preg_match($pattern, trim((string) $line), $matches);
         $matches['_statement'] = $matches[0];
 
         foreach ($matches as $key => $match) {
@@ -305,8 +298,8 @@ class Garp_Spawn_MySql_Column {
         if (array_key_exists('default', $matches)) {
             if ($matches['default'] === 'NULL') {
                 $matches['default'] = null;
-            } elseif ($this->isNumeric($matches['type'])) {
-                if (strpos($matches['default'], '.') !== false) {
+            } elseif (static::isNumeric($matches['type'])) {
+                if (str_contains($matches['default'], '.')) {
                     $matches['default'] = (float)$matches['default'];
                 } else {
                     $matches['default'] = (int)$matches['default'];
@@ -331,7 +324,7 @@ class Garp_Spawn_MySql_Column {
      */
     protected function _propExistsAndMatches(array $matches, $prop) {
         $existsAndMatches = array_key_exists($prop, $matches) &&
-            strcasecmp($matches[$prop], $this->_columnOptions[$prop]) === 0;
+            strcasecmp((string) $matches[$prop], (string) $this->_columnOptions[$prop]) === 0;
         return $existsAndMatches;
     }
 

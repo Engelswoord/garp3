@@ -13,13 +13,13 @@ class Garp_Cli_Command_Slugs extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
-    public function generate(array $args = array()) {
+    public function generate(array $args = []) {
         if (empty($args)) {
             $this->help();
             return false;
         }
         $modelName = $args[0];
-        if (strpos($modelName, '_') === false) {
+        if (!str_contains((string) $modelName, '_')) {
             $modelName = 'Model_' . $modelName;
         }
         $overwrite = !empty($args[1]) ? $args[1] : false;
@@ -29,21 +29,21 @@ class Garp_Cli_Command_Slugs extends Garp_Cli_Command {
         $model->setCacheQueries(false);
 
         // Fetch Sluggable thru the model as to use the right slug-configuration
-        list($sluggable, $model) = $this->_resolveSluggableBehavior($model);
+        [$sluggable, $model] = $this->_resolveSluggableBehavior($model);
         if (is_null($sluggable)) {
             Garp_Cli::errorOut('This model is not sluggable.');
             return false;
         }
 
         // Array to record fails
-        $fails = array();
+        $fails = [];
         $records = $model->fetchAll();
         foreach ($records as $record) {
             if (!$overwrite && $record->slug) {
                 continue;
             }
             // Mimic a beforeInsert to create the slug in a separate array $data
-            $args = array($model, $record->toArray());
+            $args = [$model, $record->toArray()];
             $sluggable->beforeInsert($args);
 
             // Since there might be more than one changed column, we use this loop
@@ -89,7 +89,7 @@ class Garp_Cli_Command_Slugs extends Garp_Cli_Command {
     protected function _resolveSluggableBehavior(Garp_Model_Db $model) {
         $sluggable = $model->getObserver('Sluggable');
         if (!is_null($sluggable)) {
-            return array($sluggable, $model);
+            return [$sluggable, $model];
         }
         // Try on a derived model
         $translatable = $model->getObserver('Translatable');
@@ -97,6 +97,6 @@ class Garp_Cli_Command_Slugs extends Garp_Cli_Command {
             $model = $translatable->getI18nModel($model->getUnilingualModel());
             return $this->_resolveSluggableBehavior($model);
         }
-        return array(null, null);
+        return [null, null];
     }
 }

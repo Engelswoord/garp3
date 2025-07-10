@@ -14,7 +14,7 @@ class Garp_Model_Db_AuthLinkedin extends Model_Base_AuthLinkedin {
 
     public function init() {
         parent::init();
-        $this->registerObserver(new Garp_Model_Behavior_Authenticatable(array($this)));
+        $this->registerObserver(new Garp_Model_Behavior_Authenticatable([$this]));
     }
 
     /**
@@ -30,10 +30,10 @@ class Garp_Model_Db_AuthLinkedin extends Model_Base_AuthLinkedin {
         $userModel = new Model_User();
         $userId    = $userModel->insert($props);
         $userData  = $userModel->find($userId)->current();
-        $this->insert(array(
+        $this->insert([
             'linkedin_uid' => $linkedinId,
             'user_id' => $userId
-        ));
+        ]);
 
         $this->getObserver('Authenticatable')->updateLoginStats($userId);
         return $userData;

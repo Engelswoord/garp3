@@ -11,7 +11,7 @@ class Garp_Model_Db_AuthPasswordless extends Model_Base_AuthPasswordless {
 
     public function init() {
         parent::init();
-        $this->registerObserver(new Garp_Model_Behavior_Authenticatable(array($this)));
+        $this->registerObserver(new Garp_Model_Behavior_Authenticatable([$this]));
     }
 
     public function fetchByUserId($userId) {

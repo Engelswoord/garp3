@@ -38,7 +38,7 @@ class Garp_Service_MailChimp extends Zend_Service_Abstract {
      */
     public function __construct($apiKey = null) {
         $this->_apiKey = $apiKey ?: $this->_getApiKey();
-        $datacenterId = explode('-', $this->_apiKey, 2);
+        $datacenterId = explode('-', (string) $this->_apiKey, 2);
         
         if (!empty($datacenterId[1])) {
             $this->_datacenterId = $datacenterId[1];
@@ -59,7 +59,7 @@ class Garp_Service_MailChimp extends Zend_Service_Abstract {
         }
         $options->obligate('email_address')
                 ->obligate('id')
-                ->setDefault('merge_vars', array('LNAME' => '', 'FNAME' => ''))
+                ->setDefault('merge_vars', ['LNAME' => '', 'FNAME' => ''])
                 ;
         $options['method'] = 'listSubscribe';
         return $this->_send((array)$options);
@@ -73,11 +73,11 @@ class Garp_Service_MailChimp extends Zend_Service_Abstract {
      * @return StdClass
      */
     public function templateAdd($name, $html) {
-        return $this->_send(array(
+        return $this->_send([
             'name' => $name,
             'html' => $html,
             'method' => 'templateAdd'
-        ));
+        ]);
     }
     
     
@@ -101,10 +101,10 @@ class Garp_Service_MailChimp extends Zend_Service_Abstract {
      */
     protected function _send(array $options) {
         $options['apikey'] = $this->_apiKey;
-        $get = array(
+        $get = [
             'method' => $options['method'],
             'output' => $this->_outputType
-        );
+        ];
         unset($options['method']);
         
         $uri  = 'http://'.$this->_datacenterId.'.api.mailchimp.com/1.3/?';

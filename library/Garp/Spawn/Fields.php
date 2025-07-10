@@ -5,10 +5,10 @@
  * @author David Spreekmeester | grrr.nl
  */
 class Garp_Spawn_Fields {
-    public $listFieldNames = array();
+    public $listFieldNames = [];
 
     /** @var Array $_fields Numeric array, where the key is the position of the field, and the value a Garp_Spawn_Field object. */
-    protected $_fields = array();
+    protected $_fields = [];
 
     /** @var Garp_Spawn_Model_Base */
     protected $_model;
@@ -38,7 +38,7 @@ class Garp_Spawn_Fields {
     * @param String $origin Context in which this field is added. Can be 'config', 'default', 'relation' or 'behavior'.
     * @param String $name Field name.
     */
-    public function add($origin, $name, array $params = array()) {
+    public function add($origin, $name, array $params = []) {
         if (!$this->exists($name)) {
             $field = new Garp_Spawn_Field($origin, $name, $params);
             if ($origin === 'default')
@@ -81,7 +81,7 @@ class Garp_Spawn_Fields {
     }
     
     public function getField($name) {
-        foreach ($this->_fields as $position => $field) {
+        foreach ($this->_fields as $field) {
             if ($field->name === $name) {
                 return $field;
             }
@@ -101,10 +101,10 @@ class Garp_Spawn_Fields {
     public function getFields($filterPropName = null, $filterPropValue = null) {
         if ($filterPropName) {
             if (count(func_get_args()) !== 2) {
-                throw new Exception(get_class($this) . "::getFields() needs either 0 or 2 arguments.");
+                throw new Exception(static::class . "::getFields() needs either 0 or 2 arguments.");
             }
 
-            $out = array();
+            $out = [];
             foreach ($this->_fields as $position => $field) {
                 if ($field->{$filterPropName} == $filterPropValue) {
                     /*  if this field is a relation field, make sure the field label is the relation label,
@@ -128,7 +128,7 @@ class Garp_Spawn_Fields {
      * @return Array Numeric array of names of Garp_Spawn_Field objects
      */
     public function getFieldNames($filterPropName = null, $filterPropValue = null) {
-        $out = array();
+        $out = [];
         $fields = $this->getFields($filterPropName, $filterPropValue);
 
         foreach ($fields as $position => $field) {
@@ -143,16 +143,14 @@ class Garp_Spawn_Fields {
      */
     public function getListFieldNames() {
         $listFieldNames = $this->listFieldNames;
-        $fieldDefs      = array();
+        $fieldDefs      = [];
 
         $self = $this;
-        $isSuitable = function($item) use ($self) {
-            return $self->isSuitableListFieldName($item);
-        };
+        $isSuitable = (fn($item) => $self->isSuitableListFieldName($item));
 
         $suitableFieldNames = array_filter($listFieldNames, $isSuitable);
         if (!$suitableFieldNames) {
-            $suitableFieldNames = array('id');
+            $suitableFieldNames = ['id'];
         }
         return $suitableFieldNames;
     }
@@ -165,7 +163,7 @@ class Garp_Spawn_Fields {
     public function isSuitableListFieldName($listFieldName) {   
         try {
             $field = $this->getField($listFieldName);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return;
         }
 
@@ -188,7 +186,7 @@ class Garp_Spawn_Fields {
         if ($this->_configuredListFields) {
             return $this->_configuredListFields;
         } else {
-            $listFields = array();
+            $listFields = [];
             
             if ($this->exists('image_id')) {
                 $listFields[] = 'image_id';
@@ -213,13 +211,13 @@ class Garp_Spawn_Fields {
 
     protected function _addWeighableRelationFields() {
         $weighableRels = $this->_model->relations->getRelations('weighable', true);
-        $fieldConfig = array(
+        $fieldConfig = [
             'type' => 'numeric',
             'required' => false,
             'default' => 0,
             'editable' => false,
             'visible' => false
-        );
+        ];
 
         foreach ($weighableRels as $relName => $rel) {
             $this->add('relation', Garp_Spawn_Util::camelcased2underscored($relName.'_weight'), $fieldConfig);

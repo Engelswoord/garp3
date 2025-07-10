@@ -64,7 +64,7 @@ class Garp_Spawn_MySql_Table_Synchronizer {
             $keysInSync = false;
         }
 
-        $colsInSync = $this->_syncColumns($target);
+        $colsInSync = $this->_syncColumns();
 
         $i18nTableFork = $this->_detectI18nTableFork();
 
@@ -195,7 +195,7 @@ class Garp_Spawn_MySql_Table_Synchronizer {
 
         foreach ($source->columns as $sourceColumn) {
             $target->columnExists($sourceColumn) ?
-                $this->_alterColumn($sourceColumn, $target) :
+                $this->_alterColumn($sourceColumn) :
                 $target->addColumn($sourceColumn);
         }
     }
@@ -286,7 +286,7 @@ class Garp_Spawn_MySql_Table_Synchronizer {
     }
 
     protected function _isBindingModel(Garp_Spawn_Model_Abstract $model) {
-        return get_class($model) === 'Garp_Spawn_Model_Binding';
+        return $model::class === 'Garp_Spawn_Model_Binding';
     }
 
 }

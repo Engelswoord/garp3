@@ -15,20 +15,18 @@ class Garp_File_Unzipper {
     const MAX_TRIES = 10;
 
     /**
-     * Original data
-     *
-     * @var string
-     */
-    protected $_original;
-
-    /**
      * Class constructor
      *
-     * @param string $obj The raw bytes
+     * @param string $_original The raw bytes
      * @return void
      */
-    public function __construct($obj) {
-        $this->_original = $obj;
+    public function __construct(
+        /**
+         * Original data
+         */
+        protected $_original
+    )
+    {
     }
 
     /**

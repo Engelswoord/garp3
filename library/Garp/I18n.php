@@ -59,25 +59,23 @@ class Garp_I18n {
      * @return array
      */
     public static function getLocalizedRoutes(array $routes, array $locales) {
-        $localizedRoutes = array();
+        $localizedRoutes = [];
         $defaultLocale = self::getDefaultLocale();
-        $requiredLocalesRegex = '^(' . join('|', $locales) . ')$';
+        $requiredLocalesRegex = '^(' . implode('|', $locales) . ')$';
 
         foreach ($routes as $key => $value) {
             // First let's add the default locale to this routes defaults.
-            $defaults = isset($value['defaults'])
-                ? $value['defaults']
-                : array();
+            $defaults = $value['defaults'] ?? [];
 
             // Always default all routes to the Zend_Locale default
-            $value['defaults'] = array_merge(array('locale' => $defaultLocale ), $defaults);
+            $value['defaults'] = array_merge(['locale' => $defaultLocale ], $defaults);
 
             //$routes[$key] = $value;
 
             // Get our route and make sure to remove the first forward slash
             // since it's not needed.
             $routeString = $value['route'];
-            $routeString = ltrim($routeString, '/\\');
+            $routeString = ltrim((string) $routeString, '/\\');
 
             // Modify our normal route to have the locale parameter.
             if (!isset($value['type']) || $value['type'] === 'Zend_Controller_Router_Route') {
@@ -85,11 +83,11 @@ class Garp_I18n {
                 $value['reqs']['locale'] = $requiredLocalesRegex;
                 $localizedRoutes['locale_' . $key] = $value;
             } else if ($value['type'] === 'Zend_Controller_Router_Route_Regex') {
-                $value['route'] = '(' . join('|', $locales) . ')\/' . $routeString;
+                $value['route'] = '(' . implode('|', $locales) . ')\/' . $routeString;
 
                 // Since we added the local regex match, we need to bump the existing
                 // match numbers plus one.
-                $map = isset($value['map']) ? $value['map'] : array();
+                $map = $value['map'] ?? [];
                 foreach ($map as $index => $word) {
                     unset($map[$index++]);
                     $map[$index] = $word;
@@ -121,9 +119,7 @@ class Garp_I18n {
      */
     public static function languageToTerritory($lang) {
         $config = Zend_Registry::get('config');
-        $territory = isset($config->resources->locale->territories->{$lang}) ?
-            $config->resources->locale->territories->{$lang} :
-            Zend_Locale::getLocaleToTerritory($lang);
+        $territory = $config->resources->locale->territories->{$lang} ?? Zend_Locale::getLocaleToTerritory($lang);
         return $territory;
     }
 
@@ -134,14 +130,14 @@ class Garp_I18n {
      * @return Zend_Translate
      */
     public static function getTranslateByLocale(Zend_Locale $locale) {
-        $adapterParams = array(
+        $adapterParams = [
             'locale' => $locale,
             'disableNotices' => true,
             'scan' => Zend_Translate::LOCALE_FILENAME,
             // Argh: the 'content' key is necessary in order to load the actual data,
             // even when using an adapter that ignores it.
             'content' => '!'
-        );
+        ];
 
         // Figure out which adapter to use
         $translateAdapter = 'array';

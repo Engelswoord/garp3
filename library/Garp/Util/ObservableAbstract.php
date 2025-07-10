@@ -12,7 +12,7 @@ abstract class Garp_Util_ObservableAbstract implements Garp_Util_Observable {
      *
      * @var array
      */
-    protected $_observers = array();
+    protected $_observers = [];
 
     /**
      * Register observer. The observer will then listen to events broadcasted
@@ -52,7 +52,7 @@ abstract class Garp_Util_ObservableAbstract implements Garp_Util_Observable {
      * @param array $args The arguments you wish to pass to the observers
      * @return Garp_Util_Observable $this
      */
-    public function notifyObservers($event, array $args = array()) {
+    public function notifyObservers($event, array $args = []) {
         foreach ($this->_observers as $observer) {
             $observer->receiveNotification($event, $args);
         }

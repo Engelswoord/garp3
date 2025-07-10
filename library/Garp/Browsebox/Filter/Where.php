@@ -16,7 +16,7 @@ class Garp_Browsebox_Filter_Where extends Garp_Browsebox_Filter_Abstract {
      * e.g. "foo = ?" and "bar LIKE ?".
      * @var Array
      */
-    protected $_config = array();
+    protected $_config = [];
 
 
     /**
@@ -31,7 +31,7 @@ class Garp_Browsebox_Filter_Where extends Garp_Browsebox_Filter_Abstract {
      * @param Array $params
      * @return Void
      */
-    public function init(array $params = array()) {
+    public function init(array $params = []) {
         if (count($params) !== count($this->_config)) {
             throw new Garp_Browsebox_Exception('Number of parameters does not match the number of required parameters in filter "'.$this->getId().'"');
         }

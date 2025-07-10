@@ -24,11 +24,11 @@ class Garp_Spawn_MySql_View_Joint extends Garp_Spawn_MySql_View_Abstract {
     }
 
     public function renderSql() {
-        $statements = array();
+        $statements = [];
 
         $singularRelations = $this->_model->relations->getRelations(
             'type',
-            array('hasOne', 'belongsTo')
+            ['hasOne', 'belongsTo']
         );
         if (count($singularRelations) || $this->_model->isMultilingual()) {
             $statements[] = $this->_renderSelect($singularRelations);
@@ -47,16 +47,14 @@ class Garp_Spawn_MySql_View_Joint extends Garp_Spawn_MySql_View_Abstract {
      * @return string
      */
     protected function _renderJoinsToLocalizedSelf() {
-        $out = array();
+        $out = [];
         $otherLocales = array_filter(
             Garp_I18n::getLocales(),
-            function ($locale) {
-                return Garp_I18n::getDefaultLocale() !== $locale;
-            }
+            fn($locale) => Garp_I18n::getDefaultLocale() !== $locale
         );
         $baseTableName = $this->getTableName();
         foreach ($otherLocales as $locale) {
-            $view = strtolower($this->_model->id) . '_' . $locale;
+            $view = strtolower((string) $this->_model->id) . '_' . $locale;
             $out[] = "LEFT JOIN `{$view}` ON `{$view}`.`id` = `{$baseTableName}`.`id`";
         }
         return implode("\n", $out);
@@ -102,7 +100,7 @@ class Garp_Spawn_MySql_View_Joint extends Garp_Spawn_MySql_View_Abstract {
 
         $select = "SELECT `{$tableName}`.*,\n";
 
-        $relNodes = array();
+        $relNodes = [];
         foreach ($singularRelations as $relName => $rel) {
             if ($rel->multilingual) {
                 // Generate entry per language
@@ -142,14 +140,14 @@ class Garp_Spawn_MySql_View_Joint extends Garp_Spawn_MySql_View_Abstract {
                         $otherTableName
                     ) {
                         $tableName = strtolower($modelId . '_' . $lang);
-                        $localizedViewName = strtolower($relName) . '_' . $lang;
+                        $localizedViewName = strtolower((string) $relName) . '_' . $lang;
                         return "\nLEFT JOIN `{$otherTableName}` AS `{$localizedViewName}` ON " .
                         "`{$tableName}`.`{$rel->column}` = `{$localizedViewName}`.`id`";
                     }, Garp_I18n::getLocales()
                 )
             );
         }
-        $lcRelName    = strtolower($relName);
+        $lcRelName    = strtolower((string) $relName);
         $relTableName = $this->_getOtherTableName($rel->model);
         return "\nLEFT JOIN `{$relTableName}` AS `{$lcRelName}` ON " .
             "`{$tableName}`.`{$rel->column}` = `{$lcRelName}`.`id`";
@@ -158,14 +156,12 @@ class Garp_Spawn_MySql_View_Joint extends Garp_Spawn_MySql_View_Abstract {
     protected function _getRecordLabelSqlForMultilingualRelation($relName, $rel) {
         $self = $this;
         return array_map(
-            function ($lang) use ($self, $relName, $rel) {
-                return $self->getRecordLabelSqlForRelation($relName, $rel, $lang);
-            }, Garp_I18n::getLocales()
+            fn($lang) => $self->getRecordLabelSqlForRelation($relName, $rel, $lang), Garp_I18n::getLocales()
         );
     }
 
     public function getRecordLabelSqlForRelation($relationName, $relation, $locale = null) {
-        $tableAlias = strtolower($relationName);
+        $tableAlias = strtolower((string) $relationName);
         if ($locale) {
             $tableAlias = "{$tableAlias}_{$locale}";
         }
@@ -235,10 +231,8 @@ class Garp_Spawn_MySql_View_Joint extends Garp_Spawn_MySql_View_Abstract {
      * @return callable
      */
     protected function _createAddFieldLabelDefinitionFn($tableAlias) {
-        return function ($columnName) use ($tableAlias) {
-            return "IF(`{$tableAlias}`.`{$columnName}` <> \"\", " .
-                "`{$tableAlias}`.`{$columnName}`, NULL)";
-        };
+        return fn($columnName) => "IF(`{$tableAlias}`.`{$columnName}` <> \"\", " .
+            "`{$tableAlias}`.`{$columnName}`, NULL)";
     }
 
     protected function _modelHasFirstAndLastNameListFields(
@@ -252,7 +246,7 @@ class Garp_Spawn_MySql_View_Joint extends Garp_Spawn_MySql_View_Abstract {
             return
                 $model->fields->getField('first_name') &&
                 $model->fields->getField('last_name');
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         return false;

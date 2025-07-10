@@ -15,11 +15,7 @@ class Garp_Content_Import_Json extends Garp_Content_Import_Abstract {
      */
     public function getSampleData() {
         $data = $this->_getJson();
-        return array_map(function($datum) {
-            return /*array_values(*/array_filter($datum, function($datum) {
-                return is_scalar($datum);
-            })/*)*/;
-        }, array_splice($data, 0, 3));
+        return array_map(fn($datum) => array_filter($datum, fn($datum) => is_scalar($datum)), array_splice($data, 0, 3));
     }
 
     /**
@@ -31,7 +27,7 @@ class Garp_Content_Import_Json extends Garp_Content_Import_Abstract {
      */
     public function save(Garp_Model $model, array $mapping, array $options) {
         $data = $this->_getJson();
-        foreach ($data as $i => $datum) {
+        foreach ($data as $datum) {
             try {
                 $this->_insert($model, $datum, $mapping);
             } catch (Exception $e) {
@@ -52,7 +48,7 @@ class Garp_Content_Import_Json extends Garp_Content_Import_Abstract {
      * @return Mixed primary key
      */
     protected function _insert(Garp_Model $model, array $data, array $mapping) {
-        $newData = array();
+        $newData = [];
         // Remove unused mappings
         $mapping = array_filter($mapping);
         foreach ($mapping as $key => $val) {

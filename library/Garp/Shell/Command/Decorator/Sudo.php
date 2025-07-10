@@ -42,11 +42,11 @@ class Garp_Shell_Command_Decorator_Sudo extends Garp_Shell_Command_Abstract {
     }
     
     protected function _isPipedEchoCommand($commandString) {
-        return strpos($commandString, '|') && substr($commandString, 0, 5) === 'echo ';
+        return strpos((string) $commandString, '|') && str_starts_with((string) $commandString, 'echo ');
     }
     
     protected function _prefixPipedEchoCommand($commandString) {
-        $parts          = explode('|', $commandString);
+        $parts          = explode('|', (string) $commandString);
         $parts[1]       = self::COMMAND_PREFIX . $parts[1];
         $commandString  = implode('|', $parts);
         

@@ -22,19 +22,19 @@ class Garp_Cache_Store_Cluster {
     public function executeDueJobs($serverId, $lastCheckIn) {
         //  if the last check-in was more than two hours ago, first clear the cache.
         if ((time() - strtotime($lastCheckIn)) > (60 * 60 * 2)) {
-            Garp_Cache_Manager::purge(array('opcache' => true), false);
-            $this->clearedTags = array();
+            Garp_Cache_Manager::purge(['opcache' => true], false);
+            $this->clearedTags = [];
         } else {
             $clusterClearCacheJobModel = new Model_ClusterClearCacheJob();
             $jobs = $clusterClearCacheJobModel->fetchDue($serverId, $lastCheckIn);
 
             if (count($jobs)) {
                 if ($this->_containsGeneralClearJob($jobs)) {
-                    Garp_Cache_Manager::purge(array('opcache' => true), false);
-                    $this->clearedTags = array();
+                    Garp_Cache_Manager::purge(['opcache' => true], false);
+                    $this->clearedTags = [];
                 } else {
                     $tags = $this->_getTagsFromJobs($jobs);
-                    Garp_Cache_Manager::purge(array('opcache' => true) + $tags, false);
+                    Garp_Cache_Manager::purge(['opcache' => true] + $tags, false);
                     $this->clearedTags = $tags;
                 }
             } else {
@@ -43,10 +43,10 @@ class Garp_Cache_Store_Cluster {
         }
     }
 
-    static public function createJob(Array $tags = array()) {
+    static public function createJob(Array $tags = []) {
         $clusterServerModel = new Model_ClusterServer();
         if (!($serverId = $clusterServerModel->fetchServerId())) {
-            list($serverId, $lastCheckIn) = $clusterServerModel->checkIn();
+            [$serverId, $lastCheckIn] = $clusterServerModel->checkIn();
         }
 
         $jobModel = new Model_ClusterClearCacheJob();
@@ -54,7 +54,7 @@ class Garp_Cache_Store_Cluster {
     }
 
     protected function _getTagsFromJobs(Garp_Db_Table_Rowset $jobs) {
-        $tags = array();
+        $tags = [];
 
         foreach ($jobs as $job) {
             $tagsPerJob = unserialize($job->tags);

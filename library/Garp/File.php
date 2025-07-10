@@ -23,13 +23,13 @@ class Garp_File {
 
     const SEPERATOR = '-';
 
-    protected $_storageTypes = array('local', 's3');
+    protected $_storageTypes = ['local', 's3'];
 
-    protected $_requiredConfigParams = array('type', 'domain', 'path', 'extensions');
+    protected $_requiredConfigParams = ['type', 'domain', 'path', 'extensions'];
 
-    protected $_requiredConfigPaths = array(self::FILE_VARIANT_UPLOAD, self::FILE_VARIANT_STATIC);
+    protected $_requiredConfigPaths = [self::FILE_VARIANT_UPLOAD, self::FILE_VARIANT_STATIC];
 
-    protected $_allowedTypes = array('image', 'document');
+    protected $_allowedTypes = ['image', 'document'];
 
     protected $_defaultUploadType = 'document';
 
@@ -49,7 +49,7 @@ class Garp_File {
      *
      * @var array
      */
-    static protected $_cachedStorage = array();
+    static protected $_cachedStorage = [];
 
     /**
      * Store config from ini file statically to save
@@ -102,11 +102,11 @@ class Garp_File {
         if (!method_exists($this->_storage, $method)) {
             throw new BadMethodCallException(
                 'Call to undefined method ' .
-                get_class($this) . '::' . $method
+                static::class . '::' . $method
             );
         }
 
-        return call_user_func_array(array($this->_storage, $method), $args);
+        return call_user_func_array([$this->_storage, $method], $args);
     }
 
     public function store($filename, $data, $overwrite = false, $formatFilename = true) {
@@ -118,7 +118,7 @@ class Garp_File {
             throw new Garp_File_Exception(self::EXCEPTION_CDN_READONLY);
         }
         // Check for filename that's only an extension (".jpg")
-        if ($filename[0] === '.' && strrpos($filename, '.') === 0) {
+        if ($filename[0] === '.' && strrpos((string) $filename, '.') === 0) {
             // Arbitrarily cast filename to current time
             $filename = time() . $filename;
         }
@@ -141,22 +141,22 @@ class Garp_File {
     }
 
     public static function formatFilename($filename) {
-        if (strpos($filename, '/') !== false) {
+        if (str_contains((string) $filename, '/')) {
             throw new Exception(__FUNCTION__ . '() is not for paths, please stick to filenames.');
         }
-        $filename = strtolower($filename);
+        $filename = strtolower((string) $filename);
         $plainFilename = preg_replace(
-            array(
+            [
                 '/[_ ]/',
                 '/[^\da-zA-Z\.' . self::SEPERATOR . ']/'
-            ),
-            array(
+            ],
+            [
                 self::SEPERATOR,
                 ''
-            ),
+            ],
             $filename
         );
-        $plainFilename = trim($plainFilename, self::SEPERATOR);
+        $plainFilename = trim((string) $plainFilename, self::SEPERATOR);
         return !empty($plainFilename) ?
             $plainFilename :
             'untitled'
@@ -173,15 +173,13 @@ class Garp_File {
     public static function getCumulativeFilename($filename) {
         $filename = self::formatFilename($filename);
 
-        $filenameParts = explode('.', $filename);
+        $filenameParts = explode('.', (string) $filename);
         $ext = array_pop($filenameParts);
         $base = implode('.', $filenameParts);
         $base = preg_match('/' . self::SEPERATOR . '\d+$/', $base) ?
             preg_replace_callback(
                 '/' . self::SEPERATOR . '(\d+)$/',
-                function ($matches) {
-                    return Garp_File::SEPERATOR . ++$matches[1];
-                },
+                fn($matches) => Garp_File::SEPERATOR . ++$matches[1],
                 $base
             ) :
             $base . self::SEPERATOR . '2'
@@ -204,16 +202,14 @@ class Garp_File {
      */
     public function getAllowedExtensions() {
         $ini = $this->_getIni();
-        $extensions = explode(',', $ini->cdn->extensions);
+        $extensions = explode(',', (string) $ini->cdn->extensions);
 
         if (!$ini->cdn->allowImageExtensionsAsDocuments) {
             $imageFile = new Garp_Image_File($this->_uploadOrStatic);
             $imageExtensions = $imageFile->getAllowedExtensions();
 
             $extensions = array_filter(
-                $extensions, function ($element) use ($imageExtensions) {
-                    return !in_array($element, $imageExtensions);
-                }
+                $extensions, fn($element) => !in_array($element, $imageExtensions)
             );
         }
 
@@ -231,9 +227,9 @@ class Garp_File {
             $htaccessLines = explode("\n", $htaccess);
             foreach ($htaccessLines as $line) {
                 $line = trim($line);
-                if (strpos($line, 'php_value upload_max_filesize') !== false) {
+                if (str_contains($line, 'php_value upload_max_filesize')) {
                     $lineParts = explode(" ", $line);
-                    $val = $lineParts[sizeof($lineParts) - 1];
+                    $val = $lineParts[count($lineParts) - 1];
                 }
             }
         }
@@ -262,13 +258,13 @@ class Garp_File {
     }
 
     public function clearContext() {
-        static::$_cachedStorage = array();
+        static::$_cachedStorage = [];
         $this->_storage = null;
         self::$_config = null;
     }
 
     protected function _getExtension($filename) {
-        $filenameParts = explode('.', $filename);
+        $filenameParts = explode('.', (string) $filename);
         if (count($filenameParts) >1) {
             return $filenameParts[count($filenameParts) -1];
         }
@@ -299,7 +295,7 @@ class Garp_File {
                 throw new Exception("'cdn.{$param}' was not set in application.ini.");
             }
         }
-        $configuredCdnType = strtolower($ini->cdn->type);
+        $configuredCdnType = strtolower((string) $ini->cdn->type);
         if (!in_array($configuredCdnType, $this->_storageTypes)) {
             throw new Exception(
                 "'{$ini->cdn->type}' is not a valid CDN type. Try: " .
@@ -339,32 +335,27 @@ class Garp_File {
         ) {
             $this->_storage = self::$_cachedStorage[$ini->cdn->type][$this->_path];
         } else {
-            switch ($ini->cdn->type) {
-            case 's3':
-                $this->_storage = new Garp_File_Storage_S3(
+            $this->_storage = match ($ini->cdn->type) {
+                's3' => new Garp_File_Storage_S3(
                     $this->_getS3Config($ini),
                     $this->_path
-                );
-                break;
-            case 'local':
-                $this->_storage = new Garp_File_Storage_Local(
-                    array(
+                ),
+                'local' => new Garp_File_Storage_Local(
+                    [
                         'domain' => $ini->cdn->domain,
                         'gzip' => $ini->cdn->gzip,
                         'ssl' => $ini->cdn->ssl
-                    ),
+                    ],
                     $this->_path
-                );
-                break;
-            default:
-                throw new Exception("The '{$ini->cdn->type}' protocol is not yet implemented.");
-            }
+                ),
+                default => throw new Exception("The '{$ini->cdn->type}' protocol is not yet implemented."),
+            };
             self::$_cachedStorage[$ini->cdn->type][$this->_path] = $this->_storage;
         }
     }
 
     protected function _getS3Config(Zend_Config $ini) {
-        return array(
+        return [
             'apikey'          => $ini->cdn->s3->apikey,
             'secret'          => $ini->cdn->s3->secret,
             'bucket'          => $ini->cdn->s3->bucket,
@@ -372,7 +363,7 @@ class Garp_File {
             'readonly'        => $ini->cdn->readonly,
             'gzip'            => $ini->cdn->gzip,
             'gzip_exceptions' => $ini->cdn->gzip_exceptions
-        );
+        ];
     }
 
     protected function _restrictExtension($filename) {
@@ -381,7 +372,7 @@ class Garp_File {
         }
         $extension = $this->_getExtension($filename);
         $allowedExtensions = $this->getAllowedExtensions();
-        if (!in_array(strtolower($extension), $allowedExtensions)) {
+        if (!in_array(strtolower((string) $extension), $allowedExtensions)) {
             throw new Garp_File_Exception_InvalidType(
                 'The file type you\'re trying to upload is not allowed. Try: ' .
                 $this->_humanList($allowedExtensions, null, 'or')

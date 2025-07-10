@@ -35,7 +35,7 @@ class G_ContentController extends Garp_Controller_Action {
         if (!$config->cms || !$config->cms->ipfilter || !count($config->cms->ipfilter->toArray())) {
             return true;
         }
-        $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null;
+        $ip = $_SERVER['REMOTE_ADDR'] ?? null;
         if ($ip === '127.0.0.1') {
             // i mean come on
             return true;
@@ -43,7 +43,7 @@ class G_ContentController extends Garp_Controller_Action {
         if (!in_array($ip, $config->cms->ipfilter->toArray())) {
             $authVars = Garp_Auth::getInstance()->getConfigValues();
             $this->_helper->flashMessenger(__($authVars['noPermissionMsg']));
-            $this->_helper->redirector->gotoRoute(array(), $authVars['login']['route']);
+            $this->_helper->redirector->gotoRoute([], $authVars['login']['route']);
             return false;
         }
     }
@@ -64,7 +64,7 @@ class G_ContentController extends Garp_Controller_Action {
      */
     public function opcacheresetAction() {
         $this->_helper->viewRenderer->setNoRender(true);
-        $output = array();
+        $output = [];
 
         if (function_exists('opcache_reset')) {
             $result = opcache_reset();
@@ -148,7 +148,7 @@ class G_ContentController extends Garp_Controller_Action {
         if ($this->getRequest()->isPost()) {
             $post = $this->_getJsonRpcRequest();
             $batch = false;
-            $responses = array();
+            $responses = [];
             $requests = Zend_Json::decode($post, Zend_Json::TYPE_ARRAY);
             /**
              * Check if this was a batch request. In that case the array is a plain array of
@@ -156,9 +156,9 @@ class G_ContentController extends Garp_Controller_Action {
              */
             $batch = !array_key_exists('jsonrpc', $requests);
             if (!$batch) {
-                $requests = array($requests);
+                $requests = [$requests];
             }
-            foreach ($requests as $i => $request) {
+            foreach ($requests as $request) {
                 $request = $this->_reformJsonRpcRequest($request);
                 $requestJson = Zend_Json::encode($request);
                 $requestObj = new Zend_Json_Server_Request();
@@ -199,16 +199,16 @@ class G_ContentController extends Garp_Controller_Action {
             if (!$filename) {
                 throw new Exception('When using type "all" a filename must be specified.');
             }
-            $dotPos = strpos($filename, '.');
+            $dotPos = strpos((string) $filename, '.');
             if ($dotPos !== false) {
-                $extension = substr($filename, $dotPos+1);
+                $extension = substr((string) $filename, $dotPos+1);
                 $gif = new Garp_Image_File();
                 if (in_array($extension, $gif->getAllowedExtensions())) {
                     $uploadType = Garp_File::TYPE_IMAGES;
                 }
             }
         }
-        $response   = array();
+        $response   = [];
         $success    = false;
         if ($request->isPost()) {
             // Upload the file
@@ -238,22 +238,22 @@ class G_ContentController extends Garp_Controller_Action {
                 // create new record here...
                 $model = new $modelClass();
                 $model->setCmsContext(true);
-                $_response = array();
+                $_response = [];
                 foreach ($response as $key => $value) {
                     // @todo Add method that allows the other columns of $model
                     // to be set via POST.
-                    $data = array('filename' => $value);
+                    $data = ['filename' => $value];
                     if ($uploadType === Garp_File::TYPE_DOCUMENTS) {
                         // Create name from basename without extension.
-                        $name = substr($value, 0, strrpos($value, '.'));
+                        $name = substr((string) $value, 0, strrpos((string) $value, '.'));
                         $data['name'] = $name;
                     }
                     $primary = $model->insert($data);
                     // Alter response a little to include columns
-                    $_response[$key] = array(
+                    $_response[$key] = [
                         'id' => $primary,
                         'filename' => $value
-                    );
+                    ];
                 }
                 $response = $_response;
             }
@@ -317,7 +317,7 @@ class G_ContentController extends Garp_Controller_Action {
         }
 
         //  @todo: als cdn niet lokaal is, moet je waarschijnlijk met zip::addFromString werken.
-        $filenames = explode(',', $params['files']);
+        $filenames = explode(',', (string) $params['files']);
 
         $image = new Garp_Image_File(Garp_File::FILE_VARIANT_UPLOAD);
         $document = new Garp_File(null, Garp_File::FILE_VARIANT_UPLOAD);
@@ -398,13 +398,13 @@ class G_ContentController extends Garp_Controller_Action {
             $className = Garp_Content_Api::modelAliasToClass($params['model']);
             $model = new $className();
             $model->setCmsContext(true);
-            $response = array();
+            $response = [];
             try {
                 $success    = !!$importer->save(
-                    $model, $mapping, array(
+                    $model, $mapping, [
                     'firstRow' => $params['firstRow'],
                     'ignoreErrors' => $params['ignoreErrors'],
-                    )
+                    ]
                 );
             } catch (Exception $e) {
                 $response['message'] = $e->getMessage();
@@ -465,9 +465,9 @@ class G_ContentController extends Garp_Controller_Action {
      */
     public function clearcacheAction() {
         $request = $this->getRequest();
-        $tags = array();
+        $tags = [];
         if ($request->getParam('tags')) {
-            $tags = explode(',', $request->getParam('tags'));
+            $tags = explode(',', (string) $request->getParam('tags'));
         }
         $createClusterJob = is_null($request->getParam('createClusterJob')) ? 1 :
             $request->getParam('createClusterJob');
@@ -481,7 +481,7 @@ class G_ContentController extends Garp_Controller_Action {
      *
      * @return Void
      */
-    public function infoAction() {
+    public function infoAction(): never {
         phpinfo();
         // This might be the only time `exit()` is appropriate...
         // If only there was a pure function that *returned* this information instead of vomiting it
@@ -531,10 +531,10 @@ class G_ContentController extends Garp_Controller_Action {
             return $request;
         }
         $meth = $request['method'];
-        $meth = explode('.', $meth);
+        $meth = explode('.', (string) $meth);
         // send everything thru Garp_Content_Manager_Proxy::pass
         $request['method'] = 'pass';
-        $request['params'] = array($meth[0], $meth[1], $request['params']);
+        $request['params'] = [$meth[0], $meth[1], $request['params']];
         return $request;
     }
 

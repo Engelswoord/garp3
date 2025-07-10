@@ -45,7 +45,7 @@ class Garp_Auth_Adapter_OpenId extends Garp_Auth_Adapter_Abstract {
                 return $this->_getUserData($result->getIdentity(), $sreg->getProperties());
             } else {
                 $errors = $result->getMessages();
-                array_walk($errors, array($this, '_addError'));
+                array_walk($errors, [$this, '_addError']);
             }
         }
         $this->_addError('Insufficient data received');
@@ -84,14 +84,14 @@ class Garp_Auth_Adapter_OpenId extends Garp_Auth_Adapter_Abstract {
         $sessionColumns = Zend_Db_Select::SQL_WILDCARD;
         if (!empty($ini->auth->login->sessionColumns)) {
             $sessionColumns = $ini->auth->login->sessionColumns;
-            $sessionColumns = explode(',', $sessionColumns);
+            $sessionColumns = explode(',', (string) $sessionColumns);
         }
         $userModel = new Model_User();
         $userConditions = $userModel->select()->from($userModel->getName(), $sessionColumns);
 
         //@phpstan-ignore class.notFound
         $model = new Model_AuthOpenId();
-        $model->bindModel('Model_User', array('conditions' => $userConditions));
+        $model->bindModel('Model_User', ['conditions' => $userConditions]);
         $userData = $model->fetchRow(
             $model->select()
                   ->where('openid = ?', $id)

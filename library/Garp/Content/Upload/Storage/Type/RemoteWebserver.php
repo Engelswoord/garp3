@@ -56,7 +56,7 @@ class Garp_Content_Upload_Storage_Type_RemoteWebserver extends Garp_Content_Uplo
         $stream = ssh2_exec($session, $lsCommand);
         $dirListing = $this->_fetchAndCloseStream($stream) . "\n";
 
-        $matches = array();
+        $matches = [];
         $pattern = '/(?P<permissions>[drwx\-+@]+)\s+\d+\s+(?P<filesize>\d+)\s+(?P<lastmodified>\w{3}\s+\d+\s+\d+:?\d+)\s+(?P<filename>[^ \n]+)\n+/';
         preg_match_all($pattern, $dirListing, $matches);
 
@@ -97,7 +97,7 @@ class Garp_Content_Upload_Storage_Type_RemoteWebserver extends Garp_Content_Uplo
         $md5output  = $this->_fetchAndCloseStream($stream);
 
         if ($md5output) {
-            $baddies = array(' ', '-', "\n");
+            $baddies = [' ', '-', "\n"];
             $md5output = str_replace($baddies, '', $md5output);
             return $md5output;
         } else throw new Exception("Could not fetch md5 sum of {$absPath}.");
@@ -201,7 +201,7 @@ class Garp_Content_Upload_Storage_Type_RemoteWebserver extends Garp_Content_Uplo
     }
 
     protected function _openSshSession($host) {
-        $session = ssh2_connect($host, 22, array('hostkey' => 'ssh-dss'));
+        $session = ssh2_connect($host, 22, ['hostkey' => 'ssh-dss']);
         ssh2_auth_agent($session, $this->getUser());
 
         return $session;

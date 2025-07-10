@@ -32,8 +32,8 @@ class Garp_Form_SubForm extends Garp_Form {
         if (!$class || 'garp-form' === $class) {
             $class = 'garp-subform';
         }
-        $this->setDecorators(array('FormElements'));
-        $this->addDecorator('HtmlTag', array('class' => $class));
+        $this->setDecorators(['FormElements']);
+        $this->addDecorator('HtmlTag', ['class' => $class]);
     }
 
 

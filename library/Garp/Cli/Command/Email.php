@@ -8,7 +8,7 @@
  */
 class Garp_Cli_Command_Email extends Garp_Cli_Command {
 
-    const REQUIRED_FLAGS = array('to', 'subject', 'message');
+    const REQUIRED_FLAGS = ['to', 'subject', 'message'];
 
     /**
      * Send email
@@ -27,11 +27,11 @@ class Garp_Cli_Command_Email extends Garp_Cli_Command {
             $mailer->setFromAddress(getenv('CLI_EMAIL_SENDER'));
         }
 
-        $email = array(
+        $email = [
             'to' => $args['to'],
             'subject' => $args['subject'],
             'message' => $args['message'],
-        );
+        ];
 
         try {
             $mailer->send($email);

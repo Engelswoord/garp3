@@ -25,7 +25,7 @@ class Garp_Mail_Transport_AmazonSes extends Zend_Mail_Transport_Abstract
      * @throws Zend_Mail_Transport_Exception if accessKey is not present in the config
      * @throws Zend_Mail_Transport_Exception if privateKey is not present in the config
      */
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         if ($config instanceof Zend_Config) {
             $config = $config->toArray();
@@ -38,7 +38,7 @@ class Garp_Mail_Transport_AmazonSes extends Zend_Mail_Transport_Abstract
             throw new Zend_Mail_Transport_Exception('This transport requires the Amazon private key');
         }
 
-        $region = isset($config['region']) ? $config['region'] : self::DEFAULT_REGION;
+        $region = $config['region'] ?? self::DEFAULT_REGION;
 
         $this->client = new \Aws\Ses\SesClient(
             [

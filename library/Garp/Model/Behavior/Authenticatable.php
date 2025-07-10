@@ -10,7 +10,7 @@ class Garp_Model_Behavior_Authenticatable extends Garp_Model_Behavior_Abstract {
 
     protected $_model;
 
-    protected function _setup($config = array()) {
+    protected function _setup($config = []) {
         $this->_model = $config[0];
     }
 
@@ -21,7 +21,7 @@ class Garp_Model_Behavior_Authenticatable extends Garp_Model_Behavior_Abstract {
      * @param array $columns Extra columns, variable
      * @return int The number of rows updated.
      */
-    public function updateLoginStats($userId, $columns = array()) {
+    public function updateLoginStats($userId, $columns = []) {
         if (isset($_SERVER['REMOTE_ADDR'])) {
             $columns['ip_address'] = $_SERVER['REMOTE_ADDR'];
         }

@@ -9,7 +9,7 @@
  */
 class Garp_Cli_Command_Folders extends Garp_Cli_Command {
 
-    public function createRequired(array $args = array()) {
+    public function createRequired(array $args = []) {
         if (!file_exists('public/cached')) {
             mkdir('public/cached');
         }

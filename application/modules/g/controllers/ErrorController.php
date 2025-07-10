@@ -89,7 +89,7 @@ class G_ErrorController extends Garp_Controller_Action {
             return;
         }
 
-        $acceptTypes = explode(',', $acceptTypes);
+        $acceptTypes = explode(',', (string) $acceptTypes);
         if (strpos($acceptTypes[0], 'json') !== -1) {
             // In the case of XHR being true, and JSON being the primary accepted type, render a
             // Garp view with a nicely laid out error response.

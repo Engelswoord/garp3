@@ -16,7 +16,7 @@ class G_View_Helper_YouTube extends Zend_View_Helper_HtmlElement {
      * @param array $options Various rendering options
      * @return string
      */
-    public function youTube($youtube = null, array $options = array()) {
+    public function youTube($youtube = null, array $options = []) {
         if (!func_num_args()) {
             return $this;
         }
@@ -31,7 +31,7 @@ class G_View_Helper_YouTube extends Zend_View_Helper_HtmlElement {
      * @param array $options Various rendering options
      * @return string
      */
-    public function render($youtube, array $options = array()) {
+    public function render($youtube, array $options = []) {
         $this->_setDefaultAttribs($options);
 
         $_attribs = $options['attribs'];
@@ -53,12 +53,12 @@ class G_View_Helper_YouTube extends Zend_View_Helper_HtmlElement {
         return $html;
     }
 
-    public function getPlayerUrl($youtube, $options = array()) {
+    public function getPlayerUrl($youtube, $options = []) {
         $this->_setDefaultQueryParams($options);
         $youtubeUrl = (is_string($youtube) ? $youtube :
-            (isset($youtube['player']) ? $youtube['player'] : ''));
+            ($youtube['player'] ?? ''));
 
-        if (strpos($youtubeUrl, '?') === false) {
+        if (!str_contains($youtubeUrl, '?')) {
             $youtubeUrl .= '?';
         } else {
             $youtubeUrl .= '&';
@@ -82,7 +82,7 @@ class G_View_Helper_YouTube extends Zend_View_Helper_HtmlElement {
                 isset($options['width']) ? 30 + round($options['width']/1.78) : 300
             )
             ->setDefault('width', 480)
-            ->setDefault('attribs', array())
+            ->setDefault('attribs', [])
             ->setDefault('wmode', 'opaque');
     }
 

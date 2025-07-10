@@ -154,8 +154,8 @@ class Garp_Model_IniFile implements Garp_Model, Garp_Util_Observer, Garp_Util_Ob
      * @param array $args The arguments you wish to pass to the observers
      * @return Garp_Util_Observable $this
      */
-    public function notifyObservers($event, array $args = array()) {
-        $first = $middle = $last = array();
+    public function notifyObservers($event, array $args = []) {
+        $first = $middle = $last = [];
 
         // Distribute observers to the different arrays
         foreach ($this->_observers as $observer) {
@@ -174,7 +174,7 @@ class Garp_Model_IniFile implements Garp_Model, Garp_Util_Observer, Garp_Util_Ob
         }
 
         // Do the actual execution
-        foreach (array($first, $middle, $last) as $observerCollection) {
+        foreach ([$first, $middle, $last] as $observerCollection) {
             foreach ($observerCollection as $observer) {
                 $observer->receiveNotification($event, $args);
             }
@@ -197,7 +197,7 @@ class Garp_Model_IniFile implements Garp_Model, Garp_Util_Observer, Garp_Util_Ob
      * @param array $params Collection of parameters (contextual to the event)
      * @return void
      */
-    public function receiveNotification($event, array $params = array()) {
+    public function receiveNotification($event, array $params = []) {
         if (method_exists($this, $event)) {
             $this->{$event}($params);
         }
