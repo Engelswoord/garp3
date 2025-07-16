@@ -27,6 +27,7 @@ class Garp_Model_Behavior_Videoable extends Garp_Model_Behavior_Abstract {
      * @param Array $config
      * @return Void
      */
+    #[\Override]
     protected function _setup($config) {
         if (empty($config['vimeo'])) {
             $config['vimeo'] = [];

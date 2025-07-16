@@ -38,6 +38,7 @@ class Garp_Application_Resource_Router extends Zend_Application_Resource_Router 
      *
      * @return Zend_Controller_Router_Rewrite
      */
+    #[\Override]
     public function getRouter() {
         $routesIni = $this->_getRoutesConfig();
         $this->setOptions($routesIni->toArray());

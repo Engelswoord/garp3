@@ -47,6 +47,7 @@ class Garp_Model_Behavior_YouTubeable extends Garp_Model_Behavior_Abstract {
      * @param array $config
      * @return void
      */
+    #[\Override]
     protected function _setup($config) {
         if (!empty($config)) {
             $this->_fields = $config + $this->_fields;

@@ -41,14 +41,14 @@ class PHPExcel_Chart_Legend
     const POSITION_TOP      = 't';
     const POSITION_TOPRIGHT = 'tr';
 
-    private static $positionXLref = array(
+    private static $positionXLref = [
         self::xlLegendPositionBottom => self::POSITION_BOTTOM,
         self::xlLegendPositionCorner => self::POSITION_TOPRIGHT,
         self::xlLegendPositionCustom => '??',
         self::xlLegendPositionLeft   => self::POSITION_LEFT,
         self::xlLegendPositionRight  => self::POSITION_RIGHT,
         self::xlLegendPositionTop    => self::POSITION_TOP
-    );
+    ];
 
     /**
      * Legend position
@@ -64,21 +64,16 @@ class PHPExcel_Chart_Legend
      */
     private $overlay = true;
 
-    /**
-     * Legend Layout
-     *
-     * @var    PHPExcel_Chart_Layout
-     */
-    private $layout = null;
-
 
     /**
      *    Create a new PHPExcel_Chart_Legend
      */
-    public function __construct($position = self::POSITION_RIGHT, PHPExcel_Chart_Layout $layout = null, $overlay = false)
+    public function __construct($position = self::POSITION_RIGHT, /**
+     * Legend Layout
+     */
+    private readonly ?\PHPExcel_Chart_Layout $layout = null, $overlay = false)
     {
         $this->setPosition($position);
-        $this->layout = $layout;
         $this->setOverlay($overlay);
     }
 

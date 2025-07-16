@@ -42,6 +42,7 @@ class Garp_Model_Behavior_Bitlyable extends Garp_Model_Behavior_Abstract {
      * Configuration.
      * @return Void
      */
+    #[\Override]
     protected function _setup($config) {
         if (empty($config['column'])) {
             throw new Garp_Model_Behavior_Exception('"column" is a required parameter.');

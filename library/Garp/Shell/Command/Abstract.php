@@ -75,7 +75,7 @@ abstract class Garp_Shell_Command_Abstract implements Garp_Shell_Command_Protoco
      * @param Garp_Shell_RemoteSession $session Pass the session instance along if this is a remote server.
      * @return Garp_Shell_Command_Abstract
      */
-    public function renderThrottledCommand(Garp_Shell_RemoteSession $session = null) {
+    public function renderThrottledCommand(?Garp_Shell_RemoteSession $session = null) {
         $command = new Garp_Shell_Command_Decorator_Nice($this);
 
         $ioNiceCommand = new Garp_Shell_Command_IoNiceIsAvailable();

@@ -70,7 +70,7 @@ class PHPExcel_Shared_Drawing
      * @param     PHPExcel_Style_Font $pDefaultFont    Default font of the workbook
      * @return     int            Value in cell dimension
      */
-    public static function pixelsToCellDimension($pValue = 0, PHPExcel_Style_Font $pDefaultFont)
+    public static function pixelsToCellDimension(PHPExcel_Style_Font $pDefaultFont, $pValue = 0)
     {
         // Font name and size
         $name = $pDefaultFont->getName();
@@ -95,7 +95,7 @@ class PHPExcel_Shared_Drawing
      * @param     PHPExcel_Style_Font $pDefaultFont    Default font of the workbook
      * @return     int        Value in pixels
      */
-    public static function cellDimensionToPixels($pValue = 0, PHPExcel_Style_Font $pDefaultFont)
+    public static function cellDimensionToPixels(PHPExcel_Style_Font $pDefaultFont, $pValue = 0)
     {
         // Font name and size
         $name = $pDefaultFont->getName();
@@ -186,11 +186,11 @@ class PHPExcel_Shared_Drawing
 
         $temp = unpack("H*", $read);
         $hex = $temp[1];
-        $header = substr($hex, 0, 108);
+        $header = substr((string) $hex, 0, 108);
 
         //    Process the header
         //    Structure: http://www.fastgraph.com/help/bmp_header_format.html
-        if (substr($header, 0, 4)=="424d") {
+        if (str_starts_with($header, "424d")) {
             //    Cut it in parts of 2 bytes
             $header_parts = str_split($header, 2);
 
@@ -212,7 +212,7 @@ class PHPExcel_Shared_Drawing
         $image = imagecreatetruecolor($width, $height);
 
         //    Grab the body from the image
-        $body = substr($hex, 108);
+        $body = substr((string) $hex, 108);
 
         //    Calculate if padding at the end-line is needed
         //    Divided by two to keep overview.

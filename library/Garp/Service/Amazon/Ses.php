@@ -161,9 +161,9 @@ class Garp_Service_Amazon_Ses extends Zend_Service_Amazon_Abstract
      *                                                  will then be forwarded to the email address specified by the ReturnPath parameter.
      * @phpcs:enable
      *
-     * @deprecated Use Garp_Mailer->send();
      * @return bool
      */
+    #[\Deprecated(message: 'Use Garp_Mailer->send();')]
     public function sendEmail($args)
     {
         $args = $args instanceof Garp_Util_Configuration ? $args : new Garp_Util_Configuration($args);
@@ -253,8 +253,8 @@ class Garp_Service_Amazon_Ses extends Zend_Service_Amazon_Abstract
      * @phpcs:enable
      *
      * @return Boolean
-     * @deprecated Use Garp_Mailer->sendMail()
      */
+    #[\Deprecated(message: 'Use Garp_Mailer->sendMail()')]
     public function sendRawEmail($args)
     {
         $this->client->sendRawEmail($args);

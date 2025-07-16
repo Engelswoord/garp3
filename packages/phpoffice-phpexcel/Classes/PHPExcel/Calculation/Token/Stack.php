@@ -32,7 +32,7 @@ class PHPExcel_Calculation_Token_Stack
      *
      *  @var mixed[]
      */
-    private $stack = array();
+    private $stack = [];
 
     /**
      *  Count of entries in the parser stack
@@ -60,11 +60,11 @@ class PHPExcel_Calculation_Token_Stack
      */
     public function push($type, $value, $reference = null)
     {
-        $this->stack[$this->count++] = array(
+        $this->stack[$this->count++] = [
             'type'      => $type,
             'value'     => $value,
             'reference' => $reference
-        );
+        ];
         if ($type == 'Function') {
             $localeFunction = PHPExcel_Calculation::localeFunc($value);
             if ($localeFunction != $value) {
@@ -105,7 +105,7 @@ class PHPExcel_Calculation_Token_Stack
      */
     public function clear()
     {
-        $this->stack = array();
+        $this->stack = [];
         $this->count = 0;
     }
 }

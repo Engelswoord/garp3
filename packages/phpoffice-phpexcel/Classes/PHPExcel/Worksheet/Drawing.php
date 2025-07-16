@@ -105,7 +105,7 @@ class PHPExcel_Worksheet_Drawing extends PHPExcel_Worksheet_BaseDrawing implemen
 
                 if ($this->width == 0 && $this->height == 0) {
                     // Get width/height
-                    list($this->width, $this->height) = getimagesize($pValue);
+                    [$this->width, $this->height] = getimagesize($pValue);
                 }
             } else {
                 throw new PHPExcel_Exception("File $pValue not found!");
@@ -121,18 +121,20 @@ class PHPExcel_Worksheet_Drawing extends PHPExcel_Worksheet_BaseDrawing implemen
      *
      * @return string    Hash code
      */
+    #[\Override]
     public function getHashCode()
     {
         return md5(
             $this->path .
             parent::getHashCode() .
-            __CLASS__
+            self::class
         );
     }
 
     /**
      * Implement PHP __clone to create a deep clone, not just a shallow copy.
      */
+    #[\Override]
     public function __clone()
     {
         $vars = get_object_vars($this);

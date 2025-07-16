@@ -21,6 +21,7 @@ class Garp_Model_Behavior_Truncatable extends Garp_Model_Behavior_Abstract {
      * Setup behavior
      * @param Array $config
      */
+    #[\Override]
     protected function _setup($config) {
         if (empty($config)) {
             throw new Garp_Model_Behavior_Exception('No config given');

@@ -145,6 +145,7 @@ class Garp_Cli_Command_S3 extends Garp_Cli_Command_Aws {
         return $this->s3api('get-bucket-website', $args);
     }
 
+    #[\Override]
     public function help() {
         parent::help();
 

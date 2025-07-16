@@ -22,6 +22,7 @@ class Garp_Service_HTMLPurifier_Filter_MyIframe extends HTMLPurifier_Filter {
      * @param object $context
      * @return string
      */
+    #[\Override]
     public function preFilter($html, $config, $context) {
         $regexp = '/<(\/?)iframe( ?)([^>]+)?>/i';
         $replace = '~$1iframe$2$3~';
@@ -37,6 +38,7 @@ class Garp_Service_HTMLPurifier_Filter_MyIframe extends HTMLPurifier_Filter {
      * @param object $context
      * @return string
      */
+    #[\Override]
     public function postFilter($html, $config, $context) {
         $regexp = '/~(\/?)iframe( ?)([^~]+)?~/i';
         $replace = '<$1iframe$2$3>';

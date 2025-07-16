@@ -63,6 +63,7 @@ class Garp_Model_Behavior_Vimeoable extends Garp_Model_Behavior_Abstract {
      * @param array $config
      * @return void
      */
+    #[\Override]
     protected function _setup($config) {
         $this->_useVimeoPro = !empty($config['useVimeoPro']) && $config['useVimeoPro'];
         unset($config['useVimeoPro']);

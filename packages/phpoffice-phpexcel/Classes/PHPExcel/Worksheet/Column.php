@@ -28,30 +28,22 @@
 class PHPExcel_Worksheet_Column
 {
     /**
-     * PHPExcel_Worksheet
-     *
-     * @var PHPExcel_Worksheet
-     */
-    private $parent;
-
-    /**
-     * Column index
-     *
-     * @var string
-     */
-    private $columnIndex;
-
-    /**
      * Create a new column
      *
      * @param PHPExcel_Worksheet     $parent
      * @param string                $columnIndex
      */
-    public function __construct(PHPExcel_Worksheet $parent = null, $columnIndex = 'A')
+    public function __construct(
+        /**
+         * PHPExcel_Worksheet
+         */
+        private ?\PHPExcel_Worksheet $parent = null,
+        /**
+         * Column index
+         */
+        private $columnIndex = 'A'
+    )
     {
-        // Set parent and column index
-        $this->parent         = $parent;
-        $this->columnIndex = $columnIndex;
     }
 
     /**

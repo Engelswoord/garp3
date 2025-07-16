@@ -28,13 +28,6 @@
 class PHPExcel_Writer_CSV extends PHPExcel_Writer_Abstract implements PHPExcel_Writer_IWriter
 {
     /**
-     * PHPExcel object
-     *
-     * @var PHPExcel
-     */
-    private $phpExcel;
-
-    /**
      * Delimiter
      *
      * @var string
@@ -89,9 +82,13 @@ class PHPExcel_Writer_CSV extends PHPExcel_Writer_Abstract implements PHPExcel_W
      *
      * @param    PHPExcel    $phpExcel    PHPExcel object
      */
-    public function __construct(PHPExcel $phpExcel)
+    public function __construct(
+        /**
+         * PHPExcel object
+         */
+        private readonly PHPExcel $phpExcel
+    )
     {
-        $this->phpExcel    = $phpExcel;
     }
 
     /**

@@ -15,6 +15,7 @@ class Garp_Cli_Command_Capistrano extends Garp_Cli_Command {
      * @param Array $args Various options. Must contain;
      * @return Boolean
      */
+    #[\Override]
     public function main(array $args = []) {
         if ($this->_helpWasRequested($args)) {
             $this->_help();

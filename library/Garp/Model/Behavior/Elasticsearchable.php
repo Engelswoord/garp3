@@ -49,6 +49,7 @@ class Garp_Model_Behavior_Elasticsearchable extends Garp_Model_Behavior_Abstract
      * Configuration.
      * @return Void
      */
+    #[\Override]
     protected function _setup($config) {
         if (empty($config['columns'])) {
             throw new Garp_Model_Behavior_Exception('"columns" is a required parameter.');

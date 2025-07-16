@@ -32,6 +32,7 @@ class Garp_Cli_Command_PostcodeNl extends Garp_Cli_Command {
      * @param array $args
      * @return Void
      */
+    #[\Override]
     public function main(array $args = []) {
         if (!$args) {
             $this->_displayHelp();

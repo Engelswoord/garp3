@@ -49,21 +49,18 @@ abstract class PHPExcel_Worksheet_Dimension
     private $collapsed = false;
 
     /**
-     * Index to cellXf. Null value means row has no explicit cellXf format.
-     *
-     * @var int|null
-     */
-    private $xfIndex;
-
-    /**
      * Create a new PHPExcel_Worksheet_Dimension
      *
      * @param int $pIndex Numeric row index
+     * @param int|null $initialValue
      */
-    public function __construct($initialValue = null)
+    public function __construct(
+        /**
+         * Index to cellXf. Null value means row has no explicit cellXf format.
+         */
+        private $xfIndex = null
+    )
     {
-        // set dimension as unformatted by default
-        $this->xfIndex = $initialValue;
     }
 
     /**

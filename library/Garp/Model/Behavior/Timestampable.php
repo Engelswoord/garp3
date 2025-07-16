@@ -29,6 +29,7 @@ class Garp_Model_Behavior_Timestampable extends Garp_Model_Behavior_Abstract {
      * @param Array $config Configuration values
      * @return Void
      */
+    #[\Override]
     protected function _setup($config) {
         if (empty($config['createdField'])) {
             $config['createdField'] = 'created';

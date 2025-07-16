@@ -61,7 +61,7 @@ class PHPExcel_Shared_ZipStreamWrapper
     public static function register()
     {
         @stream_wrapper_unregister('zip');
-        @stream_wrapper_register('zip', __CLASS__);
+        @stream_wrapper_register('zip', self::class);
     }
 
     /**
@@ -112,7 +112,7 @@ class PHPExcel_Shared_ZipStreamWrapper
      */
     public function url_stat()
     {
-        return $this->statName($this->fileNameInArchive);
+        return $this->statName();
     }
 
     /**
@@ -133,7 +133,7 @@ class PHPExcel_Shared_ZipStreamWrapper
      */
     public function stream_read($count)
     {
-        $ret = substr($this->data, $this->position, $count);
+        $ret = substr((string) $this->data, $this->position, $count);
         $this->position += strlen($ret);
         return $ret;
     }
@@ -156,7 +156,7 @@ class PHPExcel_Shared_ZipStreamWrapper
      */
     public function stream_eof()
     {
-        return $this->position >= strlen($this->data);
+        return $this->position >= strlen((string) $this->data);
     }
 
     /**
@@ -170,7 +170,7 @@ class PHPExcel_Shared_ZipStreamWrapper
     {
         switch ($whence) {
             case SEEK_SET:
-                if ($offset < strlen($this->data) && $offset >= 0) {
+                if ($offset < strlen((string) $this->data) && $offset >= 0) {
                      $this->position = $offset;
                      return true;
                 } else {
@@ -186,8 +186,8 @@ class PHPExcel_Shared_ZipStreamWrapper
                 }
                 break;
             case SEEK_END:
-                if (strlen($this->data) + $offset >= 0) {
-                     $this->position = strlen($this->data) + $offset;
+                if (strlen((string) $this->data) + $offset >= 0) {
+                     $this->position = strlen((string) $this->data) + $offset;
                      return true;
                 } else {
                      return false;

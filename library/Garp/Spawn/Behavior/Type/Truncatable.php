@@ -12,11 +12,13 @@ class Garp_Spawn_Behavior_Type_Truncatable extends Garp_Spawn_Behavior_Type_Abst
      * @return  Bool    Whether this behavior needs to be registered with an observer
      *                  called in the PHP model's init() method
      */
+    #[\Override]
     public function needsPhpModelObserver() {
         return count(array_filter($this->getModel()->fields->getFields(),
             $this->_getArrayFilterForTruncatableFields())) > 0;
     }
 
+    #[\Override]
     public function getParams() {
         $textFields = array_filter($this->getModel()->fields->getFields(),
             $this->_getArrayFilterForTruncatableFields());

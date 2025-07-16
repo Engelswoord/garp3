@@ -5,6 +5,7 @@
  */
 class Garp_Spawn_Behavior_Type_Nullable extends Garp_Spawn_Behavior_Type_Abstract {
 
+    #[\Override]
     public function getParams() {
         $model = $this->getModel();
         return [

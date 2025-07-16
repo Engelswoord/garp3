@@ -26,10 +26,12 @@ class Garp_Spawn_Behavior_Type_Sluggable extends Garp_Spawn_Behavior_Type_Abstra
 
 
 
+    #[\Override]
     public function getFields() {
         return [$this->_getSlugFieldName() => $this->_getSlugFieldConfig()];
     }
 
+    #[\Override]
     public function getParams() {
         $params         = parent::getParams();
         $defaultParams  = $this->getDefaultParams();
@@ -54,6 +56,7 @@ class Garp_Spawn_Behavior_Type_Sluggable extends Garp_Spawn_Behavior_Type_Abstra
      * @return  Bool    Whether this behavior needs to be registered with an observer
      *                  called in the PHP model's init() method
      */
+    #[\Override]
     public function needsPhpModelObserver() {
         $model = $this->getModel();
 

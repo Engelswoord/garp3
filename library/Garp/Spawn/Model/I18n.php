@@ -10,6 +10,7 @@ class Garp_Spawn_Model_I18n extends Garp_Spawn_Model_Abstract {
     /**
      * @return  Bool    Whether this is a i18n leaf model, derived from a multilingual base model
      */
+    #[\Override]
     public function isTranslated() {
         return true;
     }

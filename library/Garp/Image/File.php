@@ -20,6 +20,7 @@ class Garp_Image_File extends Garp_File {
         parent::__construct('image', $uploadOrStatic);
     }
 
+    #[\Override]
     public function store($filename, $data, $overwrite = false, $formatFilename = true) {
         $returnedParams = $this->_beforeStore($filename, $data, $overwrite, $formatFilename);
         [$filename, $data, $overwrite, $formatFilename] = $returnedParams;
@@ -81,6 +82,7 @@ class Garp_Image_File extends Garp_File {
         }
     }
 
+    #[\Override]
     public function getAllowedExtensions() {
         $allowedExtensions = array_values($this->_extensions);
         $allowedExtensions[] = 'jpeg';

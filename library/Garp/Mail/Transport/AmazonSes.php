@@ -81,6 +81,7 @@ class Garp_Mail_Transport_AmazonSes extends Zend_Mail_Transport_Abstract
      * @return  void
      * @throws  Zend_Transport_Exception
      */
+    #[\Override]
     protected function _prepareHeaders($headers)
     {
         if (!$this->_mail) {

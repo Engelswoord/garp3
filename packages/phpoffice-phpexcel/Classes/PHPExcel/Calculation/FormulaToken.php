@@ -79,39 +79,27 @@ class PHPExcel_Calculation_FormulaToken
     const TOKEN_SUBTYPE_UNION         = 'Union';
 
     /**
-     * Value
-     *
-     * @var string
-     */
-    private $value;
-
-    /**
-     * Token Type (represented by TOKEN_TYPE_*)
-     *
-     * @var string
-     */
-    private $tokenType;
-
-    /**
-     * Token SubType (represented by TOKEN_SUBTYPE_*)
-     *
-     * @var string
-     */
-    private $tokenSubType;
-
-    /**
      * Create a new PHPExcel_Calculation_FormulaToken
      *
-     * @param string    $pValue
-     * @param string    $pTokenType     Token type (represented by TOKEN_TYPE_*)
-     * @param string    $pTokenSubType     Token Subtype (represented by TOKEN_SUBTYPE_*)
+     * @param string $value
+     * @param string $tokenType Token type (represented by TOKEN_TYPE_*)
+     * @param string $tokenSubType Token Subtype (represented by TOKEN_SUBTYPE_*)
      */
-    public function __construct($pValue, $pTokenType = PHPExcel_Calculation_FormulaToken::TOKEN_TYPE_UNKNOWN, $pTokenSubType = PHPExcel_Calculation_FormulaToken::TOKEN_SUBTYPE_NOTHING)
+    public function __construct(
+        /**
+         * Value
+         */
+        private $value,
+        /**
+         * Token Type (represented by TOKEN_TYPE_*)
+         */
+        private $tokenType = PHPExcel_Calculation_FormulaToken::TOKEN_TYPE_UNKNOWN,
+        /**
+         * Token SubType (represented by TOKEN_SUBTYPE_*)
+         */
+        private $tokenSubType = PHPExcel_Calculation_FormulaToken::TOKEN_SUBTYPE_NOTHING
+    )
     {
-        // Initialise values
-        $this->value       = $pValue;
-        $this->tokenType    = $pTokenType;
-        $this->tokenSubType = $pTokenSubType;
     }
 
     /**

@@ -12,6 +12,7 @@ class Garp_Spawn_Behavior_Type_HtmlFilterable extends Garp_Spawn_Behavior_Type_A
     /**
      * In translated models (i18n leaves), multilingual columns should not be mandatory on PHP validator level.
      */
+    #[\Override]
     public function getParams() {
         $model  = $this->getModel();        
 

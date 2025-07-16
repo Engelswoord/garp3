@@ -36,6 +36,7 @@ class PHPExcel_Writer_Exception extends PHPExcel_Exception
      * @param mixed $line
      * @param mixed $context
      */
+    #[\Override]
     public static function errorHandlerCallback($code, $string, $file, $line, $context)
     {
         $e = new self($string, $code);

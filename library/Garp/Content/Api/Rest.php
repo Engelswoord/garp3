@@ -475,7 +475,7 @@ class Garp_Content_Api_Rest {
     protected function _combineRecords($datatype, array $records, $with) {
         $modelName = $this->_normalizeModelName($datatype);
         $rootModel = new $modelName;
-        $schema = (new Garp_Content_Api_Rest_Schema('rest'))->getModelDetails($datatype);
+        $schema = new Garp_Content_Api_Rest_Schema('rest')->getModelDetails($datatype);
         $hasOneRelations = f\filter(f\prop_equals('origin', 'relation'), $schema['fields']);
         $hasOneRelations = array_map(f\prop('relationAlias'), $hasOneRelations);
 

@@ -13,6 +13,7 @@ use Garp\Functional as f;
  */
 class Garp_Form_Decorator_AnyMarkup extends Zend_Form_Decorator_Abstract {
 
+    #[\Override]
     public function render($content) {
         $placement = $this->getPlacement();
         $separator = $this->getSeparator();

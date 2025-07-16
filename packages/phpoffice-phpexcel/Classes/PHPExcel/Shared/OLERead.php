@@ -30,6 +30,16 @@ defined('IDENTIFIER_OLE') ||
 
 class PHPExcel_Shared_OLERead
 {
+    public $numBigBlockDepotBlocks;
+    public $rootStartBlock;
+    public $sbdStartBlock;
+    public $extensionBlock;
+    public $numExtensionBlocks;
+    public $bigBlockChain;
+    public $smallBlockChain;
+    public $entry;
+    public $props;
+    public $rootentry;
     private $data = '';
 
     // OLE identifier
@@ -108,7 +118,7 @@ class PHPExcel_Shared_OLERead
         // Total number of sectors used by MSAT
         $this->numExtensionBlocks = self::getInt4d($this->data, self::NUM_EXTENSION_BLOCK_POS);
 
-        $bigBlockDepotBlocks = array();
+        $bigBlockDepotBlocks = [];
         $pos = self::BIG_BLOCK_DEPOT_BLOCKS_POS;
 
         $bbdBlocks = $this->numBigBlockDepotBlocks;
@@ -206,7 +216,7 @@ class PHPExcel_Shared_OLERead
 
             while ($block != -2) {
                 $pos = ($block + 1) * self::BIG_BLOCK_SIZE;
-                $streamData .= substr($this->data, $pos, self::BIG_BLOCK_SIZE);
+                $streamData .= substr((string) $this->data, $pos, self::BIG_BLOCK_SIZE);
                 $block = self::getInt4d($this->bigBlockChain, $block*4);
             }
 
@@ -227,7 +237,7 @@ class PHPExcel_Shared_OLERead
 
         while ($block != -2) {
             $pos = ($block + 1) * self::BIG_BLOCK_SIZE;
-            $data .= substr($this->data, $pos, self::BIG_BLOCK_SIZE);
+            $data .= substr((string) $this->data, $pos, self::BIG_BLOCK_SIZE);
             $block = self::getInt4d($this->bigBlockChain, $block*4);
         }
         return $data;
@@ -241,10 +251,10 @@ class PHPExcel_Shared_OLERead
         $offset = 0;
 
         // loop through entires, each entry is 128 bytes
-        $entryLen = strlen($this->entry);
+        $entryLen = strlen((string) $this->entry);
         while ($offset < $entryLen) {
             // entry data (128 bytes)
-            $d = substr($this->entry, $offset, self::PROPERTY_STORAGE_BLOCK_SIZE);
+            $d = substr((string) $this->entry, $offset, self::PROPERTY_STORAGE_BLOCK_SIZE);
 
             // size in bytes of name
             $nameSize = ord($d[self::SIZE_OF_NAME_POS]) | (ord($d[self::SIZE_OF_NAME_POS+1]) << 8);
@@ -260,12 +270,12 @@ class PHPExcel_Shared_OLERead
 
             $name = str_replace("\x00", "", substr($d, 0, $nameSize));
 
-            $this->props[] = array(
+            $this->props[] = [
                 'name' => $name,
                 'type' => $type,
                 'startBlock' => $startBlock,
                 'size' => $size
-            );
+            ];
 
             // tmp helper to simplify checks
             $upName = strtoupper($name);

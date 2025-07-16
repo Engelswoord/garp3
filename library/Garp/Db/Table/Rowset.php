@@ -53,13 +53,13 @@ final class Garp_Db_Table_Rowset extends Zend_Db_Table_Rowset_Abstract implement
                 sprintf('Unable to prepend row of type %s to this rowset. Expected: %s', $row::class, $this->_rowClass)
             );
         }
-        return (new static([
+        return new static([
             'table' => $this->_table,
             'rowClass' => $this->_rowClass,
             'data' => [$row->toArray()],
             'readOnly' => $this->_readOnly,
             'stored' => $this->_stored
-        ]))->concat($this);
+        ])->concat($this);
     }
 
     /**

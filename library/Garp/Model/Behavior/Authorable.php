@@ -12,6 +12,7 @@ class Garp_Model_Behavior_Authorable extends Garp_Model_Behavior_Abstract {
 
     protected $_columns;
 
+    #[\Override]
     protected function _setup($config) {
         if (!isset($config['authorField'])) {
             $config['authorField'] = self::_AUTHOR_COLUMN;

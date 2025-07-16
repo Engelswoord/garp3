@@ -17,7 +17,7 @@ class Garp_Service_Slack {
     protected $_config;
 
 
-    public function __construct(Garp_Service_Slack_Config $config = null) {
+    public function __construct(?Garp_Service_Slack_Config $config = null) {
         if (!$config) {
             $config = new Garp_Service_Slack_Config();
         }

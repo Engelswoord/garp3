@@ -56,7 +56,7 @@ class PHPExcel_Worksheet_ColumnCellIterator extends PHPExcel_Worksheet_CellItera
      * @param    integer                $startRow        The row number at which to start iterating
      * @param    integer                $endRow            Optionally, the row number at which to stop iterating
      */
-    public function __construct(PHPExcel_Worksheet $subject = null, $columnIndex = 'A', $startRow = 1, $endRow = null)
+    public function __construct(?PHPExcel_Worksheet $subject = null, $columnIndex = 'A', $startRow = 1, $endRow = null)
     {
         // Set subject
         $this->subject = $subject;
@@ -68,6 +68,7 @@ class PHPExcel_Worksheet_ColumnCellIterator extends PHPExcel_Worksheet_CellItera
     /**
      * Destructor
      */
+    #[\Override]
     public function __destruct()
     {
         unset($this->subject);
@@ -98,7 +99,7 @@ class PHPExcel_Worksheet_ColumnCellIterator extends PHPExcel_Worksheet_CellItera
      */
     public function resetEnd($endRow = null)
     {
-        $this->endRow = ($endRow) ? $endRow : $this->subject->getHighestRow();
+        $this->endRow = $endRow ?: $this->subject->getHighestRow();
         $this->adjustForExistingOnlyRange();
 
         return $this;

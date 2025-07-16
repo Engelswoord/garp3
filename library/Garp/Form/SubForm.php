@@ -24,6 +24,7 @@ class Garp_Form_SubForm extends Garp_Form {
      * Initalize!
      * @return void
      */ 
+    #[\Override]
     public function init() {
         parent::init();
 
@@ -44,6 +45,7 @@ class Garp_Form_SubForm extends Garp_Form {
      * @param  array|Zend_Config $options
      * @return Zend_Form_Element
      */
+    #[\Override]
     public function createElement($type, $name, $options = null) {
         $element = parent::createElement($type, $name, $options);
         return $element;

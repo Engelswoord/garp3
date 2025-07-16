@@ -69,7 +69,7 @@ class Garp_Content_Cdn_AssetList_Test extends Garp_Test_PHPUnit_TestCase {
 
             $this->assertTrue(
                 $fileTimestamp >= $threshold,
-                "Timestamp of {$assetPathRel}: " . strftime('%d-%m-%Y', $fileTimestamp)
+                "Timestamp of {$assetPathRel}: " . '' // strftime('%d-%m-%Y', $fileTimestamp)
                 . ', should be: now ' . self::FILE_TIMESTAMP_THRESHOLD
             );
         }

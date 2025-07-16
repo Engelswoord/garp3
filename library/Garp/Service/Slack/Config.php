@@ -32,7 +32,7 @@ class Garp_Service_Slack_Config {
      *                          If not provided, the values from
      *                          app.ini will be used.
      */
-    public function __construct(array $config = null) {
+    public function __construct(?array $config = null) {
         if (!$config) {
             $config = $this->_loadAppWideConfig();
         }
@@ -49,7 +49,7 @@ class Garp_Service_Slack_Config {
      *  @param Array $overrides     Optional values to pragmatically 
      *                              override the app-wide configuration.
      */
-    public function getParams(array $overrides = null) {
+    public function getParams(?array $overrides = null) {
         $params = [
             'token' => $this->_token,
             'channel' => $this->_channel,

@@ -13,6 +13,7 @@ class Garp_Spawn_MySql_View_Joint extends Garp_Spawn_MySql_View_Abstract {
         return $this->getTableName(false) . self::POSTFIX;
     }
 
+    #[\Override]
     public function getTableName($localized = true) {
         return (!$localized || !$this->getModel()->isMultilingual()) ?
             parent::getTableName() :

@@ -26,6 +26,7 @@ class Garp_Spawn_Behavior_Type_Locatable extends Garp_Spawn_Behavior_Type_Abstra
      * @return  Bool    Whether this behavior needs to be registered with an observer
      *                  called in the PHP model's init() method
      */
+    #[\Override]
     public function needsPhpModelObserver() {
         return false;
     }

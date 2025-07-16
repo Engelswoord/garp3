@@ -50,7 +50,7 @@ class PHPExcel_Writer_Excel2007 extends PHPExcel_Writer_Abstract implements PHPE
      *
      * @var PHPExcel_Writer_Excel2007_WriterPart[]
      */
-    private $writerParts    = array();
+    private $writerParts    = [];
 
     /**
      * Private PHPExcel
@@ -64,7 +64,7 @@ class PHPExcel_Writer_Excel2007 extends PHPExcel_Writer_Abstract implements PHPE
      *
      * @var string[]
      */
-    private $stringTable    = array();
+    private $stringTable    = [];
 
     /**
      * Private unique PHPExcel_Style_Conditional HashTable
@@ -120,12 +120,12 @@ class PHPExcel_Writer_Excel2007 extends PHPExcel_Writer_Abstract implements PHPE
      *
      * @param     PHPExcel    $pPHPExcel
      */
-    public function __construct(PHPExcel $pPHPExcel = null)
+    public function __construct(?PHPExcel $pPHPExcel = null)
     {
         // Assign PHPExcel
         $this->setPHPExcel($pPHPExcel);
 
-        $writerPartsArray = array(  'stringtable'       => 'PHPExcel_Writer_Excel2007_StringTable',
+        $writerPartsArray = [  'stringtable'       => 'PHPExcel_Writer_Excel2007_StringTable',
                                     'contenttypes'      => 'PHPExcel_Writer_Excel2007_ContentTypes',
                                     'docprops'          => 'PHPExcel_Writer_Excel2007_DocProps',
                                     'rels'              => 'PHPExcel_Writer_Excel2007_Rels',
@@ -138,7 +138,7 @@ class PHPExcel_Writer_Excel2007 extends PHPExcel_Writer_Abstract implements PHPE
                                     'chart'             => 'PHPExcel_Writer_Excel2007_Chart',
                                     'relsvba'           => 'PHPExcel_Writer_Excel2007_RelsVBA',
                                     'relsribbonobjects' => 'PHPExcel_Writer_Excel2007_RelsRibbon'
-                                 );
+                                 ];
 
         //    Initialise writer parts
         //        and Assign their parent IWriters
@@ -146,10 +146,10 @@ class PHPExcel_Writer_Excel2007 extends PHPExcel_Writer_Abstract implements PHPE
             $this->writerParts[$writer] = new $class($this);
         }
 
-        $hashTablesArray = array( 'stylesConditionalHashTable',    'fillHashTable',        'fontHashTable',
+        $hashTablesArray = [ 'stylesConditionalHashTable',    'fillHashTable',        'fontHashTable',
                                   'bordersHashTable',                'numFmtHashTable',        'drawingHashTable',
                                   'styleHashTable'
-                                );
+                                ];
 
         // Set HashTable variables
         foreach ($hashTablesArray as $tableName) {
@@ -186,7 +186,7 @@ class PHPExcel_Writer_Excel2007 extends PHPExcel_Writer_Abstract implements PHPE
 
             // If $pFilename is php://output or php://stdout, make it a temporary file...
             $originalFilename = $pFilename;
-            if (strtolower($pFilename) == 'php://output' || strtolower($pFilename) == 'php://stdout') {
+            if (strtolower((string) $pFilename) == 'php://output' || strtolower((string) $pFilename) == 'php://stdout') {
                 $pFilename = @tempnam(PHPExcel_Shared_File::sys_get_temp_dir(), 'phpxltmp');
                 if ($pFilename == '') {
                     $pFilename = $originalFilename;
@@ -199,7 +199,7 @@ class PHPExcel_Writer_Excel2007 extends PHPExcel_Writer_Abstract implements PHPE
             PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_EXCEL);
 
             // Create string lookup table
-            $this->stringTable = array();
+            $this->stringTable = [];
             for ($i = 0; $i < $this->spreadSheet->getSheetCount(); ++$i) {
                 $this->stringTable = $this->getWriterPart('StringTable')->createStringTable($this->spreadSheet->getSheet($i), $this->stringTable);
             }
@@ -255,13 +255,13 @@ class PHPExcel_Writer_Excel2007 extends PHPExcel_Writer_Abstract implements PHPE
                 $tmpRibbonTarget=$this->spreadSheet->getRibbonXMLData('target');
                 $objZip->addFromString($tmpRibbonTarget, $this->spreadSheet->getRibbonXMLData('data'));
                 if ($this->spreadSheet->hasRibbonBinObjects()) {
-                    $tmpRootPath=dirname($tmpRibbonTarget).'/';
+                    $tmpRootPath=dirname((string) $tmpRibbonTarget).'/';
                     $ribbonBinObjects=$this->spreadSheet->getRibbonBinObjects('data');//the files to write
                     foreach ($ribbonBinObjects as $aPath => $aContent) {
                         $objZip->addFromString($tmpRootPath.$aPath, $aContent);
                     }
                     //the rels for files
-                    $objZip->addFromString($tmpRootPath.'_rels/'.basename($tmpRibbonTarget).'.rels', $this->getWriterPart('RelsRibbonObjects')->writeRibbonRelationships($this->spreadSheet));
+                    $objZip->addFromString($tmpRootPath.'_rels/'.basename((string) $tmpRibbonTarget).'.rels', $this->getWriterPart('RelsRibbonObjects')->writeRibbonRelationships($this->spreadSheet));
                 }
             }
             
@@ -354,7 +354,7 @@ class PHPExcel_Writer_Excel2007 extends PHPExcel_Writer_Abstract implements PHPE
                 if ($this->getDrawingHashTable()->getByIndex($i) instanceof PHPExcel_Worksheet_Drawing) {
                     $imageContents = null;
                     $imagePath = $this->getDrawingHashTable()->getByIndex($i)->getPath();
-                    if (strpos($imagePath, 'zip://') !== false) {
+                    if (str_contains($imagePath, 'zip://')) {
                         $imagePath = substr($imagePath, 6);
                         $imagePathSplitted = explode('#', $imagePath);
 
@@ -423,7 +423,7 @@ class PHPExcel_Writer_Excel2007 extends PHPExcel_Writer_Abstract implements PHPE
      * @throws    PHPExcel_Writer_Exception
      * @return PHPExcel_Writer_Excel2007
      */
-    public function setPHPExcel(PHPExcel $pPHPExcel = null)
+    public function setPHPExcel(?PHPExcel $pPHPExcel = null)
     {
         $this->spreadSheet = $pPHPExcel;
         return $this;

@@ -594,6 +594,7 @@ class Garp_Model_Behavior_Translatable extends Garp_Model_Behavior_Abstract {
      * @param Array $config
      * @return Void
      */
+    #[\Override]
     protected function _setup($config) {
         if (empty($config['columns'])) {
             throw new Garp_Model_Behavior_Exception(self::MISSING_COLUMNS_EXCEPTION);

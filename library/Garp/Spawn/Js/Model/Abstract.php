@@ -6,6 +6,7 @@
  * @author David Spreekmeester <david@grrr.nl>
  */
 abstract class Garp_Spawn_Js_Model_Abstract {
+    public $_template;
     protected $_modelSet;
 
     public function __construct(protected $_modelId, Garp_Spawn_Model_Set $modelSet) {

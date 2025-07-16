@@ -27,7 +27,7 @@ class PHPExcel_Shared_JAMA_LUDecomposition
      *    Decomposition storage
      *    @var array
      */
-    private $LU = array();
+    private $LU = [];
 
     /**
      *    Row dimension.
@@ -51,7 +51,7 @@ class PHPExcel_Shared_JAMA_LUDecomposition
      *    Internal storage of pivot vector.
      *    @var array
      */
-    private $piv = array();
+    private $piv = [];
 
     /**
      *    LU Decomposition constructor.
@@ -70,7 +70,7 @@ class PHPExcel_Shared_JAMA_LUDecomposition
                 $this->piv[$i] = $i;
             }
             $this->pivsign = 1;
-            $LUrowi = $LUcolj = array();
+            $LUrowi = $LUcolj = [];
 
             // Outer loop.
             for ($j = 0; $j < $this->n; ++$j) {
@@ -105,7 +105,7 @@ class PHPExcel_Shared_JAMA_LUDecomposition
                     $k = $this->piv[$p];
                     $this->piv[$p] = $this->piv[$j];
                     $this->piv[$j] = $k;
-                    $this->pivsign = $this->pivsign * -1;
+                    $this->pivsign *= -1;
                 }
                 // Compute multipliers.
                 if (($j < $this->m) && ($this->LU[$j][$j] != 0.0)) {

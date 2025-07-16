@@ -11,10 +11,12 @@ class Garp_Shell_Command_PngQuantIsAvailable extends Garp_Shell_Command_Abstract
         return self::COMMAND_PNG_QUANT_IS_AVAILABLE;
     }
     
+    #[\Override]
     public function executeLocally() {
         return (bool)parent::executeLocally();
     }
     
+    #[\Override]
     public function executeRemotely(Garp_Shell_RemoteSession $session) {
         return (bool)parent::executeRemotely($session);
     }

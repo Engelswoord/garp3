@@ -13,6 +13,7 @@ class Garp_Log extends Zend_Log {
      * @param  array|Zend_Config $config Array or instance of Zend_Config
      * @return Zend_Log
      */
+    #[\Override]
     static public function factory($config = []) {
         if (is_string($config)) {
             // Assume $config is a filename

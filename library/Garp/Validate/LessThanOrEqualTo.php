@@ -27,6 +27,7 @@ class Garp_Validate_LessThanOrEqualTo extends Zend_Validate_LessThan
      * @param  mixed $value
      * @return boolean
      */
+    #[\Override]
     public function isValid($value)
     {
         $this->_setValue($value);

@@ -26,6 +26,7 @@ class Garp_Model_Validator_MinLength extends Garp_Model_Validator_Abstract {
      * @param array $config Configuration options
      * @return void
      */
+    #[\Override]
     protected function _setup($config) {
         $this->_fields = $config;
     }

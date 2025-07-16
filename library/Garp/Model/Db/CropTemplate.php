@@ -26,6 +26,7 @@ class Garp_Model_Db_CropTemplate extends Garp_Model_IniFile {
      *
      * @return array
      */
+    #[\Override]
     public function fetchAll() {
         $templates = parent::fetchAll();
         $out = [];

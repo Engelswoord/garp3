@@ -14,10 +14,12 @@ class Garp_Spawn_Behavior_Type_Set extends Garp_Spawn_Behavior_Type_Abstract {
         return !!count(self::_getSetColumnsFromModel($model));
     }
 
+    #[\Override]
     public function needsPhpModelObserver() {
         return true;
     }
 
+    #[\Override]
     public function getParams() {
         $sets = self::_getSetColumnsFromModel($this->getModel());
         return ['columns' => array_map(f\prop('name'), $sets)];

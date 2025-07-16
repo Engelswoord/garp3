@@ -28,13 +28,6 @@
 class PHPExcel_Worksheet_ColumnDimension extends PHPExcel_Worksheet_Dimension
 {
     /**
-     * Column index
-     *
-     * @var int
-     */
-    private $columnIndex;
-
-    /**
      * Column width
      *
      * When this is set to a negative value, the column width should be ignored by IWriter
@@ -53,13 +46,13 @@ class PHPExcel_Worksheet_ColumnDimension extends PHPExcel_Worksheet_Dimension
     /**
      * Create a new PHPExcel_Worksheet_ColumnDimension
      *
-     * @param string $pIndex Character column index
+     * @param string $columnIndex Character column index
      */
-    public function __construct($pIndex = 'A')
+    public function __construct(/**
+     * Column index
+     */
+    private $columnIndex = 'A')
     {
-        // Initialise values
-        $this->columnIndex = $pIndex;
-
         // set dimension as unformatted by default
         parent::__construct(0);
     }

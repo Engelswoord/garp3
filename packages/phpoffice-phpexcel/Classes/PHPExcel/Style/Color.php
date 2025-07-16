@@ -90,6 +90,7 @@ class PHPExcel_Style_Color extends PHPExcel_Style_Supervisor implements PHPExcel
      * @param string $parentPropertyName
      * @return PHPExcel_Style_Color
      */
+    #[\Override]
     public function bindParent($parent, $parentPropertyName = null)
     {
         $this->parent = $parent;
@@ -135,7 +136,7 @@ class PHPExcel_Style_Color extends PHPExcel_Style_Supervisor implements PHPExcel
                 break;
 
         }
-        return $this->parent->getStyleArray(array($key => $array));
+        return $this->parent->getStyleArray([$key => $array]);
     }
 
     /**
@@ -193,7 +194,7 @@ class PHPExcel_Style_Color extends PHPExcel_Style_Supervisor implements PHPExcel
             $pValue = PHPExcel_Style_Color::COLOR_BLACK;
         }
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(array('argb' => $pValue));
+            $styleArray = $this->getStyleArray(['argb' => $pValue]);
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->argb = $pValue;
@@ -226,7 +227,7 @@ class PHPExcel_Style_Color extends PHPExcel_Style_Supervisor implements PHPExcel
             $pValue = '000000';
         }
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(array('argb' => 'FF' . $pValue));
+            $styleArray = $this->getStyleArray(['argb' => 'FF' . $pValue]);
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->argb = 'FF' . $pValue;
@@ -355,7 +356,7 @@ class PHPExcel_Style_Color extends PHPExcel_Style_Supervisor implements PHPExcel
 
         // Indexed colors
         if (is_null(self::$indexedColors)) {
-            self::$indexedColors = array(
+            self::$indexedColors = [
                     1    => 'FF000000',    //    System Colour #1 - Black
                     2    => 'FFFFFFFF',    //    System Colour #2 - White
                     3    => 'FFFF0000',    //    System Colour #3 - Red
@@ -412,7 +413,7 @@ class PHPExcel_Style_Color extends PHPExcel_Style_Supervisor implements PHPExcel
                     54    => 'FF993366',    //    Standard Colour #54
                     55    => 'FF333399',    //    Standard Colour #55
                     56    => 'FF333333'    //    Standard Colour #56
-                );
+                ];
         }
 
         if (array_key_exists($pIndex, self::$indexedColors)) {
@@ -437,7 +438,7 @@ class PHPExcel_Style_Color extends PHPExcel_Style_Supervisor implements PHPExcel
         }
         return md5(
             $this->argb .
-            __CLASS__
+            self::class
         );
     }
 }

@@ -36,11 +36,6 @@
 class PHPExcel_Writer_Excel5_Escher
 {
     /**
-     * The object we are writing
-     */
-    private $object;
-
-    /**
      * The written binary data
      */
     private $data;
@@ -64,9 +59,13 @@ class PHPExcel_Writer_Excel5_Escher
      *
      * @param mixed
      */
-    public function __construct($object)
+    public function __construct(
+        /**
+         * The object we are writing
+         */
+        private $object
+    )
     {
-        $this->object = $object;
     }
 
     /**
@@ -77,7 +76,7 @@ class PHPExcel_Writer_Excel5_Escher
         // initialize
         $this->data = '';
 
-        switch (get_class($this->object)) {
+        switch ($this->object::class) {
             case 'PHPExcel_Shared_Escher':
                 if ($dggContainer = $this->object->getDggContainer()) {
                     $writer = new PHPExcel_Writer_Excel5_Escher($dggContainer);
@@ -339,8 +338,8 @@ class PHPExcel_Writer_Excel5_Escher
 
                 // initialize spape offsets
                 $totalSize = 8;
-                $spOffsets = array();
-                $spTypes   = array();
+                $spOffsets = [];
+                $spTypes   = [];
 
                 // treat the inner data
                 foreach ($this->object->getChildren() as $spContainer) {
@@ -349,7 +348,7 @@ class PHPExcel_Writer_Excel5_Escher
                     $innerData .= $spData;
 
                     // save the shape offsets (where new shape records begin)
-                    $totalSize += strlen($spData);
+                    $totalSize += strlen((string) $spData);
                     $spOffsets[] = $totalSize;
                     
                     $spTypes = array_merge($spTypes, $writer->getSpTypes());
@@ -434,7 +433,7 @@ class PHPExcel_Writer_Excel5_Escher
                     $recType        = 0xF010;
 
                     // start coordinates
-                    list($column, $row) = PHPExcel_Cell::coordinateFromString($this->object->getStartCoordinates());
+                    [$column, $row] = PHPExcel_Cell::coordinateFromString($this->object->getStartCoordinates());
                     $c1 = PHPExcel_Cell::columnIndexFromString($column) - 1;
                     $r1 = $row - 1;
 
@@ -445,7 +444,7 @@ class PHPExcel_Writer_Excel5_Escher
                     $startOffsetY = $this->object->getStartOffsetY();
 
                     // end coordinates
-                    list($column, $row) = PHPExcel_Cell::coordinateFromString($this->object->getEndCoordinates());
+                    [$column, $row] = PHPExcel_Cell::coordinateFromString($this->object->getEndCoordinates());
                     $c2 = PHPExcel_Cell::columnIndexFromString($column) - 1;
                     $r2 = $row - 1;
 

@@ -44,6 +44,7 @@ class Garp_Model_Behavior_Checkboxable extends Garp_Model_Behavior_Core {
         return $this->_normalizeCheckboxValue(intval($value));
     }
 
+    #[\Override]
     protected function _setup($config) {
         if (!array_key_exists('columns', $config)) {
             throw new Garp_Model_Behavior_Exception('Missing required config key "columns"');

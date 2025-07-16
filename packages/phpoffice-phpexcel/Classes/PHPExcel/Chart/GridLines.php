@@ -22,63 +22,63 @@ class PHPExcel_Chart_GridLines extends PHPExcel_Chart_Properties
 
     private $objectState = false;
 
-    private $lineProperties = array(
-        'color' => array(
+    private $lineProperties = [
+        'color' => [
             'type' => self::EXCEL_COLOR_TYPE_STANDARD,
             'value' => null,
             'alpha' => 0
-        ),
-        'style' => array(
+        ],
+        'style' => [
             'width' => '9525',
             'compound' => self::LINE_STYLE_COMPOUND_SIMPLE,
             'dash' => self::LINE_STYLE_DASH_SOLID,
             'cap' => self::LINE_STYLE_CAP_FLAT,
             'join' => self::LINE_STYLE_JOIN_BEVEL,
-            'arrow' => array(
-                'head' => array(
+            'arrow' => [
+                'head' => [
                     'type' => self::LINE_STYLE_ARROW_TYPE_NOARROW,
                     'size' => self::LINE_STYLE_ARROW_SIZE_5
-                ),
-                'end' => array(
+                ],
+                'end' => [
                     'type' => self::LINE_STYLE_ARROW_TYPE_NOARROW,
                     'size' => self::LINE_STYLE_ARROW_SIZE_8
-                ),
-            )
-        )
-    );
+                ],
+            ]
+        ]
+    ];
 
-    private $shadowProperties = array(
+    private $shadowProperties = [
         'presets' => self::SHADOW_PRESETS_NOSHADOW,
         'effect' => null,
-        'color' => array(
+        'color' => [
             'type' => self::EXCEL_COLOR_TYPE_STANDARD,
             'value' => 'black',
             'alpha' => 85,
-        ),
-        'size' => array(
+        ],
+        'size' => [
             'sx' => null,
             'sy' => null,
             'kx' => null
-        ),
+        ],
         'blur' => null,
         'direction' => null,
         'distance' => null,
         'algn' => null,
         'rotWithShape' => null
-    );
+    ];
 
-    private $glowProperties = array(
+    private $glowProperties = [
         'size' => null,
-        'color' => array(
+        'color' => [
             'type' => self::EXCEL_COLOR_TYPE_STANDARD,
             'value' => 'black',
             'alpha' => 40
-        )
-    );
+        ]
+    ];
 
-    private $softEdges = array(
+    private $softEdges = [
         'size' => null
-     );
+     ];
 
     /**
      * Get Object State

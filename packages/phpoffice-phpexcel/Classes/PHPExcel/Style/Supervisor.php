@@ -28,13 +28,6 @@
 abstract class PHPExcel_Style_Supervisor
 {
     /**
-     * Supervisor?
-     *
-     * @var boolean
-     */
-    protected $isSupervisor;
-
-    /**
      * Parent. Only used for supervisor
      *
      * @var PHPExcel_Style
@@ -48,10 +41,13 @@ abstract class PHPExcel_Style_Supervisor
      *                                    Leave this value at default unless you understand exactly what
      *                                        its ramifications are
      */
-    public function __construct($isSupervisor = false)
+    public function __construct(
+        /**
+         * Supervisor?
+         */
+        protected $isSupervisor = false
+    )
     {
-        // Supervisor?
-        $this->isSupervisor = $isSupervisor;
     }
 
     /**

@@ -32,6 +32,7 @@ class Garp_Model_Validator_Email extends Garp_Model_Validator_Abstract {
      * @param Array $config Configuration options
      * @return Void
      */
+    #[\Override]
     protected function _setup($config) {
         $this->_fields = $config;
     }

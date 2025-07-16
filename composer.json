@@ -18,7 +18,7 @@
     "league/csv": "^8.0",
     "aws/aws-sdk-php": "^3.87",
     "sentry/sdk": "^4.0",
-    "shardj/zf1-future": "^1.16.1",
+    "shardj/zf1-future": "^1.24",
     "guzzlehttp/guzzle": "^6|^7"
   },
   "require-dev": {

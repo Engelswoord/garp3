@@ -5,7 +5,7 @@ if (!defined('PHPEXCEL_ROOT')) {
     /**
      * @ignore
      */
-    define('PHPEXCEL_ROOT', dirname(__FILE__) . '/../../');
+    define('PHPEXCEL_ROOT', __DIR__ . '/../../');
     require(PHPEXCEL_ROOT . 'PHPExcel/Autoloader.php');
 }
 
@@ -83,7 +83,7 @@ class PHPExcel_Calculation_Functions
      * @access    private
      * @var array
      */
-    protected static $errorCodes = array(
+    protected static $errorCodes = [
         'null'           => '#NULL!',
         'divisionbyzero' => '#DIV/0!',
         'value'          => '#VALUE!',
@@ -92,7 +92,7 @@ class PHPExcel_Calculation_Functions
         'num'            => '#NUM!',
         'na'             => '#N/A',
         'gettingdata'    => '#GETTING_DATA'
-    );
+    ];
 
 
     /**
@@ -299,19 +299,19 @@ class PHPExcel_Calculation_Functions
 
     public static function isMatrixValue($idx)
     {
-        return ((substr_count($idx, '.') <= 1) || (preg_match('/\.[A-Z]/', $idx) > 0));
+        return ((substr_count((string) $idx, '.') <= 1) || (preg_match('/\.[A-Z]/', (string) $idx) > 0));
     }
 
 
     public static function isValue($idx)
     {
-        return (substr_count($idx, '.') == 0);
+        return (substr_count((string) $idx, '.') == 0);
     }
 
 
     public static function isCellValue($idx)
     {
-        return (substr_count($idx, '.') > 1);
+        return (substr_count((string) $idx, '.') > 1);
     }
 
 
@@ -321,14 +321,14 @@ class PHPExcel_Calculation_Functions
         if (!isset($condition[0])) {
             $condition = '=""';
         }
-        if (!in_array($condition[0], array('>', '<', '='))) {
+        if (!in_array($condition[0], ['>', '<', '='])) {
             if (!is_numeric($condition)) {
-                $condition = PHPExcel_Calculation::wrapResult(strtoupper($condition));
+                $condition = PHPExcel_Calculation::wrapResult(strtoupper((string) $condition));
             }
             return '=' . $condition;
         } else {
             preg_match('/([<>=]+)(.*)/', $condition, $matches);
-            list(, $operator, $operand) = $matches;
+            [, $operator, $operand] = $matches;
 
             if (!is_numeric($operand)) {
                 $operand = str_replace('"', '""', $operand);
@@ -585,8 +585,7 @@ class PHPExcel_Calculation_Functions
     {
         $value = self::flattenArrayIndexed($value);
         if (is_array($value) && (count($value) > 1)) {
-            end($value);
-            $a = key($value);
+            $a = array_key_last($value);
             //    Range of cells is an error
             if (self::isCellValue($a)) {
                 return 16;
@@ -629,7 +628,7 @@ class PHPExcel_Calculation_Functions
             return (array) $array;
         }
 
-        $arrayValues = array();
+        $arrayValues = [];
         foreach ($array as $value) {
             if (is_array($value)) {
                 foreach ($value as $val) {
@@ -662,7 +661,7 @@ class PHPExcel_Calculation_Functions
             return (array) $array;
         }
 
-        $arrayValues = array();
+        $arrayValues = [];
         foreach ($array as $k1 => $value) {
             if (is_array($value)) {
                 foreach ($value as $k2 => $val) {
@@ -736,7 +735,7 @@ if ((!function_exists('mb_str_replace')) &&
     function mb_str_replace($search, $replace, $subject)
     {
         if (is_array($subject)) {
-            $ret = array();
+            $ret = [];
             foreach ($subject as $key => $val) {
                 $ret[$key] = mb_str_replace($search, $replace, $val);
             }
@@ -748,10 +747,10 @@ if ((!function_exists('mb_str_replace')) &&
                 continue;
             }
             $r = !is_array($replace) ? $replace : (array_key_exists($key, $replace) ? $replace[$key] : '');
-            $pos = mb_strpos($subject, $s, 0, 'UTF-8');
+            $pos = mb_strpos((string) $subject, (string) $s, 0, 'UTF-8');
             while ($pos !== false) {
-                $subject = mb_substr($subject, 0, $pos, 'UTF-8') . $r . mb_substr($subject, $pos + mb_strlen($s, 'UTF-8'), 65535, 'UTF-8');
-                $pos = mb_strpos($subject, $s, $pos + mb_strlen($r, 'UTF-8'), 'UTF-8');
+                $subject = mb_substr((string) $subject, 0, $pos, 'UTF-8') . $r . mb_substr((string) $subject, $pos + mb_strlen((string) $s, 'UTF-8'), 65535, 'UTF-8');
+                $pos = mb_strpos($subject, (string) $s, $pos + mb_strlen((string) $r, 'UTF-8'), 'UTF-8');
             }
         }
         return $subject;

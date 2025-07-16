@@ -64,6 +64,7 @@ class Garp_Form extends Zend_Form {
      *
      * @return void
      */
+    #[\Override]
     public function __clone() {
         parent::__clone();
 
@@ -105,6 +106,7 @@ class Garp_Form extends Zend_Form {
      * @param bool $suppressArrayNotation
      * @return array
      */
+    #[\Override]
     public function getValues($suppressArrayNotation = false) {
         $values = parent::getValues($suppressArrayNotation);
         unset($values[self::HONEYPOT_FIELD_KEY]);
@@ -125,6 +127,7 @@ class Garp_Form extends Zend_Form {
      * @param  array|Zend_Config $options
      * @return Zend_Form_Element
      */
+    #[\Override]
     public function createElement($type, $name, $options = null) {
         if ('html' == strtolower($type)) {
             // For simple HTML elements, skip all the decorator stuff below
@@ -199,6 +202,7 @@ class Garp_Form extends Zend_Form {
      * @return Zend_Form
      * @throws Zend_Form_Exception if no valid elements provided
      */
+    #[\Override]
     public function addDisplayGroup(array $elements, $name, $options = null) {
         // Allow custom decorators, but default to a sensible set
         if (empty($options['decorators'])) {
@@ -218,6 +222,7 @@ class Garp_Form extends Zend_Form {
      * @param  int $order
      * @return Zend_Form
      */
+    #[\Override]
     public function addSubForm(Zend_Form $form,  $name = null, $order = null) {
         if (!$name) {
             $name = $form->getName();

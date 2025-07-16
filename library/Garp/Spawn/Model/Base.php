@@ -34,6 +34,7 @@ class Garp_Spawn_Model_Base extends Garp_Spawn_Model_Abstract {
         $this->_i18nModel = $i18nModel;
     }
 
+    #[\Override]
     public function materializePhpModels(Garp_Spawn_Model_Abstract $model) {
         parent::materializePhpModels($model);
 
@@ -71,6 +72,7 @@ class Garp_Spawn_Model_Base extends Garp_Spawn_Model_Abstract {
     /**
      * @return  Bool    Whether this is a base model containing one or more multilingual columns
      */
+    #[\Override]
     public function isMultilingual() {
         $fields = $this->fields->getFields('multilingual', true);
         $isMultilingual = (bool)$fields;

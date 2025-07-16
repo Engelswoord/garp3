@@ -36,6 +36,7 @@ class Garp_Cli_Command_Shell extends Garp_Cli_Command {
      * @param array $args
      * @return void
      */
+    #[\Override]
     public function main(array $args = []) {
         Garp_Cli::lineOut('Welcome to the Garp interactive shell.', Garp_Cli::YELLOW);
         Garp_Cli::lineOut('Use Ctrl-C to quit.');

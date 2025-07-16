@@ -28,30 +28,22 @@
 class PHPExcel_Worksheet_Row
 {
     /**
-     * PHPExcel_Worksheet
-     *
-     * @var PHPExcel_Worksheet
-     */
-    private $parent;
-
-    /**
-     * Row index
-     *
-     * @var int
-     */
-    private $rowIndex = 0;
-
-    /**
      * Create a new row
      *
      * @param PHPExcel_Worksheet         $parent
      * @param int                        $rowIndex
      */
-    public function __construct(PHPExcel_Worksheet $parent = null, $rowIndex = 1)
+    public function __construct(
+        /**
+         * PHPExcel_Worksheet
+         */
+        private ?\PHPExcel_Worksheet $parent = null,
+        /**
+         * Row index
+         */
+        private $rowIndex = 1
+    )
     {
-        // Set parent and row index
-        $this->parent   = $parent;
-        $this->rowIndex = $rowIndex;
     }
 
     /**

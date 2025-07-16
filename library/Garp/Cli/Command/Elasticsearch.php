@@ -17,6 +17,7 @@ class Garp_Cli_Command_Elasticsearch extends Garp_Cli_Command {
     protected $_service;
 
 
+    #[\Override]
     public function main(array $args = []) {
         $this->setService($this->_initService());
         return parent::main($args);

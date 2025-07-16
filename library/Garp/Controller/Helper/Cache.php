@@ -72,6 +72,7 @@ class Garp_Controller_Helper_Cache extends Zend_Controller_Action_Helper_Cache {
      *
      * @return mixed
      */
+    #[\Override]
     public function preDispatch() {
         if ($this->getResponse()->isRedirect() || !$this->isEnabled() || $this->_requestUriTooLong()
         ) {

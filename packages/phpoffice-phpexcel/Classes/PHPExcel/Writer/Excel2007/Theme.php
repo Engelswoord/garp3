@@ -40,7 +40,7 @@ class PHPExcel_Writer_Excel2007_Theme extends PHPExcel_Writer_Excel2007_WriterPa
      * @static    array of string
      *
      */
-    private static $majorFonts = array(
+    private static $majorFonts = [
         'Jpan' => 'ＭＳ Ｐゴシック',
         'Hang' => '맑은 고딕',
         'Hans' => '宋体',
@@ -71,14 +71,14 @@ class PHPExcel_Writer_Excel2007_Theme extends PHPExcel_Writer_Excel2007_WriterPa
         'Viet' => 'Times New Roman',
         'Uigh' => 'Microsoft Uighur',
         'Geor' => 'Sylfaen',
-    );
+    ];
 
     /**
      * Map of Minor fonts to write
      * @static    array of string
      *
      */
-    private static $minorFonts = array(
+    private static $minorFonts = [
         'Jpan' => 'ＭＳ Ｐゴシック',
         'Hang' => '맑은 고딕',
         'Hans' => '宋体',
@@ -109,14 +109,14 @@ class PHPExcel_Writer_Excel2007_Theme extends PHPExcel_Writer_Excel2007_WriterPa
         'Viet' => 'Arial',
         'Uigh' => 'Microsoft Uighur',
         'Geor' => 'Sylfaen',
-    );
+    ];
 
     /**
      * Map of core colours
      * @static    array of string
      *
      */
-    private static $colourScheme = array(
+    private static $colourScheme = [
         'dk2'        => '1F497D',
         'lt2'        => 'EEECE1',
         'accent1'    => '4F81BD',
@@ -127,7 +127,7 @@ class PHPExcel_Writer_Excel2007_Theme extends PHPExcel_Writer_Excel2007_WriterPa
         'accent6'    => 'F79646',
         'hlink'        => '0000FF',
         'folHlink'    => '800080',
-    );
+    ];
             
     /**
      * Write theme to XML format
@@ -136,7 +136,7 @@ class PHPExcel_Writer_Excel2007_Theme extends PHPExcel_Writer_Excel2007_WriterPa
      * @return     string         XML Output
      * @throws     PHPExcel_Writer_Exception
      */
-    public function writeTheme(PHPExcel $pPHPExcel = null)
+    public function writeTheme(?PHPExcel $pPHPExcel = null)
     {
         // Create XML writer
         $objWriter = null;

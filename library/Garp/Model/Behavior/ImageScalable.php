@@ -29,6 +29,7 @@ class Garp_Model_Behavior_ImageScalable extends Garp_Model_Behavior_Abstract {
      * @param Array $config
      * @return void
      */
+    #[\Override]
     protected function _setup($config) {
         if (!empty($config['filename_column'])) {
             $this->_filename_column = $config['filename_column'];

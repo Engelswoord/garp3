@@ -18,6 +18,7 @@ class Garp_Form_Element_Date extends Garp_Form_Element_Text {
 
     const DEFAULT_DATE_FORMAT = 'j-n-Y';
 
+    #[\Override]
     public function init() {
         $class = $this->getAttrib('class');
         $class .= ($class ? ' ' : '') . 'date';

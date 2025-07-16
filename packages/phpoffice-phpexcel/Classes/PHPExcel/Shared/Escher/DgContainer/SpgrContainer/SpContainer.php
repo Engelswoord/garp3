@@ -230,10 +230,7 @@ class PHPExcel_Shared_Escher_DgContainer_SpgrContainer_SpContainer
      */
     public function getOPT($property)
     {
-        if (isset($this->OPT[$property])) {
-            return $this->OPT[$property];
-        }
-        return null;
+        return $this->OPT[$property] ?? null;
     }
 
     /**

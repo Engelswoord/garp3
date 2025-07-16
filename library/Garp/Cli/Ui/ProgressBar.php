@@ -34,6 +34,7 @@ class Garp_Cli_Ui_ProgressBar extends Garp_Cli_Ui {
      *                          with the current value provided in $this->render();
      * @return void
      */
+    #[\Override]
     public function init($totalValue) {
         parent::init($totalValue);
 
@@ -51,6 +52,7 @@ class Garp_Cli_Ui_ProgressBar extends Garp_Cli_Ui {
      *                      This will be compared to $this->_totalValue.
      * @return void
      */
+    #[\Override]
     public function advance($newValue = null) {
         parent::advance($newValue);
 

@@ -216,7 +216,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @return Garp_Model_DataFactory_Interface
      */
     public function getDataFactory(): Garp_Model_DataFactory_Interface {
-        return (new Garp_Model_DataFactory_Default())->setModel($this);
+        return new Garp_Model_DataFactory_Default()->setModel($this);
     }
 
     /**
@@ -633,6 +633,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @param int                               $offset OPTIONAL An SQL LIMIT offset.
      * @return Zend_Db_Table_Rowset_Abstract The row results per the Zend_Db_Adapter fetch mode.
      */
+    #[\Override]
     public function fetchAll($where = null, $order = null, $count = null, $offset = null) {
         if (!($where instanceof Zend_Db_Table_Select)) {
             $select = $this->createSelect($where, $order, $count, $offset);
@@ -653,6 +654,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @return Zend_Db_Table_Row_Abstract|null The row results per the
      *     Zend_Db_Adapter fetch mode, or null if no row found.
      */
+    #[\Override]
     public function fetchRow($where = null, $order = null, $offset = null) {
         if (!($where instanceof Zend_Db_Table_Select)) {
             $select = $this->createSelect($where, $order, 1);
@@ -715,6 +717,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @param  array  $data  Column-value pairs.
      * @return mixed         The primary key of the row inserted.
      */
+    #[\Override]
     public function insert(array $data) {
         $this->notifyObservers('beforeInsert', [$this, &$data]);
         $pkData = parent::insert($data);
@@ -729,6 +732,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @param  array|string $where An SQL WHERE clause, or an array of SQL WHERE clauses.
      * @return int          The number of rows updated.
      */
+    #[\Override]
     public function update(array $data, $where) {
         $this->notifyObservers('beforeUpdate', [$this, &$data, &$where]);
         $result = parent::update($data, $where);
@@ -742,6 +746,7 @@ abstract class Garp_Model_Db extends Zend_Db_Table_Abstract
      * @param  array|string $where SQL WHERE clause(s).
      * @return int          The number of rows deleted.
      */
+    #[\Override]
     public function delete($where) {
         $this->notifyObservers('beforeDelete', [$this, &$where]);
         $result = parent::delete($where);

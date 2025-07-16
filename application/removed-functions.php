@@ -5,9 +5,8 @@
  *
  * @param  string $modelSuffix
  * @return Garp_Model_Db
- *
- * @deprecated Use `new Model_$modelSuffix()`
  */
+#[\Deprecated(message: 'Use `new Model_$modelSuffix()`')]
 function model(string $modelSuffix) {
     $class = "Model_{$modelSuffix}";
     return new $class();
@@ -22,7 +21,7 @@ function model(string $modelSuffix) {
 function snippet(string $identifier): string {
     $model = new Model_Snippet();
     if ($model->isMultilingual()) {
-        $model = (new Garp_I18n_ModelFactory())->getModel('Snippet');
+        $model = new Garp_I18n_ModelFactory()->getModel('Snippet');
     }
     $snippet = $model->fetchByIdentifier($identifier);
     if (!$snippet) {
@@ -39,9 +38,8 @@ function snippet(string $identifier): string {
  * Quick access to the view.
  *
  * @return Zend_View_Abstract
- *
- * @deprecated Use `Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->view`
  */
+#[\Deprecated(message: "Use `Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->view`")]
 function view(): Zend_View_Abstract {
     return Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->view;
 }
@@ -68,9 +66,8 @@ function partial(string $filename, array $params = [], string $module = 'default
  * @param string $message Your log message. Arrays will be print_r'd.
  * @param int $priority A Zend_Log priority (e.g. INFO, NOTICE, WARN etc.)
  * @return void
- *
- * @deprecated Use `Garp_Log::factory($file)->log($message, Zend_Log::INFO)`
  */
+#[\Deprecated(message: 'Use `Garp_Log::factory($file)->log($message, Zend_Log::INFO)`')]
 function dump($file, $message, $priority = Zend_Log::INFO) {
     if (!str_contains($file, '.')) {
         $file .= '.log';
@@ -99,9 +96,8 @@ function __($str) {
  * Shortcut to a "no opereration" function.
  *
  * @return callable
- *
- * @deprecated Use `function() {}`
  */
+#[\Deprecated(message: 'Use `function() {}`')]
 function noop() {
     return function (): void {
     };
@@ -116,9 +112,8 @@ function noop() {
  *
  * @param object $obj
  * @return object
- *
- * @deprecated Use `new $obj;`
  */
+#[\Deprecated(message: 'Use `new $obj;`')]
 function instance($obj) {
     if (is_string($obj)) {
         $obj = new $obj;
@@ -132,26 +127,23 @@ function instance($obj) {
  * @param array $array
  * @param string $column
  * @return array
- *
- * @deprecated Use `f\map(f\prop($column), $array)`
  */
 // Note: coding standards are ignored here because "array_" in "array_pluck" is perceived as package
 // name but it's instead chosen to be in line with existing php functions.
 // @codingStandardsIgnoreStart
+#[\Deprecated(message: 'Use `f\map(f\prop($column), $array)`')]
 function array_pluck($array, $column) {
     return array_map(fn($obj) => $obj[$column] ?? null, $array);
 }
 // @codingStandardsIgnoreEnd
-
 /**
  * Returns TRUE if $callback returns true for one of the items in the collection.
  *
  * @param array $collection
  * @param callable $callback
  * @return bool
- *
- * @deprecated Use `f\some($callback, $collection)`  @see https://grrr-amsterdam.github.io/garp-functional/#some
  */
+#[\Deprecated(message: 'Use `f\some($callback, $collection)`  @see https://grrr-amsterdam.github.io/garp-functional/#some')]
 function some($collection, $callback) {
     foreach ($collection as $index => $item) {
         if (call_user_func($callback, $item, $index)) {
@@ -167,9 +159,8 @@ function some($collection, $callback) {
  *
  * @param callable $fn
  * @return callable
- *
- * @deprecated Use `f\unary($fn)`  @see https://grrr-amsterdam.github.io/garp-functional/#unary
  */
+#[\Deprecated(message: 'Use `f\unary($fn)`  @see https://grrr-amsterdam.github.io/garp-functional/#unary')]
 function unary($fn) {
     return fn($arg) => call_user_func($fn, $arg);
 }
@@ -180,9 +171,8 @@ function unary($fn) {
  *
  * @param array $array
  * @return array
- *
- * @deprecated Use `f\flatten` @see https://grrr-amsterdam.github.io/garp-functional/#flatten
  */
+#[\Deprecated(message: 'Use `f\flatten` @see https://grrr-amsterdam.github.io/garp-functional/#flatten')]
 function concatAll($array) {
     $results = [];
     foreach ($array as $item) {
@@ -218,12 +208,11 @@ function concatAll($array) {
  * @param string $key
  * @param mixed $default
  * @return mixed
- *
- * @deprecated Use `f\either(f\prop($key, $a), $default)` @see https://grrr-amsterdam.github.io/garp-functional/#either
  */
 // Note: coding standards are ignored here because "array_" in "array_get" is perceived as package
 // name but it's instead chosen to be in line with existing php functions.
 // @codingStandardsIgnoreStart
+#[\Deprecated(message: 'Use `f\either(f\prop($key, $a), $default)` @see https://grrr-amsterdam.github.io/garp-functional/#either')]
 function array_get($a, $key = null, $default = null) {
     if (func_num_args() === 1) {
         $key = $a;
@@ -232,7 +221,6 @@ function array_get($a, $key = null, $default = null) {
     return $a[$key] ?? $default;
 }
 // @codingStandardsIgnoreEnd
-
 /**
  * Create a new array containing only the keys from the original that you want.
  * Example:
@@ -249,17 +237,15 @@ function array_get($a, $key = null, $default = null) {
  * @param array $a
  * @param array $allowed
  * @return array
- *
- * @deprecated Use `f\pick($allowed, $a)` @see https://grrr-amsterdam.github.io/garp-functional/#pick
  */
 // Note: coding standards are ignored here because "array_" in "array_get_subset" is perceived as
 // package name but it's instead chosen to be in line with existing php functions.
 // @codingStandardsIgnoreStart
+#[\Deprecated(message: 'Use `f\pick($allowed, $a)` @see https://grrr-amsterdam.github.io/garp-functional/#pick')]
 function array_get_subset(array $a, array $allowed) {
     return array_intersect_key($a, array_flip($allowed));
 }
 // @codingStandardsIgnoreEnd
-
 /**
  * Array setter in function form
  *
@@ -267,12 +253,11 @@ function array_get_subset(array $a, array $allowed) {
  * @param mixed $value
  * @param array $a
  * @return array
- *
- * @deprecated Use `f\prop_set` @see https://grrr-amsterdam.github.io/garp-functional/#prop_set
  */
 // Note: coding standards are ignored here because "array_" in "array_get" is perceived as package
 // name but it's instead chosen to be in line with existing php functions.
 // @codingStandardsIgnoreStart
+#[\Deprecated(message: 'Use `f\prop_set` @see https://grrr-amsterdam.github.io/garp-functional/#prop_set')]
 function array_set($key, $value, $a = null) {
     if (func_num_args() === 2) {
         return callLeft('array_set', $key, $value);
@@ -281,16 +266,14 @@ function array_set($key, $value, $a = null) {
     return $a;
 }
 // @codingStandardsIgnoreEnd
-
 /**
  * Pure sort function. Returns a sorted copy.
  *
  * @param callable $fn
  * @param array $a
  * @return array
- *
- * @deprecated Use `f\sort_by($fn)` @see https://grrr-amsterdam.github.io/garp-functional/#sort_by
  */
+#[\Deprecated(message: 'Use `f\sort_by($fn)` @see https://grrr-amsterdam.github.io/garp-functional/#sort_by')]
 function psort($fn = null, ?array $a = null) {
     if ($fn && !is_callable($fn)) {
         throw new InvalidArgumentException('psort expects parameter 1 to be a valid callback');
@@ -325,9 +308,8 @@ function psort($fn = null, ?array $a = null) {
  * @param string $key The property
  * @param object $obj
  * @return mixed
- *
- * @deprecated Use `f\prop($key, $obj)` @see https://grrr-amsterdam.github.io/garp-functional/#prop
  */
+#[\Deprecated(message: 'Use `f\prop($key, $obj)` @see https://grrr-amsterdam.github.io/garp-functional/#prop')]
 function getProperty($key, $obj = null) {
     $getter = (fn($obj) => property_exists($obj, $key) ? $obj->{$key} : null);
 
@@ -352,9 +334,8 @@ function getProperty($key, $obj = null) {
  * @param mixed $value
  * @param object|array $obj
  * @return bool
- *
- * @deprecated Use `f\prop_equals($key, $value, $obj)` @see https://grrr-amsterdam.github.io/garp-functional/#prop_equals
  */
+#[\Deprecated(message: 'Use `f\prop_equals($key, $value, $obj)` @see https://grrr-amsterdam.github.io/garp-functional/#prop_equals')]
 function propertyEquals($key, $value, $obj = null) {
     $checker = function ($obj) use ($key, $value) {
         if (is_array($obj)) {
@@ -382,9 +363,8 @@ function propertyEquals($key, $value, $obj = null) {
  * @param array  $args
  * @param object $obj
  * @return mixed
- *
- * @deprecated Use `f\call($method, $args, $obj)` @see https://grrr-amsterdam.github.io/garp-functional/#call
  */
+#[\Deprecated(message: 'Use `f\call($method, $args, $obj)` @see https://grrr-amsterdam.github.io/garp-functional/#call')]
 function callMethod($method, array $args, $obj = null) {
     $caller = (fn($obj) => call_user_func_array([$obj, $method], $args));
     if (is_null($obj)) {
@@ -414,9 +394,8 @@ function callMethod($method, array $args, $obj = null) {
  *
  * @param callable $fn The partially applied function
  * @return callable
- *
- * @deprecated Use `f\partial($fn, ...$args)` @see https://grrr-amsterdam.github.io/garp-functional/#partial
  */
+#[\Deprecated(message: 'Use `f\partial($fn, ...$args)` @see https://grrr-amsterdam.github.io/garp-functional/#partial')]
 function callLeft($fn) {
     $args = array_slice(func_get_args(), 1);
     return function () use ($fn, $args) {
@@ -450,9 +429,8 @@ function callLeft($fn) {
  *
  * @param callable $fn The partially applied function
  * @return callable
- *
- * @deprecated Use `f\partial_right($fn, ...$args)` @see https://grrr-amsterdam.github.io/garp-functional/#partial_right
  */
+#[\Deprecated(message: 'Use `f\partial_right($fn, ...$args)` @see https://grrr-amsterdam.github.io/garp-functional/#partial_right')]
 function callRight($fn) {
     $args = array_slice(func_get_args(), 1);
     return function () use ($fn, $args) {
@@ -473,9 +451,8 @@ function callRight($fn) {
  *
  * @param callable $fn Anything that call_user_func_array accepts
  * @return callable
- *
- * @deprecated Use `f\not($fn)` @see https://grrr-amsterdam.github.io/garp-functional/#not
  */
+#[\Deprecated(message: 'Use `f\not($fn)` @see https://grrr-amsterdam.github.io/garp-functional/#not')]
 function not($fn) {
     return function () use ($fn) {
         $args = func_get_args();
@@ -488,9 +465,8 @@ function not($fn) {
  *
  * @param mixed $it
  * @return mixed
- *
- * @deprecated Use `f\id($it)` @see https://grrr-amsterdam.github.io/garp-functional/#id
  */
+#[\Deprecated(message: 'Use `f\id($it)` @see https://grrr-amsterdam.github.io/garp-functional/#id')]
 function id($it = null) {
     if (!func_num_args()) {
         return callLeft('id');
@@ -509,9 +485,8 @@ function id($it = null) {
  * @param callable $f
  * @param callable $g
  * @return callable
- *
- * @deprecated Use `f\compose($f, $g)` @see https://grrr-amsterdam.github.io/garp-functional/#compose
  */
+#[\Deprecated(message: 'Use `f\compose($f, $g)` @see https://grrr-amsterdam.github.io/garp-functional/#compose')]
 function compose($f, $g) {
     return function () use ($f, $g) {
         $args = func_get_args();
@@ -544,9 +519,8 @@ function compose($f, $g) {
  * @param mixed $ifFalse
  * @param mixed $subject
  * @return mixed
- *
- * @deprecated Use `f\when($condition, $ifTrue, $ifFalse, $subject)` @see https://grrr-amsterdam.github.io/garp-functional/#when
  */
+#[\Deprecated(message: 'Use `f\when($condition, $ifTrue, $ifFalse, $subject)` @see https://grrr-amsterdam.github.io/garp-functional/#when')]
 function when($condition, $ifTrue, $ifFalse, $subject = null) {
     if (func_num_args() === 3
         && (is_callable($condition) || is_callable($ifTrue) || is_callable($ifFalse))

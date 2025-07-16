@@ -29,6 +29,7 @@ class G_View_Helper_FormText extends Zend_View_Helper_FormText {
      * @param array $attribs      Attributes for the element tag.
      * @return string
      */
+    #[\Override]
     public function formText($name, $value = null, $attribs = null) {
         $info = $this->_getInfo($name, $value, $attribs);
         extract($info); // name, value, attribs, options, listsep, disable

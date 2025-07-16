@@ -68,20 +68,17 @@ class PHPExcel_Reader_Excel5_Escher
     private $pos;
 
     /**
-     * The object to be returned by the reader. Modified during load.
-     *
-     * @var mixed
-     */
-    private $object;
-
-    /**
      * Create a new PHPExcel_Reader_Excel5_Escher instance
      *
      * @param mixed $object
      */
-    public function __construct($object)
+    public function __construct(
+        /**
+         * The object to be returned by the reader. Modified during load.
+         */
+        private $object
+    )
     {
-        $this->object = $object;
     }
 
     /**
@@ -103,65 +100,27 @@ class PHPExcel_Reader_Excel5_Escher
             // offset: 2; size: 2: Record Type
             $fbt = PHPExcel_Reader_Excel5::getInt2d($this->data, $this->pos + 2);
 
-            switch ($fbt) {
-                case self::DGGCONTAINER:
-                    $this->readDggContainer();
-                    break;
-                case self::DGG:
-                    $this->readDgg();
-                    break;
-                case self::BSTORECONTAINER:
-                    $this->readBstoreContainer();
-                    break;
-                case self::BSE:
-                    $this->readBSE();
-                    break;
-                case self::BLIPJPEG:
-                    $this->readBlipJPEG();
-                    break;
-                case self::BLIPPNG:
-                    $this->readBlipPNG();
-                    break;
-                case self::OPT:
-                    $this->readOPT();
-                    break;
-                case self::TERTIARYOPT:
-                    $this->readTertiaryOPT();
-                    break;
-                case self::SPLITMENUCOLORS:
-                    $this->readSplitMenuColors();
-                    break;
-                case self::DGCONTAINER:
-                    $this->readDgContainer();
-                    break;
-                case self::DG:
-                    $this->readDg();
-                    break;
-                case self::SPGRCONTAINER:
-                    $this->readSpgrContainer();
-                    break;
-                case self::SPCONTAINER:
-                    $this->readSpContainer();
-                    break;
-                case self::SPGR:
-                    $this->readSpgr();
-                    break;
-                case self::SP:
-                    $this->readSp();
-                    break;
-                case self::CLIENTTEXTBOX:
-                    $this->readClientTextbox();
-                    break;
-                case self::CLIENTANCHOR:
-                    $this->readClientAnchor();
-                    break;
-                case self::CLIENTDATA:
-                    $this->readClientData();
-                    break;
-                default:
-                    $this->readDefault();
-                    break;
-            }
+            match ($fbt) {
+                self::DGGCONTAINER => $this->readDggContainer(),
+                self::DGG => $this->readDgg(),
+                self::BSTORECONTAINER => $this->readBstoreContainer(),
+                self::BSE => $this->readBSE(),
+                self::BLIPJPEG => $this->readBlipJPEG(),
+                self::BLIPPNG => $this->readBlipPNG(),
+                self::OPT => $this->readOPT(),
+                self::TERTIARYOPT => $this->readTertiaryOPT(),
+                self::SPLITMENUCOLORS => $this->readSplitMenuColors(),
+                self::DGCONTAINER => $this->readDgContainer(),
+                self::DG => $this->readDg(),
+                self::SPGRCONTAINER => $this->readSpgrContainer(),
+                self::SPCONTAINER => $this->readSpContainer(),
+                self::SPGR => $this->readSpgr(),
+                self::SP => $this->readSp(),
+                self::CLIENTTEXTBOX => $this->readClientTextbox(),
+                self::CLIENTANCHOR => $this->readClientAnchor(),
+                self::CLIENTDATA => $this->readClientData(),
+                default => $this->readDefault(),
+            };
         }
 
         return $this->object;
@@ -325,7 +284,7 @@ class PHPExcel_Reader_Excel5_Escher
         $pos += 16;
 
         // offset: 16; size: 16; rgbUid2 (MD4 digest), only if $recInstance = 0x46B or 0x6E3
-        if (in_array($recInstance, array(0x046B, 0x06E3))) {
+        if (in_array($recInstance, [0x046B, 0x06E3])) {
             $rgbUid2 = substr($recordData, 16, 16);
             $pos += 16;
         }

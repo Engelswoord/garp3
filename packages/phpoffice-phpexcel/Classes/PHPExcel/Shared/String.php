@@ -38,14 +38,14 @@ class PHPExcel_Shared_String
      *
      * @var string[]
      */
-    private static $controlCharacters = array();
+    private static $controlCharacters = [];
 
     /**
      * SYLK Characters array
      *
      * $var array
      */
-    private static $SYLKCharacters = array();
+    private static $SYLKCharacters = [];
 
     /**
      * Decimal separator
@@ -101,7 +101,7 @@ class PHPExcel_Shared_String
      */
     private static function buildSYLKCharacters()
     {
-        self::$SYLKCharacters = array(
+        self::$SYLKCharacters = [
             "\x1B 0"  => chr(0),
             "\x1B 1"  => chr(1),
             "\x1B 2"  => chr(2),
@@ -258,7 +258,7 @@ class PHPExcel_Shared_String
             "\x1B/="  => 'ý', // 253 in CP1252
             "\x1BN|"  => 'þ', // 254 in CP1252
             "\x1BNHy" => 'ÿ', // 255 in CP1252
-        );
+        ];
     }
 
     /**
@@ -426,7 +426,7 @@ class PHPExcel_Shared_String
      * @param mixed[] $arrcRuns Details of rich text runs in $value
      * @return string
      */
-    public static function UTF8toBIFF8UnicodeShort($value, $arrcRuns = array())
+    public static function UTF8toBIFF8UnicodeShort($value, $arrcRuns = [])
     {
         // character count
         $ln = self::CountCharacters($value, 'UTF-8');
@@ -634,14 +634,14 @@ class PHPExcel_Shared_String
 
     public static function mb_is_upper($char)
     {
-        return mb_strtolower($char, "UTF-8") != $char;
+        return mb_strtolower((string) $char, "UTF-8") != $char;
     }
 
     public static function mb_str_split($string)
     {
         # Split at all position not after the start: ^
         # and not before the end: $
-        return preg_split('/(?<!^)(?!$)/u', $string);
+        return preg_split('/(?<!^)(?!$)/u', (string) $string);
     }
 
     /**
@@ -657,9 +657,9 @@ class PHPExcel_Shared_String
             $characters = self::mb_str_split($pValue);
             foreach ($characters as &$character) {
                 if (self::mb_is_upper($character)) {
-                    $character = mb_strtolower($character, 'UTF-8');
+                    $character = mb_strtolower((string) $character, 'UTF-8');
                 } else {
-                    $character = mb_strtoupper($character, 'UTF-8');
+                    $character = mb_strtoupper((string) $character, 'UTF-8');
                 }
             }
             return implode('', $characters);
@@ -790,7 +790,7 @@ class PHPExcel_Shared_String
     public static function SYLKtoUTF8($pValue = '')
     {
         // If there is no escape character in the string there is nothing to do
-        if (strpos($pValue, '') === false) {
+        if (!str_contains($pValue, '')) {
             return $pValue;
         }
 

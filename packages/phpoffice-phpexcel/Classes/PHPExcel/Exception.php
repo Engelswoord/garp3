@@ -44,7 +44,7 @@ class PHPExcel_Exception extends Exception
      * @param mixed $line
      * @param mixed $context
      */
-    public static function errorHandlerCallback($code, $string, $file, $line, $context)
+    public static function errorHandlerCallback($code, $string, $file, $line, $context): never
     {
         $e = new self($string, $code);
         $e->line = $line;

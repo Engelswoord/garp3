@@ -83,7 +83,27 @@ function js_beautify($string, $options = null) {
 
 class JSBeautifier {
 
-	public $options;
+	public $flags;
+    public $flag_store;
+    public $wanted_newline;
+    public $just_added_newline;
+    public $do_block_just_closed;
+    public $indent_string;
+    public $preindent_string;
+    public $last_word;
+    public $last_type;
+    public $last_text;
+    public $last_last_text;
+    public $input;
+    public $output;
+    public $whitespace;
+    public $wordchar;
+    public $digits;
+    public $punct;
+    public $line_starters;
+    public $parser_pos;
+    public $n_newlines;
+    public $options;
 
 	function __construct($options = null) {
 		$this->options = $options ?: new BeautifierOptions();
@@ -234,7 +254,7 @@ class JSBeautifier {
 	function get_next_token() {
 
 		$this->n_newlines = 0;
-		if ($this->parser_pos >= strlen($this->input)) {
+		if ($this->parser_pos >= strlen((string) $this->input)) {
 			return ['', TK_EOF];
 		}
 
@@ -275,7 +295,7 @@ class JSBeautifier {
             			$whitespace_count++;
             			break;
             	}
-            	if ($this->parser_pos >= strlen($this->input)) {
+            	if ($this->parser_pos >= strlen((string) $this->input)) {
                     return ['', TK_EOF];
             	}
 
@@ -306,7 +326,7 @@ class JSBeautifier {
 						$this->n_newlines++;
 					}
 				}
-				if ($this->parser_pos >= strlen($this->input)) {
+				if ($this->parser_pos >= strlen((string) $this->input)) {
 					return ['', TK_EOF];
 				}
 
@@ -324,19 +344,19 @@ class JSBeautifier {
 			$this->wanted_newline = $this->n_newlines > 0;
 		}
 
-		if (str_contains($this->wordchar, (string) $c)) {
-            if ($this->parser_pos < strlen($this->input)) {
-				while (str_contains($this->wordchar, (string) $this->input[$this->parser_pos])) {
+		if (str_contains((string) $this->wordchar, (string) $c)) {
+            if ($this->parser_pos < strlen((string) $this->input)) {
+				while (str_contains((string) $this->wordchar, (string) $this->input[$this->parser_pos])) {
 					$c .= $this->input[$this->parser_pos];
 					$this->parser_pos++;
-					if ($this->parser_pos == strlen($this->input)) {
+					if ($this->parser_pos == strlen((string) $this->input)) {
 						break;
 					}
 				}
 			}
 
 			# small and surprisingly unugly hack for 1E-10 representation
-			if (($this->parser_pos != strlen($this->input)) &&
+			if (($this->parser_pos != strlen((string) $this->input)) &&
 			    (str_contains('+-', (string) $this->input[$this->parser_pos])) &&
 			    preg_match('/^[0-9]+[Ee]$/', (string) $c)) {
 			    $sign = $this->input[$this->parser_pos];
@@ -388,18 +408,18 @@ class JSBeautifier {
 			if ($this->input[$this->parser_pos] == '*') { # peek /* .. */ comment
 				$this->parser_pos++;
 
-				if ($this->parser_pos < strlen($this->input)) {
+				if ($this->parser_pos < strlen((string) $this->input)) {
 					while (!(($this->input[$this->parser_pos] == '*') &&
-                             ($this->parser_pos + 1 < strlen($this->input)) &&
+                             ($this->parser_pos + 1 < strlen((string) $this->input)) &&
                              ($this->input[$this->parser_pos + 1] == '/')) &&
-                            ($this->parser_pos < strlen($this->input))) {
+                            ($this->parser_pos < strlen((string) $this->input))) {
                         $c = $this->input[$this->parser_pos];
                         $comment .= $c;
                         if (str_contains("\r\n", (string) $c)) {
                             $comment_mode = TK_BLOCK_COMMENT;
                         }
                         $this->parser_pos ++;
-                        if ($this->parser_pos >= strlen($this->input)) {
+                        if ($this->parser_pos >= strlen((string) $this->input)) {
                             break;
                         }
                     }
@@ -412,7 +432,7 @@ class JSBeautifier {
                 while (!str_contains("\r\n", (string) $this->input[$this->parser_pos])) {
                     $comment .= $this->input[$this->parser_pos];
                     $this->parser_pos++;
-                    if ($this->parser_pos >= strlen($this->input)) {
+                    if ($this->parser_pos >= strlen((string) $this->input)) {
                         break;
                     }
                 }
@@ -434,7 +454,7 @@ class JSBeautifier {
             $resulting_string = $c;
             $in_char_class = false;
 
-            if ($this->parser_pos < strlen($this->input)) {
+            if ($this->parser_pos < strlen((string) $this->input)) {
                 if ($sep == '/') {
                     # handle regexp
                     $in_char_class = false;
@@ -451,7 +471,7 @@ class JSBeautifier {
                             $esc = false;
                         }
                         $this->parser_pos++;
-                        if ($this->parser_pos >= strlen($this->input)) {
+                        if ($this->parser_pos >= strlen((string) $this->input)) {
                             # incomplete regex when end-of-file reached
                             # bail out with what has received so far
                             return [$resulting_string, TK_STRING];
@@ -467,7 +487,7 @@ class JSBeautifier {
                             $esc = false;
                         }
                         $this->parser_pos++;
-                        if ($this->parser_pos >= strlen($this->input)) {
+                        if ($this->parser_pos >= strlen((string) $this->input)) {
                             # incomplete string when end-of-file reached
                             # bail out with what has received so far
                             return [$resulting_string, TK_STRING];
@@ -480,7 +500,7 @@ class JSBeautifier {
 
             if ($sep == '/') {
                 # regexps may have modifiers /regexp/MOD, so fetch those too
-                while ($this->parser_pos < strlen($this->input) && str_contains($this->wordchar, (string) $this->input[$this->parser_pos])) {
+                while ($this->parser_pos < strlen((string) $this->input) && str_contains((string) $this->wordchar, (string) $this->input[$this->parser_pos])) {
                     $resulting_string .= $this->input[$this->parser_pos];
                     $this->parser_pos++;
                 }
@@ -492,9 +512,9 @@ class JSBeautifier {
         if ($c == '#') {
 
             # she-bang
-            if (count($this->output) == 0 && strlen($this->input) > 1 && $this->input[$this->parser_pos] == '!') {
+            if (count($this->output) == 0 && strlen((string) $this->input) > 1 && $this->input[$this->parser_pos] == '!') {
                 $resulting_string = $c;
-                while ($this->parser_pos < strlen($this->input) && $c != "\n") {
+                while ($this->parser_pos < strlen((string) $this->input) && $c != "\n") {
                     $c = $this->input[$this->parser_pos];
                     $resulting_string .= $c;
                     $this->parser_pos++;
@@ -508,17 +528,17 @@ class JSBeautifier {
             # https://developer.mozilla.org/En/Sharp_variables_in_JavaScript
             # http://mxr.mozilla.org/mozilla-central/source/js/src/jsscan.cpp around line 1935
             $sharp = '#';
-            if ($this->parser_pos < strlen($this->input) && str_contains($this->digits, (string) $this->input[$this->parser_pos])) {
+            if ($this->parser_pos < strlen((string) $this->input) && str_contains((string) $this->digits, (string) $this->input[$this->parser_pos])) {
                 while (true) {
                     $c = $this->input[$this->parser_pos];
                     $sharp .= $c;
                     $this->parser_pos++;
-                    if ($this->parser_pos >= strlen($this->input) || $c == '#' || $c == '=') {
+                    if ($this->parser_pos >= strlen((string) $this->input) || $c == '#' || $c == '=') {
                         break;
                     }
                 }
             }
-            if ($c == '#' || $this->parser_pos >= strlen($this->input)) {
+            if ($c == '#' || $this->parser_pos >= strlen((string) $this->input)) {
                 ;
             } elseif ($this->input[$this->parser_pos] == '[' && $this->input[$this->parser_pos+1] == ']') {
                 $sharp .= '[]';
@@ -530,13 +550,13 @@ class JSBeautifier {
             return [$sharp, TK_WORD];
         }
 
-        if ($c == '<' && substr($this->input, $this->parser_pos - 1, 4) == '<!--') {
+        if ($c == '<' && substr((string) $this->input, $this->parser_pos - 1, 4) == '<!--') {
             $this->parser_pos += 3;
             $this->flags->in_html_comment = true;
             return ['<!--', TK_COMMENT];
         }
 
-        if ($c == '-' && $this->flags->in_html_comment && substr($this->input, $this->parser_pos - 1, 3) == '-->') {
+        if ($c == '-' && $this->flags->in_html_comment && substr((string) $this->input, $this->parser_pos - 1, 3) == '-->') {
             $this->flags->in_html_comment = false;
             $this->parser_pos += 2;
             if ($this->wanted_newline) {
@@ -546,10 +566,10 @@ class JSBeautifier {
         }
 
         if (in_array($c, $this->punct)) {
-            while ($this->parser_pos < strlen($this->input) && in_array($c . $this->input[$this->parser_pos], $this->punct)) {
+            while ($this->parser_pos < strlen((string) $this->input) && in_array($c . $this->input[$this->parser_pos], $this->punct)) {
                 $c .= $this->input[$this->parser_pos];
                 $this->parser_pos++;
-                if ($this->parser_pos >= strlen($this->input)) {
+                if ($this->parser_pos >= strlen((string) $this->input)) {
                     break;
                 }
             }

@@ -27,6 +27,7 @@ class G_ExtController extends G_ContentController {
      */
     protected $_originalRequests = [];
 
+    #[\Override]
     public function init() {
         parent::init();
         $this->_helper->cache(
@@ -83,6 +84,7 @@ class G_ExtController extends G_ContentController {
      *
      * @return Void
      */
+    #[\Override]
     public function preDispatch() {
         if ($this->getRequest()->isPost()) {
             $post = $this->_getJsonRpcRequest();

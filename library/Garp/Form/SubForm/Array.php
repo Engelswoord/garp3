@@ -30,6 +30,7 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
      * Initialize!
      * @return Void
      */
+    #[\Override]
     public function init() {
         parent::init();
 
@@ -56,6 +57,7 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
      * $options['index'] (default = 0).
      * @return Zend_Form
      */
+    #[\Override]
     public function addElement($element, $name = null, $options = null) {
         if (is_string($element)) {
             $index = $options['index'] ?? 0;
@@ -80,6 +82,7 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
      * fields, and if so, create elements for them.
      * @return Boolean
      */
+    #[\Override]
     public function isValid($data) {
         if (!is_array($data)) {
             throw new Zend_Form_Exception(__METHOD__ . ' expects an array');
@@ -95,6 +98,7 @@ class Garp_Form_SubForm_Array extends Garp_Form_SubForm {
      * @param Array $defaults
      * @return Zend_Form
      */
+    #[\Override]
     public function setDefaults(array $defaults) {
         $this->_incrementArray($defaults);
         return parent::setDefaults($defaults);

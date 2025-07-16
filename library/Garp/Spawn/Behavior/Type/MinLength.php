@@ -15,6 +15,7 @@ class Garp_Spawn_Behavior_Type_MinLength extends Garp_Spawn_Behavior_Type_Abstra
         return count(array_filter($model->fields->toArray(), f\prop('minLength')));
     }
 
+    #[\Override]
     public function getParams() {
         $fields = array_filter($this->getModel()->fields->toArray(), f\prop('minLength'));
         return array_combine(

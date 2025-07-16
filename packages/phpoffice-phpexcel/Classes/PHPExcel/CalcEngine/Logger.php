@@ -51,23 +51,20 @@ class PHPExcel_CalcEngine_Logger
      *
      * @var string[]
      */
-    private $debugLog = array();
-
-    /**
-     * The calculation engine cell reference stack
-     *
-     * @var PHPExcel_CalcEngine_CyclicReferenceStack
-     */
-    private $cellStack;
+    private $debugLog = [];
 
     /**
      * Instantiate a Calculation engine logger
      *
-     * @param  PHPExcel_CalcEngine_CyclicReferenceStack $stack
+     * @param PHPExcel_CalcEngine_CyclicReferenceStack $cellStack
      */
-    public function __construct(PHPExcel_CalcEngine_CyclicReferenceStack $stack)
+    public function __construct(
+        /**
+         * The calculation engine cell reference stack
+         */
+        private readonly PHPExcel_CalcEngine_CyclicReferenceStack $cellStack
+    )
     {
-        $this->cellStack = $stack;
     }
 
     /**
@@ -117,7 +114,7 @@ class PHPExcel_CalcEngine_Logger
     {
         //    Only write the debug log if logging is enabled
         if ($this->writeDebugLog) {
-            $message = implode(func_get_args());
+            $message = implode('', func_get_args());
             $cellReference = implode(' -> ', $this->cellStack->showStack());
             if ($this->echoDebugLog) {
                 echo $cellReference,
@@ -136,7 +133,7 @@ class PHPExcel_CalcEngine_Logger
      */
     public function clearLog()
     {
-        $this->debugLog = array();
+        $this->debugLog = [];
     }
 
     /**

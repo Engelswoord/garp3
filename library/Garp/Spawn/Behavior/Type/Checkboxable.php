@@ -14,10 +14,12 @@ class Garp_Spawn_Behavior_Type_Checkboxable extends Garp_Spawn_Behavior_Type_Abs
         return !!count(self::_getCheckboxesFromModel($model));
     }
 
+    #[\Override]
     public function needsPhpModelObserver() {
         return true;
     }
 
+    #[\Override]
     public function getParams() {
         $checkboxes = self::_getCheckboxesFromModel($this->getModel());
         return ['columns' => array_map(f\prop('name'), $checkboxes)];

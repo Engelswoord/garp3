@@ -9,9 +9,10 @@
  * You only have to provide the Clientname while constructing the service, not with every method.
  */
 class Garp_Service_ActiveTickets {
-    const WSDL = 
-        "http://webservices.activetickets.com/members/ActiveTicketsMembersServices.asmx?WSDL";  
+    const WSDL =
+        "http://webservices.activetickets.com/members/ActiveTicketsMembersServices.asmx?WSDL";
     const DATETIME_FORMAT = '%FT%T';
+    const DATETIME_FORMAT_NG = 'Y-m-d\TH:i:s';
 
     protected $_clientOptions = [
         'compression' => SOAP_COMPRESSION_ACCEPT
@@ -23,7 +24,7 @@ class Garp_Service_ActiveTickets {
      */
     protected $_client;
 
-    
+
     public function __construct(protected $_username) {
         $this->_client = new Zend_Soap_Client(self::WSDL, $this->_clientOptions);
     }
@@ -35,12 +36,12 @@ class Garp_Service_ActiveTickets {
      */
     public function convertTimestampUnixToSoap($timestamp = null) {
         if (is_null($timestamp)) {
-            return strftime(self::DATETIME_FORMAT);
+            return (new DateTimeImmutable('now'))->format(self::DATETIME_FORMAT_NG);
         }
         /**
          * @todo: timezone erachter?
          */
-        return strftime(self::DATETIME_FORMAT, $timestamp);
+        return (new DateTimeImmutable('@' . $timestamp))->format(self::DATETIME_FORMAT_NG);
     }
 
     /**
@@ -60,11 +61,11 @@ class Garp_Service_ActiveTickets {
      */
     public function __call($method, $args) {
         $args = current($args);
-        $args = $this->_addUsername($args); 
-        
+        $args = $this->_addUsername($args);
+
         $response = $this->_client->$method($args);
         $responseObj = new Garp_Service_ActiveTickets_Response($response, $method);
-        
+
         return $responseObj;
     }
 

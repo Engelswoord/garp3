@@ -306,9 +306,9 @@ class Garp_Cache_Manager {
      *
      * @param int $timestamp
      * @param array $tags
-     * @deprecated More or less. You can use it, but ScheduledJob does it better
      * @return bool
      */
+    #[\Deprecated(message: 'More or less. You can use it, but ScheduledJob does it better')]
     public static function createAtCommand($timestamp, array $tags = []) {
         $time = date('H:i d.m.y', $timestamp);
 

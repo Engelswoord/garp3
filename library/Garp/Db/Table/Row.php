@@ -48,6 +48,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      *
      * @return array
      */
+    #[\Override]
     public function __sleep() {
         $props = parent::__sleep();
         $props[] = '_related';
@@ -55,6 +56,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
         return $props;
     }
 
+    #[\Override]
     public function __wakeup() {
         parent::__wakeup();
 
@@ -94,6 +96,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      * @return Zend_Db_Table_Rowset_Abstract Query result from $matchTable
      * @throws Zend_Db_Table_Row_Exception If $matchTable or $intersectionTable is not a table class or is not loadable.
      */
+    #[\Override]
     public function findManyToManyRowset($matchTable, $intersectionTable, $callerRefRule = null, $matchRefRule = null, ?Zend_Db_Table_Select $select = null) {
         $db = $this->_getTable()->getAdapter();
 
@@ -249,6 +252,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      * @return Zend_Db_Table_Row_Abstract   Query result from $parentTable
      * @throws Zend_Db_Table_Row_Exception If $parentTable is not a table or is not loadable.
      */
+    #[\Override]
     public function findParentRow($parentTable, $ruleKey = null, ?Zend_Db_Table_Select $select = null)
     {
         $db = $this->_getTable()->getAdapter();
@@ -316,6 +320,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      * @param  bool $useDirty
      * @return mixed
      */
+    #[\Override]
     public function getPrimaryKey($useDirty = true) {
         $primary = (array)$this->_getTable()->info(Zend_Db_Table::PRIMARY);
         $out = [];
@@ -382,6 +387,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      * @return string             The corresponding column value.
      * @throws Zend_Db_Table_Row_Exception if the $columnName is not a column in the row.
      */
+    #[\Override]
     public function __get($columnName) {
         try {
             $result = parent::__get($columnName);
@@ -405,6 +411,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      * @return void
      * @throws Zend_Db_Table_Row_Exception
      */
+    #[\Override]
     public function __set($columnName, $value) {
         try {
             parent::__set($columnName, $value);
@@ -426,6 +433,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      * @return Zend_Db_Table_Row_Abstract
      * @throws Zend_Db_Table_Row_Exception
      */
+    #[\Override]
     public function __unset($columnName) {
         try {
             parent::__unset($columnName);
@@ -447,6 +455,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      * @param  string $columnName The column key.
      * @return boolean
      */
+    #[\Override]
     public function __isset($columnName) {
         // Check if native column from database.
         $result = parent::__isset($columnName);
@@ -464,6 +473,7 @@ class Garp_Db_Table_Row extends Zend_Db_Table_Row_Abstract {
      *
      * @return array
      */
+    #[\Override]
     public function toArray() {
         $data = parent::toArray();
         foreach (['_related', '_virtual'] as $prop) {

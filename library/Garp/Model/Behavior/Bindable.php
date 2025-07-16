@@ -20,6 +20,7 @@ class Garp_Model_Behavior_Bindable extends Garp_Model_Behavior_Core {
      * @param array $config
      * @return void
      */
+    #[\Override]
     protected function _setup($config) {
     }
 

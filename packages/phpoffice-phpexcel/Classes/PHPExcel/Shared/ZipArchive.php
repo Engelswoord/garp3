@@ -113,8 +113,8 @@ class PHPExcel_Shared_ZipArchive
         $listCount = count($list);
         $index = -1;
         for ($i = 0; $i < $listCount; ++$i) {
-            if (strtolower($list[$i]["filename"]) == $fileName ||
-                strtolower($list[$i]["stored_filename"]) == $fileName) {
+            if (strtolower((string) $list[$i]["filename"]) == $fileName ||
+                strtolower((string) $list[$i]["stored_filename"]) == $fileName) {
                 $index = $i;
                 break;
             }

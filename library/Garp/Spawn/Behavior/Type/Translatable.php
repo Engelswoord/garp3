@@ -12,12 +12,14 @@ class Garp_Spawn_Behavior_Type_Translatable extends Garp_Spawn_Behavior_Type_Abs
      * @return  Bool    Whether this behavior needs to be registered with an observer
      *                  called in the PHP model's init() method
      */
+    #[\Override]
     public function needsPhpModelObserver() {
         $model = $this->getModel();
 
         return !$model->isTranslated();
     }
 
+    #[\Override]
     public function getParams() {
         $model = $this->getModel();
 

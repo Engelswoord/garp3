@@ -15,6 +15,7 @@ class Garp_Validate_Identical extends Zend_Validate_Identical {
      * @param array $context
      * @return bool
      */
+    #[\Override]
     public function isValid($value, $context = null) {
         $this->_setValue((string) $value);
 

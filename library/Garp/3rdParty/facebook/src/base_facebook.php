@@ -255,8 +255,8 @@ abstract class BaseFacebook
    *
    * @param string $apiSecret The App Secret
    * @return BaseFacebook
-   * @deprecated
    */
+  #[\Deprecated]
   public function setApiSecret($apiSecret) {
     $this->setAppSecret($apiSecret);
     return $this;
@@ -277,8 +277,8 @@ abstract class BaseFacebook
    * Get the App Secret.
    *
    * @return string the App Secret
-   * @deprecated
    */
+  #[\Deprecated]
   public function getApiSecret() {
     return $this->getAppSecret();
   }
@@ -1168,7 +1168,7 @@ abstract class BaseFacebook
     $metadata = $this->getMetadataCookie();
     if (property_exists($metadata, 'base_domain') &&
         !empty($metadata['base_domain'])) {
-      return trim($metadata['base_domain'], '.');
+      return trim((string) $metadata['base_domain'], '.');
     }
     return $this->getHttpHost();
   }

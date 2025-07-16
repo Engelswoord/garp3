@@ -26,21 +26,17 @@
 class PHPExcel_RichText_TextElement implements PHPExcel_RichText_ITextElement
 {
     /**
-     * Text
-     *
-     * @var string
-     */
-    private $text;
-
-    /**
      * Create a new PHPExcel_RichText_TextElement instance
      *
-     * @param     string        $pText        Text
+     * @param string $text Text
      */
-    public function __construct($pText = '')
+    public function __construct(
+        /**
+         * Text
+         */
+        private $text = ''
+    )
     {
-        // Initialise variables
-        $this->text = $pText;
     }
 
     /**
@@ -84,7 +80,7 @@ class PHPExcel_RichText_TextElement implements PHPExcel_RichText_ITextElement
     {
         return md5(
             $this->text .
-            __CLASS__
+            self::class
         );
     }
 

@@ -48,12 +48,12 @@ class PHPExcel_Shared_Excel5
             // then we have column dimension with explicit width
             $columnDimension = $columnDimensions[$col];
             $width = $columnDimension->getWidth();
-            $pixelWidth = PHPExcel_Shared_Drawing::cellDimensionToPixels($width, $font);
+            $pixelWidth = PHPExcel_Shared_Drawing::cellDimensionToPixels($font, $width);
         } elseif ($sheet->getDefaultColumnDimension()->getWidth() != -1) {
             // then we have default column dimension with explicit width
             $defaultColumnDimension = $sheet->getDefaultColumnDimension();
             $width = $defaultColumnDimension->getWidth();
-            $pixelWidth = PHPExcel_Shared_Drawing::cellDimensionToPixels($width, $font);
+            $pixelWidth = PHPExcel_Shared_Drawing::cellDimensionToPixels($font, $width);
         } else {
             // we don't even have any default column dimension. Width depends on default font
             $pixelWidth = PHPExcel_Shared_Font::getDefaultColumnWidthByFont($font, true);
@@ -226,7 +226,7 @@ class PHPExcel_Shared_Excel5
      */
     public static function oneAnchor2twoAnchor($sheet, $coordinates, $offsetX, $offsetY, $width, $height)
     {
-        list($column, $row) = PHPExcel_Cell::coordinateFromString($coordinates);
+        [$column, $row] = PHPExcel_Cell::coordinateFromString($coordinates);
         $col_start = PHPExcel_Cell::columnIndexFromString($column) - 1;
         $row_start = $row - 1;
 
@@ -284,14 +284,14 @@ class PHPExcel_Shared_Excel5
         $startCoordinates = PHPExcel_Cell::stringFromColumnIndex($col_start) . ($row_start + 1);
         $endCoordinates = PHPExcel_Cell::stringFromColumnIndex($col_end) . ($row_end + 1);
 
-        $twoAnchor = array(
+        $twoAnchor = [
             'startCoordinates' => $startCoordinates,
             'startOffsetX' => $x1,
             'startOffsetY' => $y1,
             'endCoordinates' => $endCoordinates,
             'endOffsetX' => $x2,
             'endOffsetY' => $y2,
-        );
+        ];
 
         return  $twoAnchor;
     }

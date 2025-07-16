@@ -80,6 +80,7 @@ class Garp_Config_Ini extends Zend_Config_Ini {
      *                                                string is assumed instead of an ini file.
      * @return array
      */
+    #[\Override]
     protected function _parseIniFile($filename) {
         if ($filename instanceof Garp_Config_Ini_String) {
             $ini = $filename->getValue();

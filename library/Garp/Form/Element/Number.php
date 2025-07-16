@@ -8,6 +8,7 @@
  */
 class Garp_Form_Element_Number extends Garp_Form_Element_Text {
 
+    #[\Override]
     public function init() {
         $this->addFilter('Digits');
         $this->addValidator('Digits');

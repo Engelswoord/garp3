@@ -38,6 +38,7 @@ class Garp_Cli_Command_Spawn extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
+    #[\Override]
     public function main(array $args = []) {
         if ($this->_isHelpRequested($args)) {
             $this->_displayHelp();

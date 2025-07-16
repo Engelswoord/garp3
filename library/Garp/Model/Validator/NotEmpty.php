@@ -25,6 +25,7 @@ class Garp_Model_Validator_NotEmpty extends Garp_Model_Validator_Abstract {
      * @param array $config Configuration options
      * @return void
      */
+    #[\Override]
     protected function _setup($config) {
         $this->_fields = $config;
     }

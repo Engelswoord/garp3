@@ -181,7 +181,7 @@ abstract class PHPExcel_Reader_Abstract implements PHPExcel_Reader_IReader
             return $this->setLoadAllSheets();
         }
 
-        $this->loadSheetsOnly = is_array($value) ? $value : array($value);
+        $this->loadSheetsOnly = is_array($value) ? $value : [$value];
         return $this;
     }
 
@@ -252,7 +252,7 @@ abstract class PHPExcel_Reader_Abstract implements PHPExcel_Reader_IReader
         // Check if file exists
         try {
             $this->openFile($pFilename);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
 

@@ -13,6 +13,7 @@ class Garp_Model_Behavior_Nullable extends Garp_Model_Behavior_Abstract {
      */
     const EXCEPTION_MISSING_CONFIG = '"%s" is a required config key';
 
+    #[\Override]
     protected function _setup($config) {
         $this->_validateConfig($config);
         $this->_nullableFields = $config['nullableFields'] ?: [];

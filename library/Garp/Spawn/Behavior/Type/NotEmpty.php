@@ -32,6 +32,7 @@ class Garp_Spawn_Behavior_Type_NotEmpty extends Garp_Spawn_Behavior_Type_Abstrac
      *
      * @return array
      */
+    #[\Override]
     public function getParams(): array {
         return f\map(
             f\prop('name'),

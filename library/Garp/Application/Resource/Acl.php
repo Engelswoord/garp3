@@ -46,6 +46,7 @@ class Garp_Application_Resource_Acl extends Zend_Application_Resource_ResourceAb
      *
      * @return array
      */
+    #[\Override]
     public function getOptions() {
         $options = parent::getOptions();
         if (!array_key_exists('enabled', $options)) {

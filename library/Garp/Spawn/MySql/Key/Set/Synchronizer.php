@@ -7,6 +7,7 @@
  * @author  David Spreekmeester <david@grrr.nl>
  */
 class Garp_Spawn_MySql_Key_Set_Synchronizer {
+    public $primaryKey;
     const ERROR_SET_UNIQUE_NOT_POSSIBLE
         // @codingStandardsIgnoreStart
         = "Could not set column '%s' to unique. Remember: the existing values in this column have to already be unique to be able to do this.";

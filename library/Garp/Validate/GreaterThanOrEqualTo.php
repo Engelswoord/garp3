@@ -27,6 +27,7 @@ class Garp_Validate_GreaterThanOrEqualTo extends Zend_Validate_GreaterThan
      * @param  mixed $value
      * @return boolean
      */
+    #[\Override]
     public function isValid($value)
     {
         $this->_setValue($value);

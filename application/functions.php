@@ -16,7 +16,7 @@ use Zend_Registry;
 function snippet(string $identifier): string {
     $model = new Model_Snippet();
     if ($model->isMultilingual()) {
-        $model = (new Garp_I18n_ModelFactory())->getModel('Snippet');
+        $model = new Garp_I18n_ModelFactory()->getModel('Snippet');
     }
     $snippet = $model->fetchByIdentifier($identifier);
     if (!$snippet) {

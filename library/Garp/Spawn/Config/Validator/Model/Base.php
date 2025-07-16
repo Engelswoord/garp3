@@ -7,6 +7,7 @@ class Garp_Spawn_Config_Validator_Model_Base extends Garp_Spawn_Config_Validator
     protected $_mandatoryProps = ['id', 'inputs'];
 
 
+    #[\Override]
     public function validate(ArrayObject $config) {
         parent::validate($config);
 

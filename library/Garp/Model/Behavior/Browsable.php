@@ -38,6 +38,7 @@ class Garp_Model_Behavior_Browsable extends Garp_Model_Behavior_Abstract {
      * Configuration.
      * @return Void
      */
+    #[\Override]
     protected function _setup($config) {
         if (!empty($config['url'])) {
             $this->_url = $config['url'];

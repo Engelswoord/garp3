@@ -22,6 +22,7 @@ class Garp_Service_HTMLPurifier_Filter_MyEmbed extends HTMLPurifier_Filter {
      * @param object $context
      * @return string
      */
+    #[\Override]
     public function preFilter($html, $config, $context) {
         $regexp = '/<(\/?)embed( ?)([^>]+)?>/i';
         $replace = '~$1embed$2$3~';
@@ -36,6 +37,7 @@ class Garp_Service_HTMLPurifier_Filter_MyEmbed extends HTMLPurifier_Filter {
      * @param object $context
      * @return string
      */
+    #[\Override]
     public function postFilter($html, $config, $context) {
         $regexp = '/~(\/?)embed( ?)([^~]+)?~/i';
         $replace = '<$1embed$2$3>';

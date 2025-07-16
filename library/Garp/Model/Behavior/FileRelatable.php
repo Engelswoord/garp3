@@ -55,6 +55,7 @@ class Garp_Model_Behavior_FileRelatable extends Garp_Model_Behavior_Abstract {
      * @param mixed $config Configuration options
      * @return Void
      */
+    #[\Override]
     protected function _setup(mixed $config): never {
         throw new Garp_Model_Behavior_Exception('This behavior may not be used yet. See note in docblock.');
         $this->_fields = $config;

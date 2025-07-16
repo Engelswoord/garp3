@@ -21,6 +21,7 @@ class Garp_Content_Export_Pdf extends Garp_Content_Export_Html {
      * @param array $rowset
      * @return string
      */
+    #[\Override]
     public function format(Garp_Model $model, array $rowset) {
         $html = parent::format($model, $rowset);
         $dompdf = new Dompdf\Dompdf();

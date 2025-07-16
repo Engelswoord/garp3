@@ -18,6 +18,7 @@ class Garp_Cli_Command_Test extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
+    #[\Override]
     public function main(array $args = []) {
         if (1 === count($args) && !empty($args[0]) && 'help' === strtolower((string) $args[0])) {
             $this->help();

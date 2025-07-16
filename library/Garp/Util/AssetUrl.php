@@ -57,7 +57,7 @@ class Garp_Util_AssetUrl implements JsonSerializable, \Stringable {
      * @return string
      */
     public function getVersionedQuery(string $file): string {
-        $versionAppendix = (new Garp_Version())->__toString() ?: intval(microtime(true));
+        $versionAppendix = new Garp_Version()->__toString() ?: intval(microtime(true));
         return !empty($file) && !str_ends_with($file, '/')
             ? $file . '?' . $versionAppendix
             : $file;

@@ -21,6 +21,7 @@ class Garp_Cli_Command_Aws extends Garp_Cli_Command {
      * @param array $args
      * @return bool
      */
+    #[\Override]
     public function main(array $args = []) {
         Garp_Cli::errorOut('This command is no longer compatible with the AWS Cli tool and should be refactored.');
         return false;

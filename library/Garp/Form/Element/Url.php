@@ -7,6 +7,7 @@
  */
 class Garp_Form_Element_Url extends Garp_Form_Element_Text {
 
+    #[\Override]
     public function init() {
         parent::init();
 

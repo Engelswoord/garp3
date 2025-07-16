@@ -24,7 +24,7 @@ class Garp_Model_Db_Info extends Model_Base_Info {
      * @param String $env Which application env to use
      * @return Zend_Config
      */
-    public function fetchAsConfig(Zend_Db_Select $select = null, $env = APPLICATION_ENV) {
+    public function fetchAsConfig(?Zend_Db_Select $select = null, $env = APPLICATION_ENV) {
         if (is_null($select)) {
             $select = $this->select();
         }

@@ -4,6 +4,7 @@ require APPLICATION_PATH . '/../library/Garp/3rdParty/codebird/codebird.php';
 
 class Garp_Social_Twitter {
 
+    public $config;
     private $cb;
 
     public function __construct() {

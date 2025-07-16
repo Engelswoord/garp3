@@ -100,6 +100,7 @@ class PHPExcel_CachedObjectStorage_APC extends PHPExcel_CachedObjectStorage_Cach
      * @throws  PHPExcel_Exception
      * @return  boolean
      */
+    #[\Override]
     public function isDataSet($pCoord)
     {
         //    Check if the requested entry is the current object, or exists in the cache
@@ -162,6 +163,7 @@ class PHPExcel_CachedObjectStorage_APC extends PHPExcel_CachedObjectStorage_Cach
      *
      * @return  string[]
      */
+    #[\Override]
     public function getCellList()
     {
         if ($this->currentObjectID !== null) {
@@ -178,6 +180,7 @@ class PHPExcel_CachedObjectStorage_APC extends PHPExcel_CachedObjectStorage_Cach
      * @param   string  $pCoord  Coordinate address of the cell to delete
      * @throws  PHPExcel_Exception
      */
+    #[\Override]
     public function deleteCacheData($pCoord)
     {
         //    Delete the entry from APC
@@ -195,6 +198,7 @@ class PHPExcel_CachedObjectStorage_APC extends PHPExcel_CachedObjectStorage_Cach
      * @throws  PHPExcel_Exception
      * @return  void
      */
+    #[\Override]
     public function copyCellCollection(PHPExcel_Worksheet $parent)
     {
         parent::copyCellCollection($parent);
@@ -234,7 +238,7 @@ class PHPExcel_CachedObjectStorage_APC extends PHPExcel_CachedObjectStorage_Cach
         //    Flush the APC cache
         $this->__destruct();
 
-        $this->cellCache = array();
+        $this->cellCache = [];
 
         //    detach ourself from the worksheet, so that it can then delete this object successfully
         $this->parent = null;
@@ -248,7 +252,7 @@ class PHPExcel_CachedObjectStorage_APC extends PHPExcel_CachedObjectStorage_Cach
      */
     public function __construct(PHPExcel_Worksheet $parent, $arguments)
     {
-        $cacheTime = (isset($arguments['cacheTime'])) ? $arguments['cacheTime'] : 600;
+        $cacheTime = $arguments['cacheTime'] ?? 600;
 
         if ($this->cachePrefix === null) {
             $baseUnique = $this->getUniqueID();
@@ -276,6 +280,7 @@ class PHPExcel_CachedObjectStorage_APC extends PHPExcel_CachedObjectStorage_Cach
      *
      * @return  boolean
      */
+    #[\Override]
     public static function cacheMethodIsAvailable()
     {
         if (!function_exists('apc_store')) {

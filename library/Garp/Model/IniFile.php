@@ -7,6 +7,8 @@
  * @author  Harmen Janssen <harmen@grrr.nl>
  */
 class Garp_Model_IniFile implements Garp_Model, Garp_Util_Observer, Garp_Util_Observable {
+    public $_observers;
+    public $_name;
     /**
      * Which backend ini file to use
      *

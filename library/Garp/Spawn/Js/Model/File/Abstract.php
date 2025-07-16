@@ -5,6 +5,7 @@
  * @subpackage Model
  */
 abstract class Garp_Spawn_Js_Model_File_Abstract {
+    public $_path;
     protected $_extension = 'js';
     protected $_overwrite = false;
     protected $_model;

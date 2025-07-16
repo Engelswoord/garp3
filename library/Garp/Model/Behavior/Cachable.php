@@ -30,6 +30,7 @@ class Garp_Model_Behavior_Cachable extends Garp_Model_Behavior_Core {
      * Configuration.
      * @return Void
      */
+    #[\Override]
     protected function _setup($config) {}
 
     /**

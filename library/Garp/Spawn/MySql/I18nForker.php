@@ -29,7 +29,7 @@ class Garp_Spawn_MySql_I18nForker {
     protected $_feedback;
 
 
-    public function __construct(Garp_Spawn_Model_Base $model, Garp_Cli_Ui_Protocol $feedback = null) {
+    public function __construct(Garp_Spawn_Model_Base $model, ?Garp_Cli_Ui_Protocol $feedback = null) {
         $this->setFeedback($feedback);
 
         $tableFactory = new Garp_Spawn_MySql_Table_Factory($model);

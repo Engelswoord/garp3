@@ -30,6 +30,7 @@ class Garp_Spawn_Behavior_Type_Draftable extends Garp_Spawn_Behavior_Type_Abstra
         parent::__construct($model, $origin, $name, $params, $type);
     }
 
+    #[\Override]
     public function needsPhpModelObserver() {
         $model = $this->getModel();
         return !$model->isTranslated();

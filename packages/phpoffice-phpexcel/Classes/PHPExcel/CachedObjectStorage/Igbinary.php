@@ -104,6 +104,7 @@ class PHPExcel_CachedObjectStorage_Igbinary extends PHPExcel_CachedObjectStorage
      *
      * @return  string[]
      */
+    #[\Override]
     public function getCellList()
     {
         if ($this->currentObjectID !== null) {
@@ -125,7 +126,7 @@ class PHPExcel_CachedObjectStorage_Igbinary extends PHPExcel_CachedObjectStorage
             $this->currentObject->detach();
             $this->currentObject = $this->currentObjectID = null;
         }
-        $this->cellCache = array();
+        $this->cellCache = [];
 
         //    detach ourself from the worksheet, so that it can then delete this object successfully
         $this->parent = null;
@@ -138,6 +139,7 @@ class PHPExcel_CachedObjectStorage_Igbinary extends PHPExcel_CachedObjectStorage
      *
      * @return    boolean
      */
+    #[\Override]
     public static function cacheMethodIsAvailable()
     {
         if (!function_exists('igbinary_serialize')) {

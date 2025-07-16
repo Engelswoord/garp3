@@ -25,7 +25,7 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
  * @version    ##VERSION##, ##DATE##
  */
-class PHPExcel_RichText implements PHPExcel_IComparable
+class PHPExcel_RichText implements PHPExcel_IComparable, \Stringable
 {
     /**
      * Rich text elements
@@ -40,10 +40,10 @@ class PHPExcel_RichText implements PHPExcel_IComparable
      * @param PHPExcel_Cell $pCell
      * @throws PHPExcel_Exception
      */
-    public function __construct(PHPExcel_Cell $pCell = null)
+    public function __construct(?PHPExcel_Cell $pCell = null)
     {
         // Initialise variables
-        $this->richTextElements = array();
+        $this->richTextElements = [];
 
         // Rich-Text string attached to cell?
         if ($pCell !== null) {
@@ -66,7 +66,7 @@ class PHPExcel_RichText implements PHPExcel_IComparable
      * @throws PHPExcel_Exception
      * @return PHPExcel_RichText
      */
-    public function addText(PHPExcel_RichText_ITextElement $pText = null)
+    public function addText(?PHPExcel_RichText_ITextElement $pText = null)
     {
         $this->richTextElements[] = $pText;
         return $this;
@@ -124,7 +124,7 @@ class PHPExcel_RichText implements PHPExcel_IComparable
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getPlainText();
     }
@@ -170,7 +170,7 @@ class PHPExcel_RichText implements PHPExcel_IComparable
 
         return md5(
             $hashElements .
-            __CLASS__
+            self::class
         );
     }
 

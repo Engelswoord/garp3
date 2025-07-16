@@ -155,6 +155,7 @@ class PHPExcel_CachedObjectStorage_SQLite3 extends PHPExcel_CachedObjectStorage_
      * @param    string        $pCoord        Coordinate address of the cell to check
      * @return    boolean
      */
+    #[\Override]
     public function isDataSet($pCoord)
     {
         if ($pCoord === $this->currentObjectID) {
@@ -178,6 +179,7 @@ class PHPExcel_CachedObjectStorage_SQLite3 extends PHPExcel_CachedObjectStorage_
      * @param    string            $pCoord        Coordinate address of the cell to delete
      * @throws    PHPExcel_Exception
      */
+    #[\Override]
     public function deleteCacheData($pCoord)
     {
         if ($pCoord === $this->currentObjectID) {
@@ -202,6 +204,7 @@ class PHPExcel_CachedObjectStorage_SQLite3 extends PHPExcel_CachedObjectStorage_
      * @param    string        $toAddress        Destination address of the cell to move
      * @return    boolean
      */
+    #[\Override]
     public function moveCell($fromAddress, $toAddress)
     {
         if ($fromAddress === $this->currentObjectID) {
@@ -229,6 +232,7 @@ class PHPExcel_CachedObjectStorage_SQLite3 extends PHPExcel_CachedObjectStorage_
      *
      * @return    string[]
      */
+    #[\Override]
     public function getCellList()
     {
         if ($this->currentObjectID !== null) {
@@ -241,7 +245,7 @@ class PHPExcel_CachedObjectStorage_SQLite3 extends PHPExcel_CachedObjectStorage_
             throw new PHPExcel_Exception($this->DBHandle->lastErrorMsg());
         }
 
-        $cellKeys = array();
+        $cellKeys = [];
         while ($row = $cellIdsResult->fetchArray(SQLITE3_ASSOC)) {
             $cellKeys[] = $row['id'];
         }
@@ -255,6 +259,7 @@ class PHPExcel_CachedObjectStorage_SQLite3 extends PHPExcel_CachedObjectStorage_
      * @param    PHPExcel_Worksheet    $parent        The new worksheet
      * @return    void
      */
+    #[\Override]
     public function copyCellCollection(PHPExcel_Worksheet $parent)
     {
         $this->currentCellIsDirty;
@@ -335,6 +340,7 @@ class PHPExcel_CachedObjectStorage_SQLite3 extends PHPExcel_CachedObjectStorage_
      *
      * @return    boolean
      */
+    #[\Override]
     public static function cacheMethodIsAvailable()
     {
         if (!class_exists('SQLite3', false)) {

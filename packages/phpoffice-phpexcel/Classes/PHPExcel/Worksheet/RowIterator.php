@@ -28,13 +28,6 @@
 class PHPExcel_Worksheet_RowIterator implements Iterator
 {
     /**
-     * PHPExcel_Worksheet to iterate
-     *
-     * @var PHPExcel_Worksheet
-     */
-    private $subject;
-
-    /**
      * Current iterator position
      *
      * @var int
@@ -64,10 +57,11 @@ class PHPExcel_Worksheet_RowIterator implements Iterator
      * @param    integer                $startRow    The row number at which to start iterating
      * @param    integer                $endRow        Optionally, the row number at which to stop iterating
      */
-    public function __construct(PHPExcel_Worksheet $subject, $startRow = 1, $endRow = null)
+    public function __construct(/**
+     * PHPExcel_Worksheet to iterate
+     */
+    private PHPExcel_Worksheet $subject, $startRow = 1, $endRow = null)
     {
-        // Set subject
-        $this->subject = $subject;
         $this->resetEnd($endRow);
         $this->resetStart($startRow);
     }
@@ -110,7 +104,7 @@ class PHPExcel_Worksheet_RowIterator implements Iterator
      */
     public function resetEnd($endRow = null)
     {
-        $this->endRow = ($endRow) ? $endRow : $this->subject->getHighestRow();
+        $this->endRow = $endRow ?: $this->subject->getHighestRow();
 
         return $this;
     }

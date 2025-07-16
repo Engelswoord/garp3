@@ -5,7 +5,7 @@ if (!defined('PHPEXCEL_ROOT')) {
     /**
      * @ignore
      */
-    define('PHPEXCEL_ROOT', dirname(__FILE__) . '/../../');
+    define('PHPEXCEL_ROOT', __DIR__ . '/../../');
     require(PHPEXCEL_ROOT . 'PHPExcel/Autoloader.php');
 }
 
@@ -334,7 +334,7 @@ class PHPExcel_Calculation_DateTime
         } elseif ($month > 12) {
             //    Handle year/month adjustment if month > 12
             $year += floor($month / 12);
-            $month = ($month % 12);
+            $month %= 12;
         }
 
         // Re-validate the year parameter after adjustments
@@ -413,7 +413,7 @@ class PHPExcel_Calculation_DateTime
             }
         } elseif ($second >= 60) {
             $minute += floor($second / 60);
-            $second = $second % 60;
+            $second %= 60;
         }
         if ($minute < 0) {
             $hour += floor($minute / 60);
@@ -423,11 +423,11 @@ class PHPExcel_Calculation_DateTime
             }
         } elseif ($minute >= 60) {
             $hour += floor($minute / 60);
-            $minute = $minute % 60;
+            $minute %= 60;
         }
 
         if ($hour > 23) {
-            $hour = $hour % 24;
+            $hour %= 24;
         } elseif ($hour < 0) {
             return PHPExcel_Calculation_Functions::NaN();
         }
@@ -453,7 +453,7 @@ class PHPExcel_Calculation_DateTime
                     }
                 } elseif ($hour >= 24) {
                     $dayAdjust = floor($hour / 24);
-                    $hour = $hour % 24;
+                    $hour %= 24;
                 }
                 $phpDateObject = new DateTime('1900-01-01 '.$hour.':'.$minute.':'.$second);
                 if ($dayAdjust != 0) {
@@ -492,11 +492,11 @@ class PHPExcel_Calculation_DateTime
      */
     public static function DATEVALUE($dateValue = 1)
     {
-        $dateValue = trim(PHPExcel_Calculation_Functions::flattenSingleValue($dateValue), '"');
+        $dateValue = trim((string) PHPExcel_Calculation_Functions::flattenSingleValue($dateValue), '"');
         //    Strip any ordinals because they're allowed in Excel (English only)
         $dateValue = preg_replace('/(\d)(st|nd|rd|th)([ -\/])/Ui', '$1$3', $dateValue);
         //    Convert separators (/ . or space) to hyphens (should also handle dot used for ordinals in some countries, e.g. Denmark, Germany)
-        $dateValue    = str_replace(array('/', '.', '-', '  '), array(' ', ' ', ' ', ' '), $dateValue);
+        $dateValue    = str_replace(['/', '.', '-', '  '], [' ', ' ', ' ', ' '], $dateValue);
 
         $yearFound = false;
         $t1 = explode(' ', $dateValue);
@@ -512,7 +512,7 @@ class PHPExcel_Calculation_DateTime
                 }
             }
         }
-        if ((count($t1) == 1) && (strpos($t, ':') != false)) {
+        if ((count($t1) == 1) && (str_contains($t, ':'))) {
             //    We've been fed a time value without any date
             return 0.0;
         } elseif (count($t1) == 2) {
@@ -534,7 +534,7 @@ class PHPExcel_Calculation_DateTime
                 if ($testVal2 !== false) {
                     $testVal3 = strtok('- ');
                     if ($testVal3 === false) {
-                        $testVal3 = strftime('%Y');
+                        $testVal3 =  (new DateTimeImmutable('now')->format('Y')); //strftime('%Y');
                     }
                 } else {
                     return PHPExcel_Calculation_Functions::VALUE();
@@ -554,16 +554,16 @@ class PHPExcel_Calculation_DateTime
         if (($PHPDateArray !== false) && ($PHPDateArray['error_count'] == 0)) {
             // Execute function
             if ($PHPDateArray['year'] == '') {
-                $PHPDateArray['year'] = strftime('%Y');
+                $PHPDateArray['year'] =  (new DateTimeImmutable('now')->format('Y')); //strftime('%Y');
             }
             if ($PHPDateArray['year'] < 1900) {
                 return PHPExcel_Calculation_Functions::VALUE();
             }
             if ($PHPDateArray['month'] == '') {
-                $PHPDateArray['month'] = strftime('%m');
+                $PHPDateArray['month'] =  (new DateTimeImmutable('now')->format('m')); //strftime('%m');
             }
             if ($PHPDateArray['day'] == '') {
-                $PHPDateArray['day'] = strftime('%d');
+                $PHPDateArray['day'] = (new DateTimeImmutable('now')->format('d')); //strftime('%d');
             }
             $excelDateValue = floor(
                 PHPExcel_Shared_Date::FormattedPHPToExcel(
@@ -613,8 +613,8 @@ class PHPExcel_Calculation_DateTime
      */
     public static function TIMEVALUE($timeValue)
     {
-        $timeValue = trim(PHPExcel_Calculation_Functions::flattenSingleValue($timeValue), '"');
-        $timeValue = str_replace(array('/', '.'), array('-', '-'), $timeValue);
+        $timeValue = trim((string) PHPExcel_Calculation_Functions::flattenSingleValue($timeValue), '"');
+        $timeValue = str_replace(['/', '.'], ['-', '-'], $timeValue);
 
         $PHPDateArray = date_parse($timeValue);
         if (($PHPDateArray !== false) && ($PHPDateArray['error_count'] == 0)) {
@@ -658,7 +658,7 @@ class PHPExcel_Calculation_DateTime
     {
         $startDate = PHPExcel_Calculation_Functions::flattenSingleValue($startDate);
         $endDate   = PHPExcel_Calculation_Functions::flattenSingleValue($endDate);
-        $unit      = strtoupper(PHPExcel_Calculation_Functions::flattenSingleValue($unit));
+        $unit      = strtoupper((string) PHPExcel_Calculation_Functions::flattenSingleValue($unit));
 
         if (is_string($startDate = self::getDateValue($startDate))) {
             return PHPExcel_Calculation_Functions::VALUE();
@@ -971,7 +971,7 @@ class PHPExcel_Calculation_DateTime
         }
 
         //    Test any extra holiday parameters
-        $holidayCountedArray = array();
+        $holidayCountedArray = [];
         foreach ($dateArgs as $holidayDate) {
             if (is_string($holidayDate = self::getDateValue($holidayDate))) {
                 return PHPExcel_Calculation_Functions::VALUE();
@@ -1057,7 +1057,7 @@ class PHPExcel_Calculation_DateTime
 
         //    Test any extra holiday parameters
         if (!empty($dateArgs)) {
-            $holidayCountedArray = $holidayDates = array();
+            $holidayCountedArray = $holidayDates = [];
             foreach ($dateArgs as $holidayDate) {
                 if (($holidayDate !== null) && (trim($holidayDate) > '')) {
                     if (is_string($holidayDate = self::getDateValue($holidayDate))) {
@@ -1353,7 +1353,7 @@ class PHPExcel_Calculation_DateTime
         if (!is_numeric($timeValue)) {
             if (PHPExcel_Calculation_Functions::getCompatibilityMode() == PHPExcel_Calculation_Functions::COMPATIBILITY_GNUMERIC) {
                 $testVal = strtok($timeValue, '/-: ');
-                if (strlen($testVal) < strlen($timeValue)) {
+                if (strlen($testVal) < strlen((string) $timeValue)) {
                     return PHPExcel_Calculation_Functions::VALUE();
                 }
             }
@@ -1394,7 +1394,7 @@ class PHPExcel_Calculation_DateTime
         if (!is_numeric($timeValue)) {
             if (PHPExcel_Calculation_Functions::getCompatibilityMode() == PHPExcel_Calculation_Functions::COMPATIBILITY_GNUMERIC) {
                 $testVal = strtok($timeValue, '/-: ');
-                if (strlen($testVal) < strlen($timeValue)) {
+                if (strlen($testVal) < strlen((string) $timeValue)) {
                     return PHPExcel_Calculation_Functions::VALUE();
                 }
             }
@@ -1435,7 +1435,7 @@ class PHPExcel_Calculation_DateTime
         if (!is_numeric($timeValue)) {
             if (PHPExcel_Calculation_Functions::getCompatibilityMode() == PHPExcel_Calculation_Functions::COMPATIBILITY_GNUMERIC) {
                 $testVal = strtok($timeValue, '/-: ');
-                if (strlen($testVal) < strlen($timeValue)) {
+                if (strlen($testVal) < strlen((string) $timeValue)) {
                     return PHPExcel_Calculation_Functions::VALUE();
                 }
             }

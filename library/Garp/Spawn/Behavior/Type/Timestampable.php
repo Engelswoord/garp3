@@ -20,6 +20,7 @@ class Garp_Spawn_Behavior_Type_Timestampable extends Garp_Spawn_Behavior_Type_Ab
         ]
     ];
 
+    #[\Override]
     public function getFields() {
         $params = $this->getParams();
         $created = $params['createdField'] ?? 'created';

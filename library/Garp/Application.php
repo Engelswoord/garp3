@@ -59,6 +59,7 @@ class Garp_Application extends Zend_Application {
      * @throws Zend_Application_Exception When invalid configuration file is provided
      * @return array
      */
+    #[\Override]
     protected function _loadConfig($file) {
         $suffix = pathinfo($file, PATHINFO_EXTENSION);
         $suffix = ($suffix === 'dist') ?
@@ -71,6 +72,7 @@ class Garp_Application extends Zend_Application {
         return $config;
     }
 
+    #[\Override]
     public function bootstrap($resource = null) {
         Zend_Registry::set('config', new Zend_Config($this->getOptions()));
         return parent::bootstrap();

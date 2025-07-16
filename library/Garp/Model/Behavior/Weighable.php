@@ -48,6 +48,7 @@ class Garp_Model_Behavior_Weighable extends Garp_Model_Behavior_Abstract {
      * This will be validated immediately.
      * @param Array $config Configuration values
      */
+    #[\Override]
     protected function _setup($config) {
         foreach ($config as $relationOptions) {
             if (!is_array($relationOptions) ||

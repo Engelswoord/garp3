@@ -49,9 +49,9 @@ class PHPExcel_Autoloader
         }
         // Register ourselves with SPL
         if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-            return spl_autoload_register(array('PHPExcel_Autoloader', 'load'), true, true);
+            return spl_autoload_register(['PHPExcel_Autoloader', 'load'], true, true);
         } else {
-            return spl_autoload_register(array('PHPExcel_Autoloader', 'load'));
+            return spl_autoload_register(['PHPExcel_Autoloader', 'load']);
         }
     }
 
@@ -62,7 +62,7 @@ class PHPExcel_Autoloader
      */
     public static function load($pClassName)
     {
-        if ((class_exists($pClassName, false)) || (strpos($pClassName, 'PHPExcel') !== 0)) {
+        if ((class_exists($pClassName, false)) || (!str_starts_with($pClassName, 'PHPExcel'))) {
             // Either already loaded, or not a PHPExcel class request
             return false;
         }

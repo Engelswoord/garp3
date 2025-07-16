@@ -17,6 +17,7 @@
  * @lastmodified $Date: $
  */
 class Garp_Db_Adapter_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql {
+    #[\Override]
     public function quote($value, $type = null) {
         //$this->_connect();
 
@@ -73,6 +74,7 @@ class Garp_Db_Adapter_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql {
      * @param string $value     Raw string
      * @return string           Quoted string
      */
+    #[\Override]
     protected function _quote($value) {
         if (is_int($value)) {
             return $value;

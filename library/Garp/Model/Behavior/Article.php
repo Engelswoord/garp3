@@ -28,6 +28,7 @@ class Garp_Model_Behavior_Article extends Garp_Model_Behavior_Abstract {
      * @param array $config
      * @return void
      */
+    #[\Override]
     protected function _setup($config) {
         $config = new Garp_Util_Configuration($config);
         $config->obligate('contentTypes');
@@ -324,7 +325,7 @@ class Garp_Model_Behavior_Article extends Garp_Model_Behavior_Abstract {
             if ($model->isCmsContext()) {
                 return ['modelClass' => 'Model_' . $chapterType['model']];
             }
-            $out['modelClass'] = (new Garp_I18n_ModelFactory())
+            $out['modelClass'] = new Garp_I18n_ModelFactory()
                 ->getModel($chapterType['model']);
             // Make sure the localised relation exists in the referenceMap
             $localiser = new Garp_Model_ReferenceMapLocalizer($model);

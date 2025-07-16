@@ -44,6 +44,7 @@ class Garp_Shell_Command_DumpDatabaseToFile extends Garp_Shell_Command_DumpDatab
         $this->_environment = $environment;
     }   
 
+    #[\Override]
     public function render() {
         $dumpToString       = parent::render();
 

@@ -63,13 +63,6 @@
 class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
 {
     /**
-     * Formula parser
-     *
-     * @var PHPExcel_Writer_Excel5_Parser
-     */
-    private $parser;
-
-    /**
      * The BIFF file size for the workbook.
      * @var integer
      * @see calcSheetOffsets()
@@ -80,7 +73,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
      * XF Writers
      * @var PHPExcel_Writer_Excel5_Xf[]
      */
-    private $xfWriters = array();
+    private $xfWriters = [];
 
     /**
      * Array containing the colour palette
@@ -101,52 +94,46 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
     private $countryCode;
 
     /**
-     * Workbook
-     * @var PHPExcel
-     */
-    private $phpExcel;
-
-    /**
      * Fonts writers
      *
      * @var PHPExcel_Writer_Excel5_Font[]
      */
-    private $fontWriters = array();
+    private $fontWriters = [];
 
     /**
      * Added fonts. Maps from font's hash => index in workbook
      *
      * @var array
      */
-    private $addedFonts = array();
+    private $addedFonts = [];
 
     /**
      * Shared number formats
      *
      * @var array
      */
-    private $numberFormats = array();
+    private $numberFormats = [];
 
     /**
      * Added number formats. Maps from numberFormat's hash => index in workbook
      *
      * @var array
      */
-    private $addedNumberFormats = array();
+    private $addedNumberFormats = [];
 
     /**
      * Sizes of the binary worksheet streams
      *
      * @var array
      */
-    private $worksheetSizes = array();
+    private $worksheetSizes = [];
 
     /**
      * Offsets of the binary worksheet streams relative to the start of the global workbook stream
      *
      * @var array
      */
-    private $worksheetOffsets = array();
+    private $worksheetOffsets = [];
 
     /**
      * Total number of shared strings in workbook
@@ -192,14 +179,19 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
      * @param array        &$colors        Colour Table
      * @param mixed        $parser            The formula parser created for the Workbook
      */
-    public function __construct(PHPExcel $phpExcel = null, &$str_total, &$str_unique, &$str_table, &$colors, $parser)
+    public function __construct(&$str_total, &$str_unique, &$str_table, &$colors, /**
+     * Formula parser
+     */
+    private $parser,
+    /**
+     * Workbook
+     */
+    private readonly ?\PHPExcel $phpExcel = null)
     {
         // It needs to call its parent's constructor explicitly
         parent::__construct();
-
-        $this->parser        = $parser;
         $this->biffSize     = 0;
-        $this->palette      = array();
+        $this->palette      = [];
         $this->countryCode = -1;
 
         $this->stringTotal      = &$str_total;
@@ -208,16 +200,14 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
         $this->colors        = &$colors;
         $this->setPaletteXl97();
 
-        $this->phpExcel = $phpExcel;
-
         // set BIFFwriter limit for CONTINUE records
         //        $this->_limit = 8224;
         $this->codepage = 0x04B0;
 
         // Add empty sheets and Build color cache
-        $countSheets = $phpExcel->getSheetCount();
+        $countSheets = $this->phpExcel->getSheetCount();
         for ($i = 0; $i < $countSheets; ++$i) {
-            $phpSheet = $phpExcel->getSheet($i);
+            $phpSheet = $this->phpExcel->getSheet($i);
 
             $this->parser->setExtSheet($phpSheet->getTitle(), $i);  // Register worksheet name with parser
 
@@ -321,12 +311,12 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
                 // then we add a custom color altering the palette
                 $colorIndex = 8 + count($this->colors);
                 $this->palette[$colorIndex] =
-                    array(
+                    [
                         hexdec(substr($rgb, 0, 2)),
                         hexdec(substr($rgb, 2, 2)),
                         hexdec(substr($rgb, 4)),
                         0
-                    );
+                    ];
                 $this->colors[$rgb] = $colorIndex;
             } else {
                 // no room for more custom colors, just map to black
@@ -347,64 +337,64 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
      */
     private function setPaletteXl97()
     {
-        $this->palette = array(
-            0x08 => array(0x00, 0x00, 0x00, 0x00),
-            0x09 => array(0xff, 0xff, 0xff, 0x00),
-            0x0A => array(0xff, 0x00, 0x00, 0x00),
-            0x0B => array(0x00, 0xff, 0x00, 0x00),
-            0x0C => array(0x00, 0x00, 0xff, 0x00),
-            0x0D => array(0xff, 0xff, 0x00, 0x00),
-            0x0E => array(0xff, 0x00, 0xff, 0x00),
-            0x0F => array(0x00, 0xff, 0xff, 0x00),
-            0x10 => array(0x80, 0x00, 0x00, 0x00),
-            0x11 => array(0x00, 0x80, 0x00, 0x00),
-            0x12 => array(0x00, 0x00, 0x80, 0x00),
-            0x13 => array(0x80, 0x80, 0x00, 0x00),
-            0x14 => array(0x80, 0x00, 0x80, 0x00),
-            0x15 => array(0x00, 0x80, 0x80, 0x00),
-            0x16 => array(0xc0, 0xc0, 0xc0, 0x00),
-            0x17 => array(0x80, 0x80, 0x80, 0x00),
-            0x18 => array(0x99, 0x99, 0xff, 0x00),
-            0x19 => array(0x99, 0x33, 0x66, 0x00),
-            0x1A => array(0xff, 0xff, 0xcc, 0x00),
-            0x1B => array(0xcc, 0xff, 0xff, 0x00),
-            0x1C => array(0x66, 0x00, 0x66, 0x00),
-            0x1D => array(0xff, 0x80, 0x80, 0x00),
-            0x1E => array(0x00, 0x66, 0xcc, 0x00),
-            0x1F => array(0xcc, 0xcc, 0xff, 0x00),
-            0x20 => array(0x00, 0x00, 0x80, 0x00),
-            0x21 => array(0xff, 0x00, 0xff, 0x00),
-            0x22 => array(0xff, 0xff, 0x00, 0x00),
-            0x23 => array(0x00, 0xff, 0xff, 0x00),
-            0x24 => array(0x80, 0x00, 0x80, 0x00),
-            0x25 => array(0x80, 0x00, 0x00, 0x00),
-            0x26 => array(0x00, 0x80, 0x80, 0x00),
-            0x27 => array(0x00, 0x00, 0xff, 0x00),
-            0x28 => array(0x00, 0xcc, 0xff, 0x00),
-            0x29 => array(0xcc, 0xff, 0xff, 0x00),
-            0x2A => array(0xcc, 0xff, 0xcc, 0x00),
-            0x2B => array(0xff, 0xff, 0x99, 0x00),
-            0x2C => array(0x99, 0xcc, 0xff, 0x00),
-            0x2D => array(0xff, 0x99, 0xcc, 0x00),
-            0x2E => array(0xcc, 0x99, 0xff, 0x00),
-            0x2F => array(0xff, 0xcc, 0x99, 0x00),
-            0x30 => array(0x33, 0x66, 0xff, 0x00),
-            0x31 => array(0x33, 0xcc, 0xcc, 0x00),
-            0x32 => array(0x99, 0xcc, 0x00, 0x00),
-            0x33 => array(0xff, 0xcc, 0x00, 0x00),
-            0x34 => array(0xff, 0x99, 0x00, 0x00),
-            0x35 => array(0xff, 0x66, 0x00, 0x00),
-            0x36 => array(0x66, 0x66, 0x99, 0x00),
-            0x37 => array(0x96, 0x96, 0x96, 0x00),
-            0x38 => array(0x00, 0x33, 0x66, 0x00),
-            0x39 => array(0x33, 0x99, 0x66, 0x00),
-            0x3A => array(0x00, 0x33, 0x00, 0x00),
-            0x3B => array(0x33, 0x33, 0x00, 0x00),
-            0x3C => array(0x99, 0x33, 0x00, 0x00),
-            0x3D => array(0x99, 0x33, 0x66, 0x00),
-            0x3E => array(0x33, 0x33, 0x99, 0x00),
-            0x3F => array(0x33, 0x33, 0x33, 0x00),
-        );
+        $this->palette = [
+            0x08 => [0x00, 0x00, 0x00, 0x00],
+            0x09 => [0xff, 0xff, 0xff, 0x00],
+            0x0A => [0xff, 0x00, 0x00, 0x00],
+            0x0B => [0x00, 0xff, 0x00, 0x00],
+            0x0C => [0x00, 0x00, 0xff, 0x00],
+            0x0D => [0xff, 0xff, 0x00, 0x00],
+            0x0E => [0xff, 0x00, 0xff, 0x00],
+            0x0F => [0x00, 0xff, 0xff, 0x00],
+            0x10 => [0x80, 0x00, 0x00, 0x00],
+            0x11 => [0x00, 0x80, 0x00, 0x00],
+            0x12 => [0x00, 0x00, 0x80, 0x00],
+            0x13 => [0x80, 0x80, 0x00, 0x00],
+            0x14 => [0x80, 0x00, 0x80, 0x00],
+            0x15 => [0x00, 0x80, 0x80, 0x00],
+            0x16 => [0xc0, 0xc0, 0xc0, 0x00],
+            0x17 => [0x80, 0x80, 0x80, 0x00],
+            0x18 => [0x99, 0x99, 0xff, 0x00],
+            0x19 => [0x99, 0x33, 0x66, 0x00],
+            0x1A => [0xff, 0xff, 0xcc, 0x00],
+            0x1B => [0xcc, 0xff, 0xff, 0x00],
+            0x1C => [0x66, 0x00, 0x66, 0x00],
+            0x1D => [0xff, 0x80, 0x80, 0x00],
+            0x1E => [0x00, 0x66, 0xcc, 0x00],
+            0x1F => [0xcc, 0xcc, 0xff, 0x00],
+            0x20 => [0x00, 0x00, 0x80, 0x00],
+            0x21 => [0xff, 0x00, 0xff, 0x00],
+            0x22 => [0xff, 0xff, 0x00, 0x00],
+            0x23 => [0x00, 0xff, 0xff, 0x00],
+            0x24 => [0x80, 0x00, 0x80, 0x00],
+            0x25 => [0x80, 0x00, 0x00, 0x00],
+            0x26 => [0x00, 0x80, 0x80, 0x00],
+            0x27 => [0x00, 0x00, 0xff, 0x00],
+            0x28 => [0x00, 0xcc, 0xff, 0x00],
+            0x29 => [0xcc, 0xff, 0xff, 0x00],
+            0x2A => [0xcc, 0xff, 0xcc, 0x00],
+            0x2B => [0xff, 0xff, 0x99, 0x00],
+            0x2C => [0x99, 0xcc, 0xff, 0x00],
+            0x2D => [0xff, 0x99, 0xcc, 0x00],
+            0x2E => [0xcc, 0x99, 0xff, 0x00],
+            0x2F => [0xff, 0xcc, 0x99, 0x00],
+            0x30 => [0x33, 0x66, 0xff, 0x00],
+            0x31 => [0x33, 0xcc, 0xcc, 0x00],
+            0x32 => [0x99, 0xcc, 0x00, 0x00],
+            0x33 => [0xff, 0xcc, 0x00, 0x00],
+            0x34 => [0xff, 0x99, 0x00, 0x00],
+            0x35 => [0xff, 0x66, 0x00, 0x00],
+            0x36 => [0x66, 0x66, 0x99, 0x00],
+            0x37 => [0x96, 0x96, 0x96, 0x00],
+            0x38 => [0x00, 0x33, 0x66, 0x00],
+            0x39 => [0x33, 0x99, 0x66, 0x00],
+            0x3A => [0x00, 0x33, 0x00, 0x00],
+            0x3B => [0x33, 0x33, 0x00, 0x00],
+            0x3C => [0x99, 0x33, 0x00, 0x00],
+            0x3D => [0x99, 0x33, 0x66, 0x00],
+            0x3E => [0x33, 0x33, 0x99, 0x00],
+            0x3F => [0x33, 0x33, 0x33, 0x00],
+        ];
     }
 
     /**
@@ -677,7 +667,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
                     }
                     $chunk .= $this->writeData($this->writeDefinedNameBiff8($namedRange->getName(), $formulaData, $scope, false));
 
-                } catch (PHPExcel_Exception $e) {
+                } catch (PHPExcel_Exception) {
                     // do nothing
                 }
             }
@@ -779,7 +769,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
                 //Autofilter built in name
                 $name = pack('C', 0x0D);
 
-                $chunk .= $this->writeData($this->writeShortNameBiff8($name, $i + 1, $rangeBounds, true));
+                $chunk .= $this->writeData($this->writeShortNameBiff8($name, $rangeBounds, $i + 1, true));
             }
         }
 
@@ -830,7 +820,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
      * @param    boolean      $isHidden
      * @return    string    Complete binary record data
      * */
-    private function writeShortNameBiff8($name, $sheetIndex = 0, $rangeBounds, $isHidden = false)
+    private function writeShortNameBiff8($name, $rangeBounds, $sheetIndex = 0, $isHidden = false)
     {
         $record = 0x0018;
 
@@ -916,20 +906,12 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
         $record    = 0x0085;                    // Record identifier
 
         // sheet state
-        switch ($sheet->getSheetState()) {
-            case PHPExcel_Worksheet::SHEETSTATE_VISIBLE:
-                $ss = 0x00;
-                break;
-            case PHPExcel_Worksheet::SHEETSTATE_HIDDEN:
-                $ss = 0x01;
-                break;
-            case PHPExcel_Worksheet::SHEETSTATE_VERYHIDDEN:
-                $ss = 0x02;
-                break;
-            default:
-                $ss = 0x00;
-                break;
-        }
+        $ss = match ($sheet->getSheetState()) {
+            PHPExcel_Worksheet::SHEETSTATE_VISIBLE => 0x00,
+            PHPExcel_Worksheet::SHEETSTATE_HIDDEN => 0x01,
+            PHPExcel_Worksheet::SHEETSTATE_VERYHIDDEN => 0x02,
+            default => 0x00,
+        };
 
         // sheet type
         $st = 0x00;
@@ -1297,7 +1279,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
         $continue_limit = 8224;
 
         // initialize array of record data blocks
-        $recordDatas = array();
+        $recordDatas = [];
 
         // start SST record data block with total number of strings, total number of unique strings
         $recordData = pack("VV", $this->stringTotal, $this->stringUnique);
@@ -1413,7 +1395,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
             $data = $writer->close();
 
             $record = 0x00EB;
-            $length = strlen($data);
+            $length = strlen((string) $data);
             $header = pack("vv", $record, $length);
 
             return $this->writeData($header . $data);
@@ -1437,7 +1419,7 @@ class PHPExcel_Writer_Excel5_Workbook extends PHPExcel_Writer_Excel5_BIFFwriter
      *
      * @param PHPExcel_Shared_Escher $pValue
      */
-    public function setEscher(PHPExcel_Shared_Escher $pValue = null)
+    public function setEscher(?PHPExcel_Shared_Escher $pValue = null)
     {
         $this->escher = $pValue;
     }

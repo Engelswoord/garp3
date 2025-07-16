@@ -40,6 +40,7 @@ class Garp_Model_Behavior_Sluggable extends Garp_Model_Behavior_Abstract {
      * @param Array $config Configuration values
      * @return Void
      */
+    #[\Override]
     protected function _setup($config) {
         if (!array_key_exists('baseField', $config)) {
             throw new Garp_Model_Behavior_Exception(sprintf(self::EXCEPTION_MISSING_CONFIG, 'baseField'));

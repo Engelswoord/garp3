@@ -1868,6 +1868,7 @@ class TransientFacebook extends BaseFacebook {
 class FBRecordURL extends TransientFacebook {
   private $url;
 
+  #[\Override]
   protected function _oauthRequest($url, $params) {
     $this->url = $url;
   }
@@ -1880,6 +1881,7 @@ class FBRecordURL extends TransientFacebook {
 class FBRecordMakeRequest extends TransientFacebook {
   private $requests = [];
 
+  #[\Override]
   protected function makeRequest($url, $params, $ch=null) {
     $this->requests[] = [
       'url' => $url,
@@ -2021,6 +2023,7 @@ class FBPublicGetAccessTokenFromCode extends TransientFacebook {
 
 class FBPublicState extends TransientFacebook {
   const STATE = 'foo';
+  #[\Override]
   protected function getPersistentData($key, $default = false) {
     if ($key === 'state') {
       return self::STATE;

@@ -21,7 +21,7 @@ class Garp_Util_RoutedUrl implements JsonSerializable, \Stringable {
      * @return void
      */
     public function __construct(
-        $routeName, $params = [], Zend_Controller_Router_Interface $router = null
+        $routeName, $params = [], ?Zend_Controller_Router_Interface $router = null
     ) {
         $router = $router ?: Zend_Controller_Front::getInstance()->getRouter();
         if (!$router) {

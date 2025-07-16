@@ -63,6 +63,7 @@ class Garp_Model_Behavior_Draftable extends Garp_Model_Behavior_Abstract {
      * @param array $config
      * @return void
      */
+    #[\Override]
     protected function _setup($config) {
         if (!array_key_exists('draft_only', $config)) {
             $config['draft_only'] = false;

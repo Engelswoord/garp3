@@ -34,6 +34,7 @@ class Garp_Model_Behavior_HtmlFilterable extends Garp_Model_Behavior_Abstract {
      *
      * @param mixed $config Configuration values
      */
+    #[\Override]
     protected function _setup($config) {
         $this->_fields = $config;
     }
