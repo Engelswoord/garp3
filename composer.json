@@ -18,13 +18,19 @@
     "league/csv": "^8.0",
     "aws/aws-sdk-php": "^3.87",
     "sentry/sdk": "^4.0",
-    "shardj/zf1-future": "^1.24",
+    "shardj/zf1-future": "dev-php84",
     "guzzlehttp/guzzle": "^6|^7"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.5",
     "phpunit/phpunit": "^9",
     "rector/rector": "dev-main"
+  },
+  "repositories": {
+    "shardj/zf1-future": {
+      "type": "vcs",
+      "url": "git@github.com:Engelswoord/zf1-future.git"
+    }
   },
   "autoload": {
     "psr-0": {
